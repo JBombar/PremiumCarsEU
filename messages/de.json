@@ -1,0 +1,30 @@
+{
+    "HomePage": {
+        "hero": {
+            "title": "Finden Sie Ihr perfektes Auto",
+            "subtitle": "Ihre Premium-Adresse für Neu- und Gebrauchtwagen",
+            "browseButton": "Bestand durchsuchen",
+            "contactButton": "Kontaktieren Sie uns",
+            "imageAlt": "Luxuriöses schwarzes Auto"
+        },
+        "testimonials": {
+            "title": "Was Kunden sagen",
+            "trustpilot": {
+                "title": "TrustPilot Bewertungen",
+                "quote": "Das Team hat mir geholfen, das perfekte Auto für meine Familie zu finden. Ihr Service war professionell und machte den Prozess stressfrei.",
+                "author": "- Michael Weber"
+            },
+            "google": {
+                "title": "Google Bewertungen",
+                "quote": "Ich war beeindruckt, wie schnell sie genau das gefunden haben, wonach ich gesucht habe. Toller Kundenservice!",
+                "author": "- Laura Schmid"
+            }
+        },
+        "stats": {
+            "title": "Tausende vertrauen uns",
+            "carsSoldLabel": "Verkaufte Autos",
+            "averageRatingLabel": "Durchschnittliche Bewertung",
+            "locationsLabel": "Standorte in der Schweiz"
+        }
+    }
+}

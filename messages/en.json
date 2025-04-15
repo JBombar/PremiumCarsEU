@@ -1,0 +1,30 @@
+{
+    "HomePage": {
+        "hero": {
+            "title": "Find Your Perfect Car",
+            "subtitle": "Your premium destination for new and pre-owned vehicles",
+            "browseButton": "Browse Inventory",
+            "contactButton": "Contact Us",
+            "imageAlt": "Luxury Black Car"
+        },
+        "testimonials": {
+            "title": "What Customers Are Saying",
+            "trustpilot": {
+                "title": "TrustPilot Reviews",
+                "quote": "The team helped me find the perfect car for my family. Their service was professional and made the process stress-free.",
+                "author": "- Michael Weber"
+            },
+            "google": {
+                "title": "Google Reviews",
+                "quote": "I was impressed with how quickly they found exactly what I was looking for. Great customer service!",
+                "author": "- Laura Schmid"
+            }
+        },
+        "stats": {
+            "title": "Trusted by Thousands",
+            "carsSoldLabel": "Cars Sold",
+            "averageRatingLabel": "Average Rating",
+            "locationsLabel": "Locations in Switzerland"
+        }
+    }
+}

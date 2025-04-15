@@ -1,0 +1,346 @@
+'use client';
+
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { format } from "date-fns";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
+import { RefreshCcw, Search, DollarSign, TrendingUp, CheckCircle2 } from "lucide-react";
+
+// Define types based on your schema
+interface Transaction {
+  id: string;
+  buyer_id: string | null;
+  seller_id: string;
+  listing_id: string;
+  agreed_price: number;
+  status: 'pending' | 'completed' | 'cancelled';
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined fields from other tables
+  vehicle_title?: string;
+  seller_name?: string;
+  buyer_name?: string | null;
+}
+
+export default function TransactionsPage() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const supabase = createClient();
+
+  // Calculate summary statistics
+  const totalTransactions = transactions.length;
+  const totalSalesValue = transactions.reduce((sum, trans) => sum + (trans.agreed_price || 0), 0);
+  const completedSales = transactions.filter(t => t.status === 'completed').length;
+  const completedSalesValue = transactions
+    .filter(t => t.status === 'completed')
+    .reduce((sum, trans) => sum + (trans.agreed_price || 0), 0);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  async function fetchTransactions() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Fetch transactions with joined data from car_listings and users tables
+      const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          car_listings:listing_id (
+            title
+          ),
+          seller:seller_id (
+            full_name
+          ),
+          buyer:buyer_id (
+            full_name
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform the data to flatten the structure
+      const transformedData = data?.map(trans => ({
+        ...trans,
+        vehicle_title: trans.car_listings?.title || 'Unknown Vehicle',
+        seller_name: trans.seller?.full_name || 'Unknown Seller',
+        buyer_name: trans.buyer?.full_name || null
+      })) || [];
+
+      setTransactions(transformedData);
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+      setError('Failed to load transactions. Please try again.');
+      toast({
+        title: "Error",
+        description: "Failed to load transactions data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Handle refresh button click
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchTransactions();
+    setRefreshing(false);
+    toast({
+      title: "Data Refreshed",
+      description: "Transaction data has been updated",
+    });
+  };
+
+  // Filter transactions based on search term and status filter
+  const filteredTransactions = transactions.filter(transaction => {
+    const matchesSearch =
+      searchTerm === '' ||
+      transaction.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.vehicle_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.seller_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (transaction.buyer_name && transaction.buyer_name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesStatus =
+      !statusFilter ||
+      transaction.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  // Helper function to get badge variant based on status
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'success';
+      case 'pending':
+        return 'warning';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'default';
+    }
+  };
+
+  // Format currency with proper locale
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  // Format date from ISO string
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
+    try {
+      return format(new Date(dateString), 'MMM dd, yyyy');
+    } catch (e) {
+      return 'Invalid Date';
+    }
+  };
+
+  // Truncate transaction ID for display
+  const truncateId = (id: string) => {
+    return id.substring(0, 8) + '...';
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Transactions</p>
+                <h2 className="text-3xl font-bold">{totalTransactions}</h2>
+              </div>
+              <div className="bg-primary/10 p-3 rounded-full">
+                <TrendingUp className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Sales Value</p>
+                <h2 className="text-3xl font-bold">{formatCurrency(totalSalesValue)}</h2>
+              </div>
+              <div className="bg-primary/10 p-3 rounded-full">
+                <DollarSign className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Completed Sales</p>
+                <h2 className="text-3xl font-bold">{completedSales}</h2>
+                <p className="text-sm text-muted-foreground mt-1">{formatCurrency(completedSalesValue)}</p>
+              </div>
+              <div className="bg-primary/10 p-3 rounded-full">
+                <CheckCircle2 className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Transactions Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>All Transactions</CardTitle>
+          <CardDescription>
+            View and manage all financial transactions for vehicle sales
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {/* Controls */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by vehicle, buyer, seller or ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <Select
+                value={statusFilter || "all"}
+                onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleRefresh}
+                disabled={refreshing}
+              >
+                <RefreshCcw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+          </div>
+
+          {/* Transactions Table */}
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <RefreshCcw className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>{error}</p>
+              <Button
+                variant="outline"
+                onClick={handleRefresh}
+                className="mt-4"
+              >
+                Try Again
+              </Button>
+            </div>
+          ) : filteredTransactions.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              {searchTerm || statusFilter ? (
+                <p>No transactions match your filters</p>
+              ) : (
+                <p>No transactions found</p>
+              )}
+            </div>
+          ) : (
+            <div className="rounded-md border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Transaction ID</TableHead>
+                    <TableHead>Vehicle</TableHead>
+                    <TableHead>Agreed Price</TableHead>
+                    <TableHead>Seller</TableHead>
+                    <TableHead>Buyer</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Completed</TableHead>
+                    <TableHead>Created</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell className="font-mono text-xs">
+                        {truncateId(transaction.id)}
+                      </TableCell>
+                      <TableCell className="font-medium">{transaction.vehicle_title}</TableCell>
+                      <TableCell>{formatCurrency(transaction.agreed_price)}</TableCell>
+                      <TableCell>{transaction.seller_name}</TableCell>
+                      <TableCell>{transaction.buyer_name || 'Not specified'}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={getStatusBadgeVariant(transaction.status) as any}
+                          className="capitalize"
+                        >
+                          {transaction.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{formatDate(transaction.completed_at)}</TableCell>
+                      <TableCell>{formatDate(transaction.created_at)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+} 

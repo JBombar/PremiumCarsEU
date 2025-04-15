@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es5", // Or "es2017", "esnext" etc. depending on your needs
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler", // Recommended for modern Node/Next.js
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve", // Standard for Next.js
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    // --- Path Alias Configuration ---
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"] // Ensure './src/*' matches your project structure
+    }
+    // --- End Path Alias Configuration ---
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
