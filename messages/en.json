@@ -26,5 +26,618 @@
             "averageRatingLabel": "Average Rating",
             "locationsLabel": "Locations in Switzerland"
         }
+    },
+    "Navbar": {
+        "links": {
+            "home": "Home",
+            "requestCar": "Request a Car",
+            "sellCar": "Sell a Car",
+            "searchCars": "Search Cars",
+            "aboutUs": "About Us",
+            "contact": "Contact"
+        },
+        "mobileMenu": {
+            "openLabel": "Open menu",
+            "closeLabel": "Close menu"
+        },
+        "languageSwitcher": {
+            "labelPrefix": "Language: "
+        }
+    },
+    "Footer": {
+        "brand": {
+            "slogan": "Modern Car Dealership Websites, Made Simple.",
+            "copyright": "© {year} CarBiz. All rights reserved."
+        },
+        "quickLinks": {
+            "title": "Quick Links",
+            "search": "Search",
+            "newCars": "New Cars",
+            "preowned": "Preowned"
+        },
+        "supportLegal": {
+            "title": "Support & Legal",
+            "privacyPolicy": "Privacy Policy",
+            "terms": "Terms of Service",
+            "faq": "FAQ",
+            "customerSupport": "Customer Support"
+        },
+        "contactUs": {
+            "title": "Contact Us"
+        },
+        "followUs": {
+            "title": "Follow Us",
+            "socialAriaLabels": {
+                "facebook": "Facebook",
+                "instagram": "Instagram",
+                "linkedIn": "LinkedIn"
+            }
+        }
+    },
+    "BrowseByType": {
+        "title": "Browse By Type",
+        "types": {
+            "suv": "SUV",
+            "sedan": "Sedan",
+            "hatchback": "Hatchback",
+            "electric": "Electric",
+            "convertible": "Convertible",
+            "hybrid": "Hybrid",
+            "coupe": "Coupe",
+            "van": "Van"
+        }
+    },
+    "CredibilitySection": {
+        "widgets": {
+            "trustpilotPlaceholder": "TrustPilot Reviews Widget",
+            "googlePlaceholder": "Google Reviews Widget"
+        },
+        "carousel": {
+            "ariaLabel": "View testimonial {index}"
+        },
+        "sampleTestimonials": [
+            {
+                "id": 1,
+                "name": "Thomas Weber",
+                "quote": "CarBiz helped me find the perfect car for my family. Their team was professional and made the process stress-free."
+            },
+            {
+                "id": 2,
+                "name": "Laura Schmid",
+                "quote": "I was impressed with how quickly they found exactly what I was looking for. Great selection and excellent service."
+            },
+            {
+                "id": 3,
+                "name": "Daniel Meier",
+                "quote": "The team at CarBiz went above and beyond to help me find a car within my budget. Highly recommend!"
+            }
+        ]
+    },
+    "WhyChooseUs": {
+        "title": "Why Choose Us",
+        "features": {
+            "quality": {
+                "title": "Certified Quality",
+                "description": "All our cars go through a 150-point inspection to ensure safety and performance."
+            },
+            "process": {
+                "title": "Quick & Easy Process",
+                "description": "Get approved and drive away in less than 24 hours with our streamlined process."
+            },
+            "customer": {
+                "title": "Customer First",
+                "description": "We prioritize transparency and support — before, during, and after your purchase."
+            }
+        }
+    },
+    "SpecialOfferCarousel": {
+        "title": "Special Offers",
+        "loadingError": "Failed to load special offers",
+        "emptyState": "No special offers available at the moment.",
+        "defaultOfferLabel": "🔥 Special Offer",
+        "imageAlt": "{carTitle}",
+        "kmUnit": "km",
+        "viewOfferButton": "View Offer",
+        "srPrevious": "Previous",
+        "srNext": "Next",
+        "indicatorAriaLabel": "Go to slide {index}"
+    },
+    "OurServices": {
+        "title": "Our Services",
+        "services": {
+            "maintenance": {
+                "title": "Maintenance Packages",
+                "description": "Affordable service plans tailored for your car's needs."
+            },
+            "tradeIn": {
+                "title": "Trade-In Program",
+                "description": "Easily trade in your current vehicle for credit towards your next purchase."
+            },
+            "financing": {
+                "title": "Flexible Financing",
+                "description": "We partner with leading financial institutions to get you the best rates."
+            }
+        }
+    },
+    "CTASection": {
+        "title": "Ready to Drive Your Dream Car?",
+        "subtitle": "Get in touch with us today and let us help you find the perfect ride."
+    },
+    "RequestCarForm": {
+        "section": {
+            "title": "Can't Find What You're Looking For?",
+            "subtitle": "Help us find your ideal car through our dealer network by letting us know your preferences."
+        },
+        "card": {
+            "title": "Request a Car",
+            "description": "Fill out the form below with your vehicle preferences and our specialists will contact you shortly."
+        },
+        "subheadings": {
+            "contactInfo": "Contact Information",
+            "vehicleDetails": "Vehicle Details",
+            "specifications": "Vehicle Specifications",
+            "additionalInfo": "Additional Notes"
+        },
+        "labels": {
+            "fullName": "Full Name",
+            "email": "Email Address",
+            "phone": "Phone Number",
+            "location": "Location / Region",
+            "make": "Desired Car Make",
+            "model": "Desired Car Model",
+            "yearFrom": "Year Range (From)",
+            "yearTo": "Year Range (To)",
+            "budget": "Preferred Budget",
+            "color": "Preferred Color(s)",
+            "condition": "Car Condition",
+            "transmission": "Transmission Type",
+            "fuelType": "Fuel Type",
+            "maxMileage": "Maximum Mileage",
+            "notes": "Additional Notes"
+        },
+        "placeholders": {
+            "fullName": "John Doe",
+            "email": "john@example.com",
+            "phone": "(123) 456-7890",
+            "location": "City, State or Zip Code",
+            "make": "BMW, Toyota, etc.",
+            "model": "X5, Camry, etc.",
+            "yearFrom": "From Year",
+            "yearTo": "To Year",
+            "budget": "$30,000",
+            "color": "Black, Silver, etc.",
+            "transmission": "Select transmission",
+            "fuelType": "Select fuel type",
+            "maxMileage": "50000",
+            "notes": "Any specific requirements or preferences?"
+        },
+        "options": {
+            "conditionNew": "New",
+            "conditionPreowned": "Pre-Owned",
+            "conditionEither": "Either",
+            "transmissionAutomatic": "Automatic",
+            "transmissionManual": "Manual",
+            "transmissionAny": "Doesn't Matter",
+            "fuelGasoline": "Gasoline",
+            "fuelDiesel": "Diesel",
+            "fuelHybrid": "Hybrid",
+            "fuelElectric": "Electric",
+            "fuelAny": "Doesn't Matter"
+        },
+        "buttons": {
+            "submit": "Submit Request",
+            "submitting": "Submitting...",
+            "submitAnother": "Submit Another Request"
+        },
+        "success": {
+            "title": "Request Submitted!",
+            "description": "Thank you for your car request. Our team will review your preferences and contact you soon.",
+            "confirmation": "We'll be in touch with you at {email} shortly."
+        },
+        "error": {
+            "prefix": "Failed to save your request: ",
+            "fallback": "An error occurred while submitting your request. Please try again."
+        }
+    },
+    "MostSearchedCars": {
+        "title": "Most Searched Cars",
+        "loading": "Loading popular vehicles...",
+        "error": "Failed to load popular cars. Please try again later.",
+        "errorPrefix": "Failed to fetch cars: ",
+        "empty": "No popular vehicles found at the moment.",
+        "card": {
+            "badgeNew": "New",
+            "badgeSold": "Sold",
+            "unitMiles": "mi",
+            "viewDetailsButton": "View Details",
+            "imageAltFallback": "Car listing"
+        },
+        "fuelTypes": {
+            "Electric": "Electric",
+            "Hybrid": "Hybrid",
+            "Diesel": "Diesel",
+            "Gasoline": "Gasoline",
+            "Unknown": "Unknown"
+        },
+        "transmissions": {
+            "Manual": "Manual",
+            "CVT": "CVT",
+            "DCT": "DCT",
+            "Automatic": "Automatic",
+            "Unknown": "Unknown"
+        }
+    },
+    "AboutPage": {
+        "hero": {
+            "title": "Driven by Excellence",
+            "subtitle": "Learn who we are and what drives our mission."
+        },
+        "story": {
+            "title": "Our Story",
+            "paragraph1": "Founded in 2005, CarBiz began with a simple mission: to transform the car buying experience in Switzerland. Our founder, Michael Brunner, was frustrated with the traditional dealership model and envisioned a more transparent, customer-focused approach to selling vehicles.",
+            "paragraph2": "What started as a small showroom in Zurich has grown into Switzerland's most trusted automotive marketplace, with three locations across the country and an ever-expanding digital presence. Throughout our growth, we've remained committed to our core principles: fair pricing, exceptional service, and absolute transparency.",
+            "paragraph3": "Today, we're proud to have helped over 10,000 customers find their perfect vehicle, earning a reputation as the dealership that truly puts customers first. Our journey continues as we embrace new technologies and innovative approaches to make car buying and selling simpler, more enjoyable, and more accessible than ever before.",
+            "imageAlt": "CarBiz showroom and team"
+        },
+        "values": {
+            "title": "Our Values",
+            "trust": {
+                "title": "Trust",
+                "description": "We build lasting relationships based on honesty, integrity, and reliability at every step of the customer journey."
+            },
+            "transparency": {
+                "title": "Transparency",
+                "description": "We believe in clear communication, fair pricing, and providing complete vehicle information with no hidden surprises."
+            },
+            "innovation": {
+                "title": "Innovation",
+                "description": "We continuously embrace new technologies and approaches to improve the car buying and selling experience."
+            },
+            "customerFirst": {
+                "title": "Customer First",
+                "description": "Every decision we make prioritizes the needs, preferences, and satisfaction of our customers above all else."
+            }
+        },
+        "team": {
+            "title": "Meet the Team",
+            "member1": {
+                "imageAlt": "Michael Brunner",
+                "name": "Michael Brunner",
+                "title": "Founder & CEO",
+                "quote": "\"Our goal is to reinvent how people buy and sell cars, making it the most enjoyable purchase they'll ever make.\""
+            },
+            "member2": {
+                "imageAlt": "Sarah Mueller",
+                "name": "Sarah Mueller",
+                "title": "Sales Director",
+                "quote": "\"I believe in building relationships, not just selling cars. Our customers become part of the CarBiz family.\""
+            },
+            "member3": {
+                "imageAlt": "Thomas Weber",
+                "name": "Thomas Weber",
+                "title": "Chief Technology Officer",
+                "quote": "\"Technology should make buying a car easier and more transparent. That's what drives our digital innovation.\""
+            }
+        },
+        "cta": {
+            "title": "Want to join our journey?",
+            "subtitle": "We're always looking for talented individuals who share our passion for automotive excellence and customer service."
+        }
+    },
+    "ContactPage": {
+        "hero": {
+            "title": "Contact Us",
+            "subtitle": "We'd love to hear from you. Fill out the form and our team will get back to you shortly."
+        },
+        "formCard": {
+            "title": "Send us a message",
+            "description": "Fill out the form below with your inquiry and we'll respond as soon as possible."
+        },
+        "labels": {
+            "fullName": "Full Name",
+            "email": "Email Address",
+            "phone": "Phone Number (Optional)",
+            "subject": "Subject",
+            "message": "Message"
+        },
+        "placeholders": {
+            "fullName": "Enter your full name",
+            "email": "you@example.com",
+            "phone": "Enter your phone number",
+            "subject": "Select a subject",
+            "message": "Write your message here..."
+        },
+        "subjectOptions": {
+            "general": "General Inquiry",
+            "availability": "Vehicle Availability",
+            "collaboration": "Collaboration",
+            "other": "Other"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Please enter a valid email address",
+            "subjectRequired": "Please select a subject",
+            "messageRequired": "Message is required"
+        },
+        "buttons": {
+            "send": "Send Message",
+            "sending": "Sending..."
+        },
+        "infoCard": {
+            "title": "Contact Information",
+            "description": "You can also reach us directly using the information below.",
+            "addressTitle": "Address",
+            "phoneTitle": "Phone",
+            "emailTitle": "Email",
+            "hoursTitle": "Working Hours",
+            "connectTitle": "Connect with us",
+            "addressLine1": "Main Office — Zurich, Switzerland",
+            "addressLine2": "Bahnhofstrasse 42, 8001 Zurich",
+            "hoursLine1": "Monday - Friday: 9am – 6pm",
+            "hoursLine2": "Saturday: 10am – 4pm",
+            "hoursLine3": "Sunday: Closed"
+        },
+        "success": {
+            "title": "Message Sent Successfully!",
+            "description": "Thank you for contacting us. We've received your message and will get back to you shortly.",
+            "heading": "We'll Be In Touch Soon",
+            "confirmation": "Our team typically responds within 24-48 hours on business days.",
+            "button": "Send Another Message"
+        }
+    },
+    "SellPage": {
+        "hero": {
+            "title": "Sell Your Car with Confidence",
+            "subtitle": "Get a fair price and hassle-free experience when you sell your car through CarBiz. No middlemen, no hidden fees - just straightforward service."
+        },
+        "benefits": {
+            "title": "Why Sell With Us?",
+            "pricing": {
+                "title": "Competitive Pricing",
+                "description": "We offer fair market value for your vehicle based on its condition, history, and current market trends."
+            },
+            "process": {
+                "title": "Hassle-Free Process",
+                "description": "Our streamlined selling process means less paperwork and quicker transactions. Most deals close within 48 hours."
+            },
+            "service": {
+                "title": "Trusted Service",
+                "description": "With over 10 years in the business, our reputation for transparency and customer satisfaction speaks for itself."
+            }
+        },
+        "trustIndicator": {
+            "title": "Trusted by 2,300+ drivers",
+            "description": "Join thousands of satisfied customers who have successfully sold their vehicles through our platform."
+        }
+    },
+    "CarSellForm": {
+        "card": {
+            "title": "Sell Your Car",
+            "description": "Fill out the form below with your car details. Our team will review and contact you within 24-48 hours."
+        },
+        "sections": {
+            "ownerInfo": "Owner Information",
+            "carInfo": "Car Information",
+            "pricingMedia": "Pricing & Media",
+            "additionalInfo": "Additional Information"
+        },
+        "labels": {
+            "fullName": "Full Name",
+            "email": "Email Address",
+            "phone": "Phone Number",
+            "make": "Car Make",
+            "model": "Car Model",
+            "year": "Year",
+            "mileage": "Mileage",
+            "fuelType": "Fuel Type",
+            "transmission": "Transmission",
+            "condition": "Condition",
+            "city": "City",
+            "askingPrice": "Asking Price (Optional)",
+            "photos": "Upload Photos",
+            "description": "Description / Notes"
+        },
+        "placeholders": {
+            "fullName": "John Doe",
+            "email": "your@email.com",
+            "phone": "(123) 456-7890",
+            "make": "e.g., Toyota",
+            "model": "e.g., Camry",
+            "year": "e.g., 2019",
+            "mileage": "e.g., 45000",
+            "fuelType": "Select fuel type",
+            "transmission": "Select transmission",
+            "city": "e.g., San Francisco",
+            "askingPrice": "e.g., 25000",
+            "description": "Please provide any additional details about your car..."
+        },
+        "options": {
+            "fuelGasoline": "Gasoline",
+            "fuelDiesel": "Diesel",
+            "fuelElectric": "Electric",
+            "fuelHybrid": "Hybrid",
+            "transmissionManual": "Manual",
+            "transmissionAutomatic": "Automatic",
+            "conditionNew": "New",
+            "conditionUsed": "Used"
+        },
+        "descriptions": {
+            "askingPrice": "Leave blank if you'd like us to provide a market valuation.",
+            "filesSelected": "{count} file(s) selected:",
+            "fileTypes": "PNG, JPG, GIF, HEIC up to 10MB each"
+        },
+        "fileUpload": {
+            "upload": "Upload files",
+            "dragDrop": "or drag and drop"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Invalid email format",
+            "phoneRequired": "Phone is required",
+            "makeRequired": "Make is required",
+            "modelRequired": "Model is required",
+            "yearRequired": "Year is required",
+            "yearInvalid": "Invalid year format",
+            "mileageRequired": "Mileage is required",
+            "mileageInvalid": "Mileage must be a number",
+            "fuelTypeRequired": "Fuel type is required",
+            "transmissionRequired": "Transmission is required",
+            "conditionRequired": "Condition is required",
+            "cityRequired": "City is required",
+            "priceInvalid": "Price must be a number"
+        },
+        "buttons": {
+            "submit": "Submit Car for Review",
+            "submitting": "Submitting...",
+            "submitAnother": "Submit Another Car"
+        },
+        "success": {
+            "title": "Submission Received!",
+            "description": "Thank you! We'll review your car details and get back to you soon.",
+            "heading": "Details Submitted",
+            "confirmation": "We'll use {email} to contact you."
+        },
+        "error": {
+            "submitFallback": "An error occurred while submitting your information. Please try again.",
+            "updatePhotoUrlError": "Photos uploaded but couldn't save URLs: {message}",
+            "updatePhotoUrlException": "Photos uploaded but encountered an error saving URLs",
+            "noPhotosUploaded": "No photos were successfully uploaded"
+        }
+    },
+    "InventoryPage": {
+        "loading": "Loading Inventory...",
+        "errorTitle": "Error",
+        "errorLoading": "Failed to load inventory. {message}",
+        "errorTryAgain": "Try Again",
+        "hero": {
+            "title": "Browse Our Inventory",
+            "subtitle": "Explore our extensive collection of premium vehicles. Use the filters to find your perfect match."
+        },
+        "aiSearch": {
+            "title": "What are you looking for?",
+            "placeholder": "e.g. A weekend coupe under 50k",
+            "buttonIdle": "Search",
+            "buttonLoading": "Searching...",
+            "errorPrefix": "Failed to process your search",
+            "errorCouldNotUnderstand": "Could not understand your search. Please try again with different wording.",
+            "toastTitle": "Search processed",
+            "toastDescSuccess": "Found exactly what you're looking for!",
+            "toastDescPotential": "Found potential matches. You can adjust filters if needed."
+        },
+        "filters": {
+            "makeLabel": "Make",
+            "modelLabel": "Model",
+            "bodyTypeLabel": "Body Type",
+            "priceLabel": "Price Range",
+            "yearLabel": "Year Range",
+            "mileageLabel": "Mileage Range",
+            "fuelTypeLabel": "Fuel Type",
+            "transmissionLabel": "Transmission",
+            "conditionLabel": "Condition",
+            "minLabel": "Min",
+            "maxLabel": "Max",
+            "fromLabel": "From",
+            "toLabel": "To",
+            "makePlaceholderLoading": "Loading makes...",
+            "makePlaceholder": "Select make",
+            "modelPlaceholderLoading": "Loading models...",
+            "modelPlaceholder": "Select model",
+            "modelSearchPlaceholder": "Search models...",
+            "modelNotFound": "No matching models",
+            "modelNotAvailable": "No models available",
+            "bodyTypePlaceholder": "Select body type",
+            "fuelTypePlaceholder": "Select fuel type",
+            "transmissionPlaceholder": "Select transmission",
+            "conditionPlaceholder": "Select condition",
+            "priceMinPlaceholder": "Min Price",
+            "priceMaxPlaceholder": "Max Price",
+            "yearMinPlaceholder": "From Year",
+            "yearMaxPlaceholder": "To Year",
+            "mileageMinPlaceholder": "Min Mileage",
+            "mileageMaxPlaceholder": "Max Mileage",
+            "applyButton": "Apply Filters",
+            "resetButton": "Reset",
+            "showAdvancedButton": "Show Advanced",
+            "hideAdvancedButton": "Hide Advanced",
+            "backButton": "Back to Filters",
+            "optionAny": "Any"
+        },
+        "results": {
+            "count": "Showing {count} vehicles",
+            "sortByLabel": "Sort by:",
+            "sortPlaceholder": "Sort by",
+            "emptyTitle": "No vehicles found matching your criteria.",
+            "resetFiltersButton": "Reset Filters"
+        },
+        "sortOptions": {
+            "price-asc": "Price: Low to High",
+            "price-desc": "Price: High to Low",
+            "year-desc": "Year: Newest First",
+            "year-asc": "Year: Oldest First",
+            "mileage-asc": "Mileage: Low to High",
+            "mileage-desc": "Mileage: High to Low",
+            "created_at-desc": "Newest Listings"
+        },
+        "card": {
+            "imageAlt": "{make} {model} - view {index}",
+            "imageAltFallback": "Car image",
+            "noImage": "No image available",
+            "prevImageLabel": "Previous image",
+            "nextImageLabel": "Next image",
+            "priceNA": "N/A",
+            "mileageNA": "N/A",
+            "fuelNA": "N/A",
+            "transmissionNA": "N/A",
+            "yearNA": "N/A",
+            "addToCompareButton": "Add to Compare",
+            "viewDetailsButton": "View Details"
+        },
+        "pagination": {
+            "previous": "Previous page",
+            "next": "Next page"
+        },
+        "toastMessages": {
+            "compareAddedTitle": "Added to compare",
+            "compareAddedDesc": "{make} {model} added to compare list.",
+            "errorTitle": "Error",
+            "errorViewDetails": "Cannot view details: Car ID is missing."
+        },
+        "bodyTypes": {
+            "Any": "Any",
+            "Sedan": "Sedan",
+            "SUV": "SUV",
+            "Coupe": "Coupe",
+            "Convertible": "Convertible",
+            "Hatchback": "Hatchback",
+            "Wagon": "Wagon",
+            "Truck": "Truck",
+            "Van": "Van"
+        },
+        "fuelTypes": {
+            "Any": "Any",
+            "Gasoline": "Gasoline",
+            "Diesel": "Diesel",
+            "Hybrid": "Hybrid",
+            "Electric": "Electric"
+        },
+        "transmissions": {
+            "Any": "Any",
+            "Automatic": "Automatic",
+            "Manual": "Manual",
+            "CVT": "CVT",
+            "PDK": "PDK"
+        },
+        "conditions": {
+            "Any": "Any",
+            "New": "New",
+            "Used": "Used"
+        }
+    },
+    "Common": {
+        "signIn": "Sign In",
+        "register": "Register",
+        "requiredIndicator": "*"
     }
 }

@@ -2,7 +2,7 @@
     "HomePage": {
         "hero": {
             "title": "Finden Sie Ihr perfektes Auto",
-            "subtitle": "Ihre Premium-Adresse für Neu- und Gebrauchtwagen",
+            "subtitle": "Ihr Premium-Ziel für Neu- und Gebrauchtwagen",
             "browseButton": "Bestand durchsuchen",
             "contactButton": "Kontaktieren Sie uns",
             "imageAlt": "Luxuriöses schwarzes Auto"
@@ -11,20 +11,633 @@
             "title": "Was Kunden sagen",
             "trustpilot": {
                 "title": "TrustPilot Bewertungen",
-                "quote": "Das Team hat mir geholfen, das perfekte Auto für meine Familie zu finden. Ihr Service war professionell und machte den Prozess stressfrei.",
+                "quote": "Das Team hat mir geholfen, das perfekte Auto für meine Familie zu finden. Ihr Service war professionell und hat den Prozess stressfrei gestaltet.",
                 "author": "- Michael Weber"
             },
             "google": {
                 "title": "Google Bewertungen",
-                "quote": "Ich war beeindruckt, wie schnell sie genau das gefunden haben, wonach ich gesucht habe. Toller Kundenservice!",
+                "quote": "Ich war beeindruckt, wie schnell sie genau das gefunden haben, wonach ich gesucht habe. Großartiger Kundenservice!",
                 "author": "- Laura Schmid"
             }
         },
         "stats": {
-            "title": "Tausende vertrauen uns",
+            "title": "Vertraut von Tausenden",
             "carsSoldLabel": "Verkaufte Autos",
             "averageRatingLabel": "Durchschnittliche Bewertung",
             "locationsLabel": "Standorte in der Schweiz"
         }
+    },
+    "Navbar": {
+        "links": {
+            "home": "Startseite",
+            "requestCar": "Auto anfragen",
+            "sellCar": "Auto verkaufen",
+            "searchCars": "Autos suchen",
+            "aboutUs": "Über uns",
+            "contact": "Kontakt"
+        },
+        "mobileMenu": {
+            "openLabel": "Menü öffnen",
+            "closeLabel": "Menü schließen"
+        },
+        "languageSwitcher": {
+            "labelPrefix": "Sprache: "
+        }
+    },
+    "Footer": {
+        "brand": {
+            "slogan": "Moderne Autohaus-Websites, einfach gemacht.",
+            "copyright": "© {year} CarBiz. Alle Rechte vorbehalten."
+        },
+        "quickLinks": {
+            "title": "Schnelllinks",
+            "search": "Suche",
+            "newCars": "Neuwagen",
+            "preowned": "Gebrauchtwagen"
+        },
+        "supportLegal": {
+            "title": "Support & Rechtliches",
+            "privacyPolicy": "Datenschutzrichtlinie",
+            "terms": "Nutzungsbedingungen",
+            "faq": "FAQ",
+            "customerSupport": "Kundensupport"
+        },
+        "contactUs": {
+            "title": "Kontaktieren Sie uns"
+        },
+        "followUs": {
+            "title": "Folgen Sie uns",
+            "socialAriaLabels": {
+                "facebook": "Facebook",
+                "instagram": "Instagram",
+                "linkedIn": "LinkedIn"
+            }
+        }
+    },
+    "BrowseByType": {
+        "title": "Nach Typ durchsuchen",
+        "types": {
+            "suv": "SUV",
+            "sedan": "Limousine",
+            "hatchback": "Kompaktwagen",
+            "electric": "Elektrisch",
+            "convertible": "Cabriolet",
+            "hybrid": "Hybrid",
+            "coupe": "Coupé",
+            "van": "Van"
+        }
+    },
+    "CredibilitySection": {
+        "widgets": {
+            "trustpilotPlaceholder": "TrustPilot Bewertungen Widget",
+            "googlePlaceholder": "Google Bewertungen Widget"
+        },
+        "carousel": {
+            "ariaLabel": "Testimonial {index} ansehen"
+        },
+        "sampleTestimonials": [
+            {
+                "id": 1,
+                "name": "Thomas Weber",
+                "quote": "CarBiz hat mir geholfen, das perfekte Auto für meine Familie zu finden. Ihr Team war professionell und hat den Prozess stressfrei gestaltet."
+            },
+            {
+                "id": 2,
+                "name": "Laura Schmid",
+                "quote": "Ich war beeindruckt, wie schnell sie genau das gefunden haben, wonach ich gesucht habe. Große Auswahl und exzellenter Service."
+            },
+            {
+                "id": 3,
+                "name": "Daniel Meier",
+                "quote": "Das Team von CarBiz hat alles getan, um mir zu helfen, ein Auto innerhalb meines Budgets zu finden. Sehr zu empfehlen!"
+            }
+        ]
+    },
+    "WhyChooseUs": {
+        "title": "Warum Sie uns wählen sollten",
+        "features": {
+            "quality": {
+                "title": "Zertifizierte Qualität",
+                "description": "Alle unsere Autos durchlaufen eine 150-Punkte-Inspektion, um Sicherheit und Leistung zu gewährleisten."
+            },
+            "process": {
+                "title": "Schneller & einfacher Prozess",
+                "description": "Erhalten Sie die Genehmigung und fahren Sie in weniger als 24 Stunden mit unserem optimierten Prozess los."
+            },
+            "customer": {
+                "title": "Kunde zuerst",
+                "description": "Wir legen Wert auf Transparenz und Unterstützung – vor, während und nach Ihrem Kauf."
+            }
+        }
+    },
+    "SpecialOfferCarousel": {
+        "title": "Sonderangebote",
+        "loadingError": "Sonderangebote konnten nicht geladen werden",
+        "emptyState": "Momentan sind keine Sonderangebote verfügbar.",
+        "defaultOfferLabel": "🔥 Sonderangebot",
+        "imageAlt": "{carTitle}",
+        "kmUnit": "km",
+        "viewOfferButton": "Angebot ansehen",
+        "srPrevious": "Zurück",
+        "srNext": "Weiter",
+        "indicatorAriaLabel": "Zu Folie {index} gehen"
+    },
+    "OurServices": {
+        "title": "Unsere Dienstleistungen",
+        "services": {
+            "maintenance": {
+                "title": "Wartungspakete",
+                "description": "Günstige Servicepläne, zugeschnitten auf die Bedürfnisse Ihres Autos."
+            },
+            "tradeIn": {
+                "title": "Inzahlungnahme-Programm",
+                "description": "Tauschen Sie Ihr aktuelles Fahrzeug einfach gegen eine Gutschrift für Ihren nächsten Kauf ein."
+            },
+            "financing": {
+                "title": "Flexible Finanzierung",
+                "description": "Wir arbeiten mit führenden Finanzinstituten zusammen, um Ihnen die besten Konditionen zu sichern."
+            }
+        }
+    },
+    "CTASection": {
+        "title": "Bereit, Ihr Traumauto zu fahren?",
+        "subtitle": "Nehmen Sie noch heute Kontakt mit uns auf und lassen Sie sich von uns helfen, das perfekte Fahrzeug zu finden."
+    },
+    "RequestCarForm": {
+        "section": {
+            "title": "Finden Sie nicht, wonach Sie suchen?",
+            "subtitle": "Helfen Sie uns, Ihr ideales Auto über unser Händlernetzwerk zu finden, indem Sie uns Ihre Präferenzen mitteilen."
+        },
+        "card": {
+            "title": "Auto anfragen",
+            "description": "Füllen Sie das folgende Formular mit Ihren Fahrzeugpräferenzen aus und unsere Spezialisten werden sich in Kürze mit Ihnen in Verbindung setzen."
+        },
+        "subheadings": {
+            "contactInfo": "Kontaktinformationen",
+            "vehicleDetails": "Fahrzeugdetails",
+            "specifications": "Fahrzeugspezifikationen",
+            "additionalInfo": "Zusätzliche Anmerkungen"
+        },
+        "labels": {
+            "fullName": "Vollständiger Name<span class=\"text-red-500\">*</span>",
+            "email": "E-Mail-Adresse<span class=\"text-red-500\">*</span>",
+            "phone": "Telefonnummer",
+            "location": "Standort / Region",
+            "make": "Gewünschte Automarke",
+            "model": "Gewünschtes Automodell",
+            "yearFrom": "Baujahr (Von)",
+            "yearTo": "Baujahr (Bis)",
+            "budget": "Bevorzugtes Budget",
+            "color": "Bevorzugte Farbe(n)",
+            "condition": "Fahrzeugzustand",
+            "transmission": "Getriebetyp",
+            "fuelType": "Kraftstoffart",
+            "maxMileage": "Maximale Laufleistung",
+            "notes": "Zusätzliche Anmerkungen"
+        },
+        "placeholders": {
+            "fullName": "Max Mustermann",
+            "email": "max@beispiel.com",
+            "phone": "(0123) 4567890",
+            "location": "Stadt, Bundesland oder Postleitzahl",
+            "make": "BMW, Toyota, usw.",
+            "model": "X5, Camry, usw.",
+            "yearFrom": "Ab Jahr",
+            "yearTo": "Bis Jahr",
+            "budget": "€30.000",
+            "color": "Schwarz, Silber, usw.",
+            "transmission": "Getriebe auswählen",
+            "fuelType": "Kraftstoffart auswählen",
+            "maxMileage": "50000",
+            "notes": "Spezifische Anforderungen oder Präferenzen?"
+        },
+        "options": {
+            "conditionNew": "Neu",
+            "conditionPreowned": "Gebraucht",
+            "conditionEither": "Beides",
+            "transmissionAutomatic": "Automatik",
+            "transmissionManual": "Manuell",
+            "transmissionAny": "Egal",
+            "fuelGasoline": "Benzin",
+            "fuelDiesel": "Diesel",
+            "fuelHybrid": "Hybrid",
+            "fuelElectric": "Elektrisch",
+            "fuelAny": "Egal"
+        },
+        "buttons": {
+            "submit": "Anfrage senden",
+            "submitting": "Wird gesendet...",
+            "submitAnother": "Weitere Anfrage senden"
+        },
+        "success": {
+            "title": "Anfrage gesendet!",
+            "description": "Vielen Dank für Ihre Autoanfrage. Unser Team wird Ihre Präferenzen prüfen und sich bald bei Ihnen melden.",
+            "confirmation": "Wir werden uns in Kürze unter {email} bei Ihnen melden."
+        },
+        "error": {
+            "prefix": "Fehler beim Speichern Ihrer Anfrage: ",
+            "fallback": "Beim Senden Ihrer Anfrage ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+        }
+    },
+    "MostSearchedCars": {
+        "title": "Meistgesuchte Autos",
+        "loading": "Lade beliebte Fahrzeuge...",
+        "error": "Fehler beim Laden beliebter Autos. Bitte versuchen Sie es später erneut.",
+        "errorPrefix": "Fehler beim Abrufen von Autos: ",
+        "empty": "Momentan keine beliebten Fahrzeuge gefunden.",
+        "card": {
+            "badgeNew": "Neu",
+            "badgeSold": "Verkauft",
+            "unitMiles": "km",
+            "viewDetailsButton": "Details anzeigen",
+            "imageAltFallback": "Autoinserat"
+        },
+        "fuelTypes": {
+            "Electric": "Elektrisch",
+            "Hybrid": "Hybrid",
+            "Diesel": "Diesel",
+            "Gasoline": "Benzin",
+            "Unknown": "Unbekannt"
+        },
+        "transmissions": {
+            "Manual": "Manuell",
+            "CVT": "CVT",
+            "DCT": "DCT",
+            "Automatic": "Automatik",
+            "Unknown": "Unbekannt"
+        }
+    },
+    "AboutPage": {
+        "hero": {
+            "title": "Angetrieben von Exzellenz",
+            "subtitle": "Erfahren Sie, wer wir sind und was unsere Mission antreibt."
+        },
+        "story": {
+            "title": "Unsere Geschichte",
+            "paragraph1": "Gegründet 2005, begann CarBiz mit einer einfachen Mission: das Autokauferlebnis in der Schweiz zu transformieren. Unser Gründer, Michael Brunner, war frustriert vom traditionellen Händlermodell und stellte sich einen transparenteren, kundenorientierteren Ansatz beim Fahrzeugverkauf vor.",
+            "paragraph2": "Was als kleiner Showroom in Zürich begann, ist zu Schweizers vertrauenswürdigstem Automobilmarktplatz herangewachsen, mit drei Standorten im ganzen Land und einer ständig wachsenden digitalen Präsenz. Während unseres Wachstums sind wir unseren Kernprinzipien treu geblieben: faire Preise, außergewöhnlicher Service und absolute Transparenz.",
+            "paragraph3": "Heute sind wir stolz darauf, über 10.000 Kunden geholfen zu haben, ihr perfektes Fahrzeug zu finden, und uns einen Ruf als das Autohaus erworben zu haben, das den Kunden wirklich an erste Stelle setzt. Unsere Reise geht weiter, während wir neue Technologien und innovative Ansätze nutzen, um den Kauf und Verkauf von Autos einfacher, angenehmer und zugänglicher als je zuvor zu gestalten.",
+            "imageAlt": "CarBiz Showroom und Team"
+        },
+        "values": {
+            "title": "Unsere Werte",
+            "trust": {
+                "title": "Vertrauen",
+                "description": "Wir bauen dauerhafte Beziehungen auf, die auf Ehrlichkeit, Integrität und Zuverlässigkeit bei jedem Schritt der Kundenreise basieren."
+            },
+            "transparency": {
+                "title": "Transparenz",
+                "description": "Wir glauben an klare Kommunikation, faire Preise und die Bereitstellung vollständiger Fahrzeuginformationen ohne versteckte Überraschungen."
+            },
+            "innovation": {
+                "title": "Innovation",
+                "description": "Wir nutzen kontinuierlich neue Technologien und Ansätze, um das Erlebnis beim Kauf und Verkauf von Autos zu verbessern."
+            },
+            "customerFirst": {
+                "title": "Kunde zuerst",
+                "description": "Jede Entscheidung, die wir treffen, priorisiert die Bedürfnisse, Vorlieben und Zufriedenheit unserer Kunden über alles andere."
+            }
+        },
+        "team": {
+            "title": "Lernen Sie das Team kennen",
+            "member1": {
+                "imageAlt": "Michael Brunner",
+                "name": "Michael Brunner",
+                "title": "Gründer & CEO",
+                "quote": "\"Unser Ziel ist es, die Art und Weise, wie Menschen Autos kaufen und verkaufen, neu zu erfinden und es zum angenehmsten Kauf zu machen, den sie jemals tätigen werden.\""
+            },
+            "member2": {
+                "imageAlt": "Sarah Mueller",
+                "name": "Sarah Mueller",
+                "title": "Verkaufsdirektorin",
+                "quote": "\"Ich glaube daran, Beziehungen aufzubauen, nicht nur Autos zu verkaufen. Unsere Kunden werden Teil der CarBiz-Familie.\""
+            },
+            "member3": {
+                "imageAlt": "Thomas Weber",
+                "name": "Thomas Weber",
+                "title": "Technischer Leiter (CTO)",
+                "quote": "\"Technologie sollte den Autokauf einfacher und transparenter machen. Das treibt unsere digitale Innovation an.\""
+            }
+        },
+        "cta": {
+            "title": "Möchten Sie Teil unserer Reise werden?",
+            "subtitle": "Wir sind immer auf der Suche nach talentierten Persönlichkeiten, die unsere Leidenschaft für automobile Exzellenz und Kundenservice teilen."
+        }
+    },
+    "ContactPage": {
+        "hero": {
+            "title": "Kontaktieren Sie uns",
+            "subtitle": "Wir würden uns freuen, von Ihnen zu hören. Füllen Sie das Formular aus und unser Team wird sich in Kürze bei Ihnen melden."
+        },
+        "formCard": {
+            "title": "Senden Sie uns eine Nachricht",
+            "description": "Füllen Sie das folgende Formular mit Ihrer Anfrage aus und wir werden so schnell wie möglich antworten."
+        },
+        "labels": {
+            "fullName": "Vollständiger Name",
+            "email": "E-Mail-Adresse",
+            "phone": "Telefonnummer (Optional)",
+            "subject": "Betreff",
+            "message": "Nachricht"
+        },
+        "placeholders": {
+            "fullName": "Geben Sie Ihren vollständigen Namen ein",
+            "email": "ihre@email.com",
+            "phone": "Geben Sie Ihre Telefonnummer ein",
+            "subject": "Wählen Sie einen Betreff aus",
+            "message": "Schreiben Sie Ihre Nachricht hier..."
+        },
+        "subjectOptions": {
+            "general": "Allgemeine Anfrage",
+            "availability": "Fahrzeugverfügbarkeit",
+            "collaboration": "Zusammenarbeit",
+            "other": "Sonstiges"
+        },
+        "validation": {
+            "nameRequired": "Name ist erforderlich",
+            "emailRequired": "E-Mail ist erforderlich",
+            "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+            "subjectRequired": "Bitte wählen Sie einen Betreff aus",
+            "messageRequired": "Nachricht ist erforderlich"
+        },
+        "buttons": {
+            "send": "Nachricht senden",
+            "sending": "Wird gesendet..."
+        },
+        "infoCard": {
+            "title": "Kontaktinformationen",
+            "description": "Sie können uns auch direkt über die unten stehenden Informationen erreichen.",
+            "addressTitle": "Adresse",
+            "phoneTitle": "Telefon",
+            "emailTitle": "E-Mail",
+            "hoursTitle": "Öffnungszeiten",
+            "connectTitle": "Verbinden Sie sich mit uns",
+            "addressLine1": "Hauptsitz — Zürich, Schweiz",
+            "addressLine2": "Bahnhofstrasse 42, 8001 Zürich",
+            "hoursLine1": "Montag - Freitag: 9:00 – 18:00 Uhr",
+            "hoursLine2": "Samstag: 10:00 – 16:00 Uhr",
+            "hoursLine3": "Sonntag: Geschlossen"
+        },
+        "success": {
+            "title": "Nachricht erfolgreich gesendet!",
+            "description": "Vielen Dank für Ihre Kontaktaufnahme. Wir haben Ihre Nachricht erhalten und werden uns in Kürze bei Ihnen melden.",
+            "heading": "Wir melden uns bald bei Ihnen",
+            "confirmation": "Unser Team antwortet in der Regel innerhalb von 24-48 Stunden an Werktagen.",
+            "button": "Weitere Nachricht senden"
+        }
+    },
+    "SellPage": {
+        "hero": {
+            "title": "Verkaufen Sie Ihr Auto mit Vertrauen",
+            "subtitle": "Erhalten Sie einen fairen Preis und eine problemlose Erfahrung, wenn Sie Ihr Auto über CarBiz verkaufen. Keine Zwischenhändler, keine versteckten Gebühren - nur ein unkomplizierter Service."
+        },
+        "benefits": {
+            "title": "Warum mit uns verkaufen?",
+            "pricing": {
+                "title": "Wettbewerbsfähige Preise",
+                "description": "Wir bieten einen fairen Marktwert für Ihr Fahrzeug basierend auf Zustand, Historie und aktuellen Markttrends."
+            },
+            "process": {
+                "title": "Problemloser Prozess",
+                "description": "Unser optimierter Verkaufsprozess bedeutet weniger Papierkram und schnellere Transaktionen. Die meisten Geschäfte werden innerhalb von 48 Stunden abgeschlossen."
+            },
+            "service": {
+                "title": "Vertrauenswürdiger Service",
+                "description": "Mit über 10 Jahren Erfahrung spricht unser Ruf für Transparenz und Kundenzufriedenheit für sich."
+            }
+        },
+        "trustIndicator": {
+            "title": "Vertraut von über 2.300 Fahrern",
+            "description": "Schließen Sie sich Tausenden von zufriedenen Kunden an, die ihre Fahrzeuge erfolgreich über unsere Plattform verkauft haben."
+        }
+    },
+    "CarSellForm": {
+        "card": {
+            "title": "Verkaufen Sie Ihr Auto",
+            "description": "Füllen Sie das folgende Formular mit Ihren Fahrzeugdaten aus. Unser Team wird es prüfen und Sie innerhalb von 24-48 Stunden kontaktieren."
+        },
+        "sections": {
+            "ownerInfo": "Besitzerinformationen",
+            "carInfo": "Fahrzeuginformationen",
+            "pricingMedia": "Preisgestaltung & Medien",
+            "additionalInfo": "Zusätzliche Informationen"
+        },
+        "labels": {
+            "fullName": "Vollständiger Name",
+            "email": "E-Mail-Adresse",
+            "phone": "Telefonnummer",
+            "make": "Automarke",
+            "model": "Automodell",
+            "year": "Baujahr",
+            "mileage": "Laufleistung",
+            "fuelType": "Kraftstoffart",
+            "transmission": "Getriebe",
+            "condition": "Zustand",
+            "city": "Stadt",
+            "askingPrice": "Preisvorstellung (Optional)",
+            "photos": "Fotos hochladen",
+            "description": "Beschreibung / Anmerkungen"
+        },
+        "placeholders": {
+            "fullName": "Max Mustermann",
+            "email": "ihre@email.com",
+            "phone": "(0123) 4567890",
+            "make": "z.B. Toyota",
+            "model": "z.B. Camry",
+            "year": "z.B. 2019",
+            "mileage": "z.B. 45000",
+            "fuelType": "Kraftstoffart auswählen",
+            "transmission": "Getriebe auswählen",
+            "city": "z.B. Zürich",
+            "askingPrice": "z.B. 25000",
+            "description": "Bitte geben Sie zusätzliche Details zu Ihrem Auto an..."
+        },
+        "options": {
+            "fuelGasoline": "Benzin",
+            "fuelDiesel": "Diesel",
+            "fuelElectric": "Elektrisch",
+            "fuelHybrid": "Hybrid",
+            "transmissionManual": "Manuell",
+            "transmissionAutomatic": "Automatik",
+            "conditionNew": "Neu",
+            "conditionUsed": "Gebraucht"
+        },
+        "descriptions": {
+            "askingPrice": "Lassen Sie das Feld leer, wenn wir eine Marktbewertung vornehmen sollen.",
+            "filesSelected": "{count} Datei(en) ausgewählt:",
+            "fileTypes": "PNG, JPG, GIF, HEIC bis zu je 10MB"
+        },
+        "fileUpload": {
+            "upload": "Dateien hochladen",
+            "dragDrop": "oder per Drag & Drop"
+        },
+        "validation": {
+            "nameRequired": "Name ist erforderlich",
+            "emailRequired": "E-Mail ist erforderlich",
+            "emailInvalid": "Ungültiges E-Mail-Format",
+            "phoneRequired": "Telefonnummer ist erforderlich",
+            "makeRequired": "Marke ist erforderlich",
+            "modelRequired": "Modell ist erforderlich",
+            "yearRequired": "Baujahr ist erforderlich",
+            "yearInvalid": "Ungültiges Jahresformat",
+            "mileageRequired": "Laufleistung ist erforderlich",
+            "mileageInvalid": "Laufleistung muss eine Zahl sein",
+            "fuelTypeRequired": "Kraftstoffart ist erforderlich",
+            "transmissionRequired": "Getriebe ist erforderlich",
+            "conditionRequired": "Zustand ist erforderlich",
+            "cityRequired": "Stadt ist erforderlich",
+            "priceInvalid": "Preis muss eine Zahl sein"
+        },
+        "buttons": {
+            "submit": "Auto zur Überprüfung einreichen",
+            "submitting": "Wird gesendet...",
+            "submitAnother": "Weiteres Auto einreichen"
+        },
+        "success": {
+            "title": "Einreichung erhalten!",
+            "description": "Vielen Dank! Wir werden Ihre Fahrzeugdaten prüfen und uns bald bei Ihnen melden.",
+            "heading": "Daten übermittelt",
+            "confirmation": "Wir werden Sie unter {email} kontaktieren."
+        },
+        "error": {
+            "submitFallback": "Beim Übermitteln Ihrer Informationen ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+            "updatePhotoUrlError": "Fotos hochgeladen, aber URLs konnten nicht gespeichert werden: {message}",
+            "updatePhotoUrlException": "Fotos hochgeladen, aber beim Speichern der URLs ist ein Fehler aufgetreten",
+            "noPhotosUploaded": "Es wurden keine Fotos erfolgreich hochgeladen"
+        }
+    },
+    "InventoryPage": {
+        "loading": "Inventar wird geladen...",
+        "errorTitle": "Fehler",
+        "errorLoading": "Inventar konnte nicht geladen werden. {message}",
+        "errorTryAgain": "Erneut versuchen",
+        "hero": {
+            "title": "Durchsuchen Sie unseren Bestand",
+            "subtitle": "Entdecken Sie unsere umfangreiche Sammlung von Premium-Fahrzeugen. Verwenden Sie die Filter, um Ihr perfektes Fahrzeug zu finden."
+        },
+        "aiSearch": {
+            "title": "Wonach suchen Sie?",
+            "placeholder": "z.B. Ein Wochenend-Coupé unter 50k",
+            "buttonIdle": "Suchen",
+            "buttonLoading": "Suche läuft...",
+            "errorPrefix": "Fehler bei der Verarbeitung Ihrer Suche",
+            "errorCouldNotUnderstand": "Ihre Suche konnte nicht verstanden werden. Bitte versuchen Sie es mit einer anderen Formulierung erneut.",
+            "toastTitle": "Suche verarbeitet",
+            "toastDescSuccess": "Genau das gefunden, wonach Sie gesucht haben!",
+            "toastDescPotential": "Potenzielle Treffer gefunden. Sie können die Filter bei Bedarf anpassen."
+        },
+        "filters": {
+            "makeLabel": "Marke",
+            "modelLabel": "Modell",
+            "bodyTypeLabel": "Karosserietyp",
+            "priceLabel": "Preisspanne",
+            "yearLabel": "Baujahrspanne",
+            "mileageLabel": "Laufleistungsbereich",
+            "fuelTypeLabel": "Kraftstoffart",
+            "transmissionLabel": "Getriebe",
+            "conditionLabel": "Zustand",
+            "minLabel": "Min",
+            "maxLabel": "Max",
+            "fromLabel": "Von",
+            "toLabel": "Bis",
+            "makePlaceholderLoading": "Lade Marken...",
+            "makePlaceholder": "Marke auswählen",
+            "modelPlaceholderLoading": "Lade Modelle...",
+            "modelPlaceholder": "Modell auswählen",
+            "modelSearchPlaceholder": "Modelle suchen...",
+            "modelNotFound": "Keine passenden Modelle",
+            "modelNotAvailable": "Keine Modelle verfügbar",
+            "bodyTypePlaceholder": "Karosserietyp auswählen",
+            "fuelTypePlaceholder": "Kraftstoffart auswählen",
+            "transmissionPlaceholder": "Getriebe auswählen",
+            "conditionPlaceholder": "Zustand auswählen",
+            "priceMinPlaceholder": "Min Preis",
+            "priceMaxPlaceholder": "Max Preis",
+            "yearMinPlaceholder": "Ab Jahr",
+            "yearMaxPlaceholder": "Bis Jahr",
+            "mileageMinPlaceholder": "Min Laufleistung",
+            "mileageMaxPlaceholder": "Max Laufleistung",
+            "applyButton": "Filter anwenden",
+            "resetButton": "Zurücksetzen",
+            "showAdvancedButton": "Erweitert anzeigen",
+            "hideAdvancedButton": "Erweitert ausblenden",
+            "backButton": "Zurück zu Filtern",
+            "optionAny": "Beliebig"
+        },
+        "results": {
+            "count": "{count} Fahrzeuge angezeigt",
+            "sortByLabel": "Sortieren nach:",
+            "sortPlaceholder": "Sortieren nach",
+            "emptyTitle": "Keine Fahrzeuge gefunden, die Ihren Kriterien entsprechen.",
+            "resetFiltersButton": "Filter zurücksetzen"
+        },
+        "sortOptions": {
+            "price-asc": "Preis: Niedrig bis Hoch",
+            "price-desc": "Preis: Hoch bis Niedrig",
+            "year-desc": "Baujahr: Neueste zuerst",
+            "year-asc": "Baujahr: Älteste zuerst",
+            "mileage-asc": "Laufleistung: Niedrig bis Hoch",
+            "mileage-desc": "Laufleistung: Hoch bis Niedrig",
+            "created_at-desc": "Neueste Angebote"
+        },
+        "card": {
+            "imageAlt": "{make} {model} - Ansicht {index}",
+            "imageAltFallback": "Autobild",
+            "noImage": "Kein Bild verfügbar",
+            "prevImageLabel": "Vorheriges Bild",
+            "nextImageLabel": "Nächstes Bild",
+            "priceNA": "n.v.",
+            "mileageNA": "n.v.",
+            "fuelNA": "n.v.",
+            "transmissionNA": "n.v.",
+            "yearNA": "n.v.",
+            "addToCompareButton": "Zum Vergleich hinzufügen",
+            "viewDetailsButton": "Details anzeigen"
+        },
+        "pagination": {
+            "previous": "Vorherige Seite",
+            "next": "Nächste Seite"
+        },
+        "toastMessages": {
+            "compareAddedTitle": "Zum Vergleich hinzugefügt",
+            "compareAddedDesc": "{make} {model} zur Vergleichsliste hinzugefügt.",
+            "errorTitle": "Fehler",
+            "errorViewDetails": "Details können nicht angezeigt werden: Auto-ID fehlt."
+        },
+        "bodyTypes": {
+            "Any": "Beliebig",
+            "Sedan": "Limousine",
+            "SUV": "SUV",
+            "Coupe": "Coupé",
+            "Convertible": "Cabriolet",
+            "Hatchback": "Kompaktwagen",
+            "Wagon": "Kombi",
+            "Truck": "Pickup",
+            "Van": "Van"
+        },
+        "fuelTypes": {
+            "Any": "Beliebig",
+            "Gasoline": "Benzin",
+            "Diesel": "Diesel",
+            "Hybrid": "Hybrid",
+            "Electric": "Elektrisch"
+        },
+        "transmissions": {
+            "Any": "Beliebig",
+            "Automatic": "Automatik",
+            "Manual": "Manuell",
+            "CVT": "CVT",
+            "PDK": "PDK"
+        },
+        "conditions": {
+            "Any": "Beliebig",
+            "New": "Neu",
+            "Used": "Gebraucht"
+        }
+    },
+    "Common": {
+        "signIn": "Anmelden",
+        "register": "Registrieren",
+        "requiredIndicator": "*"
     }
 }

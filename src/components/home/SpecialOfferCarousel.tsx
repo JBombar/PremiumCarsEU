@@ -1,3 +1,4 @@
+// src/components/home/SpecialOfferCarousel.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,6 +8,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/client';
+import { useTranslations } from 'next-intl'; // Import useTranslations
 
 // Define the type for our car listings
 interface SpecialOffer {
@@ -24,9 +26,10 @@ interface SpecialOffer {
 }
 
 export function SpecialOfferCarousel() {
+  const t = useTranslations('SpecialOfferCarousel'); // Initialize hook
   const [specialOffers, setSpecialOffers] = useState<SpecialOffer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Keep error state management
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [animating, setAnimating] = useState(false);
@@ -36,54 +39,55 @@ export function SpecialOfferCarousel() {
     const fetchSpecialOffers = async () => {
       try {
         setLoading(true);
+        setError(null); // Reset error on new fetch
         const supabase = createClient();
 
-        // Query car_listings table for special offers - now filtering for available status
-        const { data, error } = await supabase
+        const { data, error: dbError } = await supabase
           .from('car_listings')
           .select('*')
           .eq('is_special_offer', true)
-          .eq('status', 'available') // Only show available cars
+          .eq('status', 'available')
           .order('created_at', { ascending: false })
           .limit(10);
 
-        if (error) throw error;
+        if (dbError) throw dbError;
 
         if (data && data.length > 0) {
           setSpecialOffers(data);
         } else {
-          // No special offers found
           setSpecialOffers([]);
         }
       } catch (err) {
         console.error('Error fetching special offers:', err);
-        setError('Failed to load special offers');
+        // Set error state using the translated message key
+        setError(t('loadingError'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchSpecialOffers();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]); // Add t to dependency array as it's used in catch block
 
   const prevSlide = () => {
-    if (animating) return;
+    if (animating || specialOffers.length <= 1) return;
     setAnimating(true);
     setDirection('left');
     setActiveIndex((current) =>
       current === 0 ? specialOffers.length - 1 : current - 1
     );
-    setTimeout(() => setAnimating(false), 500); // Match duration to CSS transition
+    setTimeout(() => setAnimating(false), 500);
   };
 
   const nextSlide = () => {
-    if (animating) return;
+    if (animating || specialOffers.length <= 1) return;
     setAnimating(true);
     setDirection('right');
     setActiveIndex((current) =>
       current === specialOffers.length - 1 ? 0 : current + 1
     );
-    setTimeout(() => setAnimating(false), 500); // Match duration to CSS transition
+    setTimeout(() => setAnimating(false), 500);
   };
 
   // Show loading state
@@ -91,8 +95,10 @@ export function SpecialOfferCarousel() {
     return (
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Special Offers</h2>
+          {/* Use translated title */}
+          <h2 className="text-3xl font-bold text-center mb-12">{t('title')}</h2>
           <div className="h-64 flex items-center justify-center">
+            {/* Skeleton remains untranslated */}
             <div className="animate-pulse flex space-x-4">
               <div className="rounded-full bg-gray-300 h-12 w-12"></div>
               <div className="flex-1 space-y-4 py-1">
@@ -109,12 +115,13 @@ export function SpecialOfferCarousel() {
     );
   }
 
-  // Show error state
+  // Show error state - uses the error state variable which now holds the translated string
   if (error) {
     return (
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Special Offers</h2>
+          {/* Use translated title */}
+          <h2 className="text-3xl font-bold text-center mb-12">{t('title')}</h2>
           <div className="rounded-lg bg-red-50 p-6 text-center text-red-800">
             {error}
           </div>
@@ -128,35 +135,34 @@ export function SpecialOfferCarousel() {
     return (
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Special Offers</h2>
+          {/* Use translated title */}
+          <h2 className="text-3xl font-bold text-center mb-12">{t('title')}</h2>
           <div className="rounded-lg bg-white p-6 text-center shadow-sm">
-            No special offers available at the moment.
+            {/* Use translated empty state message */}
+            {t('emptyState')}
           </div>
         </div>
       </section>
     );
   }
 
-  const currentOffer = specialOffers[activeIndex];
+  // Ensure activeIndex is valid if offers array changes unexpectedly
+  const validIndex = activeIndex < specialOffers.length ? activeIndex : 0;
+  const currentOffer = specialOffers[validIndex];
 
-  // Get the first image or use a placeholder
   const imageUrl = currentOffer.images && currentOffer.images.length > 0
     ? currentOffer.images[0]
     : '/images/car-placeholder.jpg';
 
-  // Format the car title
   const carTitle = `${currentOffer.year} ${currentOffer.make} ${currentOffer.model}`;
-
-  // Format price (without discount calculation)
   const formattedPrice = currentOffer.price?.toLocaleString() || "0";
-
-  // Format mileage with commas
   const formattedMileage = currentOffer.mileage?.toLocaleString() || "0";
 
   return (
     <section className="py-16 bg-gray-100">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <h2 className="text-3xl font-bold text-center mb-12">Special Offer</h2>
+        {/* Use translated title */}
+        <h2 className="text-3xl font-bold text-center mb-12">{t('title')}</h2>
 
         <div className="relative">
           {/* Navigation - Previous */}
@@ -169,57 +175,58 @@ export function SpecialOfferCarousel() {
               disabled={animating}
             >
               <ChevronLeft className="h-6 w-6" />
-              <span className="sr-only">Previous</span>
+              {/* Use translated screen-reader text */}
+              <span className="sr-only">{t('srPrevious')}</span>
             </Button>
           )}
 
-          {/* Offer Card - with animation only when multiple offers */}
+          {/* Offer Card */}
+          {/* Animation logic remains */}
           <div
+            key={validIndex} // Add key to ensure re-render on index change for animations
             className={cn(
-              specialOffers.length > 1 ? "transition-all duration-500 ease-in-out transform" : "",
-              specialOffers.length > 1 && direction === 'left' ? "translate-x-full opacity-0" : "",
-              specialOffers.length > 1 && direction === 'right' ? "-translate-x-full opacity-0" : "",
-              specialOffers.length > 1 && animating ? "animate-in fade-in slide-in-from-right" : ""
+              "transition-opacity duration-500 ease-in-out",
+              animating ? "opacity-0" : "opacity-100" // Simpler fade logic
             )}
           >
             <div className="overflow-hidden rounded-xl shadow-lg bg-white">
               <div className="flex flex-col md:flex-row">
-                {/* Left side - Image - Fixed height at all screen sizes */}
+                {/* Left side - Image */}
                 <div className="relative w-full md:w-1/2 h-64 md:h-96">
                   <div className="absolute top-4 left-4 z-10 bg-primary text-white text-sm font-bold px-4 py-1 rounded-full">
-                    {currentOffer.special_offer_label || '🔥 Special Offer'}
+                    {/* Use fetched label or translated default */}
+                    {currentOffer.special_offer_label || t('defaultOfferLabel')}
                   </div>
                   <Image
                     src={imageUrl}
-                    alt={carTitle}
+                    // Use translated alt text with dynamic value
+                    alt={t('imageAlt', { carTitle: carTitle })}
                     className="object-cover h-full w-full"
                     width={600}
                     height={400}
-                    priority
+                    priority={validIndex === 0} // Only prioritize the first image initially
                   />
                 </div>
 
-                {/* Right side - Details - Fixed height to match image */}
+                {/* Right side - Details */}
                 <div className="w-full md:w-1/2 p-8 flex flex-col justify-center md:h-96">
                   <h3 className="text-2xl font-bold mb-2">{carTitle}</h3>
-
-                  {/* Simplified price display - no discounts */}
                   <div className="mb-4">
                     <span className="text-3xl font-bold text-primary">
                       ${formattedPrice}
                     </span>
                   </div>
-
                   <p className="text-gray-600 mb-6">
-                    {formattedMileage} km · {currentOffer.fuel_type} · {currentOffer.transmission}
+                    {/* Use translated unit */}
+                    {formattedMileage} {t('kmUnit')} · {currentOffer.fuel_type} · {currentOffer.transmission}
                   </p>
-
                   <div className="mt-2">
                     <Link
                       href={`/inventory/${currentOffer.id}`}
                       className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
                     >
-                      View Offer
+                      {/* Use translated button text */}
+                      {t('viewOfferButton')}
                     </Link>
                   </div>
                 </div>
@@ -237,11 +244,12 @@ export function SpecialOfferCarousel() {
               disabled={animating}
             >
               <ChevronRight className="h-6 w-6" />
-              <span className="sr-only">Next</span>
+              {/* Use translated screen-reader text */}
+              <span className="sr-only">{t('srNext')}</span>
             </Button>
           )}
 
-          {/* Indicators - only show when multiple offers */}
+          {/* Indicators */}
           {specialOffers.length > 1 && (
             <div className="flex justify-center mt-6 gap-2">
               {specialOffers.map((_, index) => (
@@ -257,9 +265,10 @@ export function SpecialOfferCarousel() {
                   }}
                   className={cn(
                     "w-2.5 h-2.5 rounded-full transition-colors",
-                    index === activeIndex ? "bg-primary" : "bg-gray-300 hover:bg-gray-400"
+                    index === validIndex ? "bg-primary" : "bg-gray-300 hover:bg-gray-400"
                   )}
-                  aria-label={`Go to slide ${index + 1}`}
+                  // Use translated aria-label with dynamic value
+                  aria-label={t('indicatorAriaLabel', { index: index + 1 })}
                   disabled={animating}
                 />
               ))}
@@ -269,4 +278,4 @@ export function SpecialOfferCarousel() {
       </div>
     </section>
   );
-} 
+}
