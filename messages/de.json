@@ -334,11 +334,11 @@
             "description": "Füllen Sie das folgende Formular mit Ihrer Anfrage aus und wir werden so schnell wie möglich antworten."
         },
         "labels": {
-            "fullName": "Vollständiger Name",
-            "email": "E-Mail-Adresse",
+            "fullName": "Vollständiger Name<span class=\"text-red-500\">*</span>",
+            "email": "E-Mail-Adresse<span class=\"text-red-500\">*</span>",
             "phone": "Telefonnummer (Optional)",
-            "subject": "Betreff",
-            "message": "Nachricht"
+            "subject": "Betreff<span class=\"text-red-500\">*</span>",
+            "message": "Nachricht<span class=\"text-red-500\">*</span>"
         },
         "placeholders": {
             "fullName": "Geben Sie Ihren vollständigen Namen ein",
@@ -423,17 +423,17 @@
             "additionalInfo": "Zusätzliche Informationen"
         },
         "labels": {
-            "fullName": "Vollständiger Name",
-            "email": "E-Mail-Adresse",
-            "phone": "Telefonnummer",
-            "make": "Automarke",
-            "model": "Automodell",
-            "year": "Baujahr",
-            "mileage": "Laufleistung",
-            "fuelType": "Kraftstoffart",
-            "transmission": "Getriebe",
-            "condition": "Zustand",
-            "city": "Stadt",
+            "fullName": "Vollständiger Name<span class=\"text-red-500\">*</span>",
+            "email": "E-Mail-Adresse<span class=\"text-red-500\">*</span>",
+            "phone": "Telefonnummer<span class=\"text-red-500\">*</span>",
+            "make": "Automarke<span class=\"text-red-500\">*</span>",
+            "model": "Automodell<span class=\"text-red-500\">*</span>",
+            "year": "Baujahr<span class=\"text-red-500\">*</span>",
+            "mileage": "Laufleistung<span class=\"text-red-500\">*</span>",
+            "fuelType": "Kraftstoffart<span class=\"text-red-500\">*</span>",
+            "transmission": "Getriebe<span class=\"text-red-500\">*</span>",
+            "condition": "Zustand<span class=\"text-red-500\">*</span>",
+            "city": "Stadt<span class=\"text-red-500\">*</span>",
             "askingPrice": "Preisvorstellung (Optional)",
             "photos": "Fotos hochladen",
             "description": "Beschreibung / Anmerkungen"
@@ -564,6 +564,17 @@
             "backButton": "Zurück zu Filtern",
             "optionAny": "Beliebig"
         },
+        "advancedFilters": {
+            "title": "Erweiterte Filter",
+            "closeAriaLabel": "Erweiterte Filter schließen",
+            "horsepowerLabel": "Leistung (PS)",
+            "horsepowerUnit": "PS",
+            "displacementLabel": "Hubraum (cm³)",
+            "displacementUnit": "cm³",
+            "cylindersLabel": "Zylinder",
+            "minLabel": "Min",
+            "maxLabel": "Max"
+        },
         "results": {
             "count": "{count} Fahrzeuge angezeigt",
             "sortByLabel": "Sortieren nach:",
@@ -591,6 +602,7 @@
             "fuelNA": "n.v.",
             "transmissionNA": "n.v.",
             "yearNA": "n.v.",
+            "unitMiles": "km",
             "addToCompareButton": "Zum Vergleich hinzufügen",
             "viewDetailsButton": "Details anzeigen"
         },
@@ -633,6 +645,73 @@
             "Any": "Beliebig",
             "New": "Neu",
             "Used": "Gebraucht"
+        }
+    },
+    "CarListingPage": {
+        "backToInventory": "Zurück zum Inventar",
+        "carIdLabel": "ID:",
+        "tabs": {
+            "overview": "Übersicht",
+            "specifications": "Spezifikationen",
+            "features": "Ausstattung"
+        },
+        "overview": {
+            "descriptionTitle": "Beschreibung",
+            "noDescription": "Keine Beschreibung für dieses Fahrzeug verfügbar.",
+            "locationTitle": "Standort",
+            "noLocation": "Standort nicht angegeben"
+        },
+        "specifications": {
+            "title": "Spezifikationen",
+            "make": "Marke",
+            "model": "Modell",
+            "year": "Baujahr",
+            "bodyType": "Karosserietyp",
+            "fuelType": "Kraftstoffart",
+            "transmission": "Getriebe",
+            "mileage": "Laufleistung",
+            "interiorColor": "Innenfarbe",
+            "exteriorColor": "Außenfarbe",
+            "vin": "FIN",
+            "engine": "Motor",
+            "condition": "Zustand",
+            "notAvailable": "-"
+        },
+        "features": {
+            "title": "Ausstattung & Optionen",
+            "noFeatures": "Keine Ausstattung für dieses Fahrzeug aufgelistet."
+        },
+        "pricing": {
+            "contactForPrice": "Preis auf Anfrage",
+            "dailyRentalLabel": "Tagesmiete",
+            "perDaySuffix": "/Tag"
+        },
+        "quickFacts": {
+            "year": "Baujahr",
+            "mileage": "Laufleistung",
+            "fuel": "Kraftstoff",
+            "transmission": "Getriebe",
+            "notAvailable": "-",
+            "unitMiles": "km"
+        },
+        "sellerInfo": {
+            "title": "Verkäuferinformationen",
+            "fallbackName": "CarBiz Händler",
+            "memberSince": "Mitglied seit {year}",
+            "fallbackInitial": "H",
+            "fallbackYear": "2022"
+        },
+        "imageGallery": {
+            "imageAlt": "{year} {make} {model} - Bild {index}",
+            "imageAltFallback": "Autobild {index}",
+            "conditionBadgeNew": "Neu",
+            "conditionBadgeUsed": "Gebraucht",
+            "listingTypeBadgeSale": "Zum Verkauf",
+            "listingTypeBadgeRent": "Zur Miete"
+        },
+        "conditionValues": {
+            "new": "Neu",
+            "used": "Gebraucht"
         }
     },
     "Common": {

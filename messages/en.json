@@ -564,6 +564,17 @@
             "backButton": "Back to Filters",
             "optionAny": "Any"
         },
+        "advancedFilters": {
+            "title": "Advanced Filters",
+            "closeAriaLabel": "Close advanced filters",
+            "horsepowerLabel": "Horsepower (PS)",
+            "horsepowerUnit": "PS",
+            "displacementLabel": "Engine Displacement (cm³)",
+            "displacementUnit": "cm³",
+            "cylindersLabel": "Cylinders",
+            "minLabel": "Min",
+            "maxLabel": "Max"
+        },
         "results": {
             "count": "Showing {count} vehicles",
             "sortByLabel": "Sort by:",
@@ -591,6 +602,7 @@
             "fuelNA": "N/A",
             "transmissionNA": "N/A",
             "yearNA": "N/A",
+            "unitMiles": "mi",
             "addToCompareButton": "Add to Compare",
             "viewDetailsButton": "View Details"
         },
@@ -633,6 +645,73 @@
             "Any": "Any",
             "New": "New",
             "Used": "Used"
+        }
+    },
+    "CarListingPage": {
+        "backToInventory": "Back to inventory",
+        "carIdLabel": "ID:",
+        "tabs": {
+            "overview": "Overview",
+            "specifications": "Specifications",
+            "features": "Features"
+        },
+        "overview": {
+            "descriptionTitle": "Description",
+            "noDescription": "No description available for this vehicle.",
+            "locationTitle": "Location",
+            "noLocation": "Location not specified"
+        },
+        "specifications": {
+            "title": "Specifications",
+            "make": "Make",
+            "model": "Model",
+            "year": "Year",
+            "bodyType": "Body Type",
+            "fuelType": "Fuel Type",
+            "transmission": "Transmission",
+            "mileage": "Mileage",
+            "interiorColor": "Interior Color",
+            "exteriorColor": "Exterior Color",
+            "vin": "VIN",
+            "engine": "Engine",
+            "condition": "Condition",
+            "notAvailable": "-"
+        },
+        "features": {
+            "title": "Features & Options",
+            "noFeatures": "No features listed for this vehicle."
+        },
+        "pricing": {
+            "contactForPrice": "Contact for price",
+            "dailyRentalLabel": "Daily Rental",
+            "perDaySuffix": "/day"
+        },
+        "quickFacts": {
+            "year": "Year",
+            "mileage": "Mileage",
+            "fuel": "Fuel",
+            "transmission": "Transmission",
+            "notAvailable": "-",
+            "unitMiles": "mi"
+        },
+        "sellerInfo": {
+            "title": "Seller Information",
+            "fallbackName": "CarBiz Dealer",
+            "memberSince": "Member since {year}",
+            "fallbackInitial": "S",
+            "fallbackYear": "2022"
+        },
+        "imageGallery": {
+            "imageAlt": "{year} {make} {model} - Image {index}",
+            "imageAltFallback": "Car image {index}",
+            "conditionBadgeNew": "New",
+            "conditionBadgeUsed": "Used",
+            "listingTypeBadgeSale": "For Sale",
+            "listingTypeBadgeRent": "For Rent"
+        },
+        "conditionValues": {
+            "new": "New",
+            "used": "Used"
         }
     },
     "Common": {

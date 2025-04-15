@@ -9,23 +9,15 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider"; // Keep if AdvancedCarFilters uses it
+import { Badge } from "@/components/ui/badge"; // Keep if used
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, Filter, Fuel, Gauge, RefreshCcw, Tag, Calendar, X, ChevronUp, ChevronDown, AlertCircle, Search, Sparkles } from "lucide-react";
 import { AdvancedCarFilters } from "@/components/filters/AdvancedCarFilters";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "@/components/ui/use-toast";
+import { useTranslations } from 'next-intl'; // Import useTranslations
 
 export const dynamic = 'force-dynamic';
-
-const formatPrice = (price: number | null | undefined): string => {
-  if (price == null) return "N/A";
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
-};
-const formatMileage = (mileage: number | null | undefined): string => {
-  if (mileage == null) return "N/A";
-  return `${new Intl.NumberFormat('en-US').format(mileage)} mi`;
-};
 
 // Type for car listing from database (unchanged)
 interface CarListing { /* ... */
@@ -90,21 +82,47 @@ const parseSortOption = (option: string): [string, string] => {
   return [field, direction];
 };
 
+// First, we need to define the isFirstLoad ref outside the component to ensure it properly persists
+const isFirstLoad = { current: true };
+
 // Suspense Wrapper (unchanged)
 export default function InventoryPageWrapper() {
+  // No translation needed for the skeleton itself, but wrapping component needs it
   return (<Suspense fallback={<InventoryLoadingSkeleton />}><InventoryPage /></Suspense>);
 }
+
 function InventoryLoadingSkeleton() {
-  return (<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>);
+  const t = useTranslations('InventoryPage'); // Hook needed even in skeleton wrapper if text is added
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+        <p>{t('loading')}</p>
+      </div>
+    </div>
+  );
 }
 
 // Main Inventory Page Component
 function InventoryPage() {
+  const t = useTranslations('InventoryPage'); // Initialize useTranslations
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Helper function for price formatting (unchanged for now, locale handled by Intl.NumberFormat)
+  const formatPrice = (price: number | null | undefined): string => {
+    if (price == null) return t('card.priceNA');
+    // Consider using next-intl's number formatting for better locale support if needed
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+  };
+
+  // Helper function for mileage formatting (use translated unit)
+  const formatMileage = (mileage: number | null | undefined): string => {
+    if (mileage == null) return t('card.mileageNA');
+    return `${new Intl.NumberFormat('en-US').format(mileage)} ${t('card.unitMiles')}`;
+  };
+
   // **** CORRECTED HELPER FUNCTIONS (defined inside component or globally) ****
-  // getIntParam now correctly handles optional defaultValue
   const getIntParam = useCallback((name: string, defaultValue?: number): number | undefined => {
     const param = searchParams?.get(name);
     if (param === null || param === undefined) return defaultValue;
@@ -196,8 +214,7 @@ function InventoryPage() {
   }, []);
 
   // --- Data Fetching and Filtering Logic ---
-  // fetchAndSetCars useCallback (ensure it checks for undefined on advanced filters before appending)
-  const fetchAndSetCars = useCallback(async (currentFilters: FilterState, currentSort: string) => {
+  const fetchAndSetCars = useCallback(async (currentFilters: FilterState, currentSort: string, updateUrl: boolean = true) => {
     setLoading(true);
     setError(null);
     const queryParams = new URLSearchParams();
@@ -234,12 +251,13 @@ function InventoryPage() {
     const [sortBy, sortOrder] = parseSortOption(currentSort);
     queryParams.append('sortBy', sortBy);
     queryParams.append('sortOrder', sortOrder);
-    if (currentSort !== "price-asc") queryParams.append('sort', currentSort);
+    if (currentSort !== "price-asc") queryParams.append('sort', currentSort); // Keep original sort param if needed
 
     const searchString = queryParams.toString();
     const currentSearchString = searchParams?.toString() ?? "";
 
-    if (searchString !== currentSearchString) {
+    // Only update URL if specifically requested
+    if (updateUrl && searchString !== currentSearchString) {
       router.replace(`/inventory?${searchString}`, { scroll: false });
     }
 
@@ -256,22 +274,22 @@ function InventoryPage() {
       }
       else {
         console.error('Unexpected API data format:', result);
-        setError('Received invalid data format');
+        setError(t('errorLoading', { message: 'Received invalid data format' })); // Translate error
         setCars([]);
       }
     } catch (err) {
       console.error('Error fetching cars:', err);
-      setError(`Failed to load inventory. ${err instanceof Error ? err.message : 'Please try again.'}`);
+      setError(t('errorLoading', { message: err instanceof Error ? err.message : 'Please try again.' })); // Translate error
       setCars([]);
     } finally {
       setLoading(false);
     }
-  }, [router, searchParams]);
+  }, [router, searchParams, t]); // Added t to dependencies
 
   // MODIFY this effect to only fetch on initial load and when sort changes
   useEffect(() => {
     console.log("Sort option changed, refetching cars...");
-    fetchAndSetCars(filters, sortOption);
+    fetchAndSetCars(filters, sortOption, false); // Don't update URL on sort change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOption]); // Remove filters from dependency array, only refetch on sort changes
 
@@ -279,43 +297,45 @@ function InventoryPage() {
   useEffect(() => {
     if (!searchParams) return;
 
-    // Use helpers defined within component scope
-    const filtersFromUrl: FilterState = {
-      // Basic (Strings)
-      make: getStringParam('make', defaultFilters.make),
-      model: getStringParam('model', defaultFilters.model),
-      fuelType: getStringParam('fuel_type', defaultFilters.fuelType),
-      transmission: getStringParam('transmission', defaultFilters.transmission),
-      condition: getStringParam('condition', defaultFilters.condition),
-      bodyType: getStringParam('body_type', defaultFilters.bodyType),
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
 
-      // Basic (Numbers - ensure they are numbers)
-      priceMin: getIntParam('price_min', defaultFilters.priceMin) ?? defaultFilters.priceMin,
-      priceMax: getIntParam('price_max', defaultFilters.priceMax) ?? defaultFilters.priceMax,
-      yearMin: getIntParam('year_from', defaultFilters.yearMin) ?? defaultFilters.yearMin,
-      yearMax: getIntParam('year_to', defaultFilters.yearMax) ?? defaultFilters.yearMax,
-      mileageMin: getIntParam('mileage_min', defaultFilters.mileageMin) ?? defaultFilters.mileageMin,
-      mileageMax: getIntParam('mileage_max', defaultFilters.mileageMax) ?? defaultFilters.mileageMax,
+      // Only sync from URL on first load
+      const filtersFromUrl: FilterState = {
+        // Basic (Strings)
+        make: getStringParam('make', defaultFilters.make),
+        model: getStringParam('model', defaultFilters.model),
+        fuelType: getStringParam('fuel_type', defaultFilters.fuelType),
+        transmission: getStringParam('transmission', defaultFilters.transmission),
+        condition: getStringParam('condition', defaultFilters.condition),
+        bodyType: getStringParam('body_type', defaultFilters.bodyType),
 
-      // Advanced (Optional Numbers)
-      horsepowerMin: getIntParam('hp_min'),
-      horsepowerMax: getIntParam('hp_max'),
-      displacementMin: getIntParam('disp_min'),
-      displacementMax: getIntParam('disp_max'),
-      cylindersMin: getIntParam('cyl_min'),
-      cylindersMax: getIntParam('cyl_max'),
-      // ...
-    };
-    const sortFromUrl = searchParams.get('sort') || "price-asc";
-    const filtersDiffer = JSON.stringify(filtersFromUrl) !== JSON.stringify(filters);
-    const sortDiffer = sortFromUrl !== sortOption;
+        // Basic (Numbers - ensure they are numbers)
+        priceMin: getIntParam('price_min', defaultFilters.priceMin) ?? defaultFilters.priceMin,
+        priceMax: getIntParam('price_max', defaultFilters.priceMax) ?? defaultFilters.priceMax,
+        yearMin: getIntParam('year_from', defaultFilters.yearMin) ?? defaultFilters.yearMin,
+        yearMax: getIntParam('year_to', defaultFilters.yearMax) ?? defaultFilters.yearMax,
+        mileageMin: getIntParam('mileage_min', defaultFilters.mileageMin) ?? defaultFilters.mileageMin,
+        mileageMax: getIntParam('mileage_max', defaultFilters.mileageMax) ?? defaultFilters.mileageMax,
 
-    if (filtersDiffer || sortDiffer) {
-      console.log("URL changed, syncing state...");
-      if (filtersDiffer) setFilters(filtersFromUrl);
-      if (sortDiffer) setSortOption(sortFromUrl);
+        // Advanced (Optional Numbers)
+        horsepowerMin: getIntParam('hp_min'),
+        horsepowerMax: getIntParam('hp_max'),
+        displacementMin: getIntParam('disp_min'),
+        displacementMax: getIntParam('disp_max'),
+        cylindersMin: getIntParam('cyl_min'),
+        cylindersMax: getIntParam('cyl_max'),
+      };
+      const sortFromUrl = searchParams.get('sort') || "price-asc";
+
+      // Update state with URL values
+      setFilters(filtersFromUrl);
+      setSortOption(sortFromUrl);
+
+      // Initial data fetch based on URL params
+      fetchAndSetCars(filtersFromUrl, sortFromUrl, false); // Don't update URL on initial fetch
     }
-    // Use dependencies that trigger the effect correctly
+    // Remove dependencies on filters and sortOption to prevent recursive updates
   }, [searchParams, getIntParam, getStringParam]);
 
   // Fetch makes
@@ -343,6 +363,10 @@ function InventoryPage() {
   useEffect(() => {
     if (filters.make === "Any") {
       setAvailableModels([]);
+      // Ensure model filter is also reset if make goes back to "Any"
+      if (filters.model !== "Any") {
+        handleFilterChange("model", "Any"); // Use handler to potentially trigger other logic
+      }
       return;
     }
 
@@ -371,20 +395,18 @@ function InventoryPage() {
       .finally(() => {
         setModelsLoading(false);
       });
-  }, [filters.make, makes]);
-
-  // Add this new effect for initial data loading
-  useEffect(() => {
-    console.log("Initial data loading...");
-    fetchAndSetCars(filters, sortOption);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array means this runs only once on mount
+  }, [filters.make, makes]); // Removed handleFilterChange from deps
 
   // --- Event Handlers ---
   const handleFilterChange = (name: keyof FilterState, value: string | number) => {
     setFilters(prev => {
       const newState = { ...prev, [name]: value };
-      if (name === "make" && value !== prev.make) newState.model = "Any";
+      // Reset model when make changes
+      if (name === "make" && value !== prev.make) {
+        newState.model = "Any";
+        // Clear model search term as well
+        setModelSearchTerm('');
+      }
       return newState;
     });
   };
@@ -400,7 +422,7 @@ function InventoryPage() {
 
   const applyFilters = () => {
     console.log("Manual Apply Filters triggered");
-    fetchAndSetCars(filters, sortOption);
+    fetchAndSetCars(filters, sortOption, true); // true means update URL
     trackSearchInteraction(filters);
   };
 
@@ -408,12 +430,16 @@ function InventoryPage() {
     if (JSON.stringify(filters) === JSON.stringify(defaultFilters) && sortOption === "price-asc") return;
     setFilters(defaultFilters);
     setSortOption("price-asc");
+    setModelSearchTerm(''); // Reset model search term
     router.replace('/inventory', { scroll: false });
+    // Fetch cars with default filters after resetting state and URL
+    fetchAndSetCars(defaultFilters, "price-asc");
   };
 
   const handleSortChange = (value: string) => {
     if (value === sortOption) return;
     setSortOption(value);
+    // Fetching happens automatically via the useEffect watching sortOption
   };
 
   const nextImage = (carId: string, imageCount: number) => {
@@ -458,7 +484,7 @@ function InventoryPage() {
       }
 
       // If model is selected, find the corresponding model_id
-      if (appliedFilters.model && appliedFilters.model !== "") {
+      if (appliedFilters.model && appliedFilters.model !== "" && appliedFilters.model !== "Any") { // Check for "Any" here too
         const selectedModel = availableModels.find(model => model.name === appliedFilters.model);
         if (selectedModel) {
           modelId = selectedModel.id;
@@ -514,57 +540,71 @@ function InventoryPage() {
       });
 
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to process your search');
+        const errorText = await response.text();
+        // Check if the error is the specific 'Could not understand' message
+        if (errorText?.toLowerCase().includes('could not understand')) {
+          throw new Error(t('aiSearch.errorCouldNotUnderstand'));
+        }
+        throw new Error(errorText || t('aiSearch.errorPrefix'));
       }
 
       const { parsed_filters, confidence, success } = await response.json();
 
       if (!success || !parsed_filters) {
-        throw new Error('Could not understand your search. Please try again with different wording.');
+        throw new Error(t('aiSearch.errorCouldNotUnderstand'));
       }
 
       // Update filters based on AI results
-      const newFilters = { ...filters };
+      const newFilters = { ...filters }; // Start with current filters
 
-      // Map the parsed_filters to our filter state
-      if (parsed_filters.make) newFilters.make = parsed_filters.make;
-      if (parsed_filters.model) newFilters.model = parsed_filters.model;
-      if (parsed_filters.body_type) newFilters.bodyType = parsed_filters.body_type;
+      // Map the parsed_filters to our filter state, falling back to existing if not provided by AI
+      newFilters.make = parsed_filters.make ?? newFilters.make;
+      newFilters.model = parsed_filters.model ?? newFilters.model;
+      newFilters.bodyType = parsed_filters.body_type ?? newFilters.bodyType;
 
       // Handle numeric ranges
-      if (parsed_filters.year_min) newFilters.yearMin = parsed_filters.year_min;
-      if (parsed_filters.year_max) newFilters.yearMax = parsed_filters.year_max;
-      if (parsed_filters.price_min) newFilters.priceMin = parsed_filters.price_min;
-      if (parsed_filters.price_max) newFilters.priceMax = parsed_filters.price_max;
-      if (parsed_filters.mileage_min) newFilters.mileageMin = parsed_filters.mileage_min;
-      if (parsed_filters.mileage_max) newFilters.mileageMax = parsed_filters.mileage_max;
+      newFilters.yearMin = parsed_filters.year_min ?? newFilters.yearMin;
+      newFilters.yearMax = parsed_filters.year_max ?? newFilters.yearMax;
+      newFilters.priceMin = parsed_filters.price_min ?? newFilters.priceMin;
+      newFilters.priceMax = parsed_filters.price_max ?? newFilters.priceMax;
+      newFilters.mileageMin = parsed_filters.mileage_min ?? newFilters.mileageMin;
+      newFilters.mileageMax = parsed_filters.mileage_max ?? newFilters.mileageMax;
 
       // Handle other categorical filters
-      if (parsed_filters.fuel_type) newFilters.fuelType = parsed_filters.fuel_type;
-      if (parsed_filters.transmission) newFilters.transmission = parsed_filters.transmission;
-      if (parsed_filters.condition) newFilters.condition = parsed_filters.condition;
+      newFilters.fuelType = parsed_filters.fuel_type ?? newFilters.fuelType;
+      newFilters.transmission = parsed_filters.transmission ?? newFilters.transmission;
+      newFilters.condition = parsed_filters.condition ?? newFilters.condition;
+
+      // Ensure model is reset if make changed but model didn't
+      if (parsed_filters.make && parsed_filters.make !== filters.make && !parsed_filters.model) {
+        newFilters.model = 'Any';
+      }
 
       // Update filter state
       setFilters(newFilters);
 
       // Auto-apply filters
       setTimeout(() => {
-        applyFilters();
+        applyFilters(); // applyFilters already calls fetchAndSetCars
 
         // Show success message with confidence level
         toast({
-          title: "Search processed",
+          title: t('aiSearch.toastTitle'),
           description: confidence > 0.8
-            ? "Found exactly what you're looking for!"
-            : "Found potential matches. You can adjust filters if needed.",
+            ? t('aiSearch.toastDescSuccess')
+            : t('aiSearch.toastDescPotential'),
           variant: confidence > 0.8 ? "default" : "secondary"
         });
-      }, 100);
+      }, 100); // Small delay to allow state update
 
     } catch (error) {
       console.error('AI search error:', error);
-      setSearchError(error instanceof Error ? error.message : 'Failed to process your search');
+      // Use the error message directly if it's already translated, otherwise use prefix
+      const errorMessage = error instanceof Error ? error.message : t('aiSearch.errorPrefix');
+      // Check if the message is one of the known translated errors
+      const knownErrors = [t('aiSearch.errorCouldNotUnderstand'), t('aiSearch.errorPrefix')];
+      const displayError = knownErrors.includes(errorMessage) ? errorMessage : `${t('aiSearch.errorPrefix')}: ${errorMessage}`;
+      setSearchError(displayError);
     } finally {
       setAiSearchLoading(false);
     }
@@ -575,12 +615,21 @@ function InventoryPage() {
   if (error && cars.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <h2 className="text-xl font-bold text-red-500">Error</h2>
+        <h2 className="text-xl font-bold text-red-500">{t('errorTitle')}</h2>
         <p>{error}</p>
-        <Button className="mt-4" onClick={() => window.location.reload()}>Try Again</Button>
+        <Button className="mt-4" onClick={() => window.location.reload()}>{t('errorTryAgain')}</Button>
       </div>
     </div>;
   }
+
+  // Prepare filter options from JSON
+  // Cast to expected type for safety, although explicit casting in map is the direct fix
+  const bodyTypeOptions = t.raw('bodyTypes') as Record<string, string>;
+  const fuelTypeOptions = t.raw('fuelTypes') as Record<string, string>;
+  const transmissionOptions = t.raw('transmissions') as Record<string, string>;
+  const conditionOptions = t.raw('conditions') as Record<string, string>;
+  const sortOptions = t.raw('sortOptions') as Record<string, string>;
+
 
   return (
     <div className="min-h-screen pb-12">
@@ -588,9 +637,9 @@ function InventoryPage() {
       <div className="bg-muted/40 py-12">
         <div className="container max-w-6xl mx-auto px-6">
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">Browse Our Inventory</h1>
+            <h1 className="text-4xl font-bold mb-4">{t('hero.title')}</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore our extensive collection of premium vehicles. Use the filters to find your perfect match.
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -602,7 +651,7 @@ function InventoryPage() {
           <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6 rounded-lg shadow-sm">
             <h2 className="text-lg font-medium mb-4 flex items-center">
               <Sparkles className="h-5 w-5 mr-2 text-primary" />
-              What are you looking for?
+              {t('aiSearch.title')}
             </h2>
 
             <form onSubmit={handleAiSearch} className="flex gap-2">
@@ -611,13 +660,13 @@ function InventoryPage() {
                 <Input
                   value={aiSearchInput}
                   onChange={(e) => setAiSearchInput(e.target.value)}
-                  placeholder="e.g. A weekend coupe under 50k"
+                  placeholder={t('aiSearch.placeholder')}
                   className="pl-10 w-full"
                   disabled={aiSearchLoading}
                 />
               </div>
               <Button type="submit" disabled={aiSearchLoading}>
-                {aiSearchLoading ? "Searching..." : "Search"}
+                {aiSearchLoading ? t('aiSearch.buttonLoading') : t('aiSearch.buttonIdle')}
               </Button>
             </form>
 
@@ -633,22 +682,24 @@ function InventoryPage() {
         {/* **** FULL FILTERS SECTION **** */}
         <div id="filter-section" className="bg-background py-8 border-y mb-6">
           <div className="container max-w-6xl mx-auto px-4">
-            {/* All existing filter content stays here */}
             {/* Basic Filters Row 1: Make, Model, Body Type */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 mb-6">
               {/* Make */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium mb-2">Make</label>
+                <label className="block text-sm font-medium mb-2">{t('filters.makeLabel')}</label>
                 <Select
                   value={filters.make}
-                  onValueChange={(value) => handleFilterChange("make", value)}
+                  onValueChange={(value) => {
+                    handleFilterChange("make", value);
+                    // No immediate fetch - wait for Apply button
+                  }}
                   disabled={makesLoading}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={makesLoading ? "Loading makes..." : "Select make"} />
+                    <SelectValue placeholder={makesLoading ? t('filters.makePlaceholderLoading') : t('filters.makePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Any">Any</SelectItem>
+                    <SelectItem value="Any">{t('filters.optionAny')}</SelectItem>
                     {makes.map(make => (
                       <SelectItem key={make.id} value={make.name}>{make.name}</SelectItem>
                     ))}
@@ -658,20 +709,23 @@ function InventoryPage() {
 
               {/* Model */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium mb-2">Model</label>
+                <label className="block text-sm font-medium mb-2">{t('filters.modelLabel')}</label>
                 <Select
                   value={filters.model}
-                  onValueChange={(value) => handleFilterChange("model", value)}
+                  onValueChange={(value) => {
+                    handleFilterChange("model", value);
+                    // No immediate fetch - wait for Apply button
+                  }}
                   disabled={filters.make === "Any" || modelsLoading}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={modelsLoading ? "Loading models..." : "Select model"} />
+                    <SelectValue placeholder={modelsLoading ? t('filters.modelPlaceholderLoading') : t('filters.modelPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {/* Add search input */}
                     <div className="px-2 py-2 sticky top-0 bg-background z-10 border-b">
                       <Input
-                        placeholder="Search models..."
+                        placeholder={t('filters.modelSearchPlaceholder')}
                         className="h-8"
                         onChange={(e) => setModelSearchTerm(e.target.value)}
                         value={modelSearchTerm}
@@ -679,7 +733,7 @@ function InventoryPage() {
                       />
                     </div>
 
-                    <SelectItem value="Any">Any</SelectItem>
+                    <SelectItem value="Any">{t('filters.optionAny')}</SelectItem>
 
                     {availableModels.length > 0 ? (
                       // Filter models by both name validity and search term
@@ -698,7 +752,7 @@ function InventoryPage() {
                       // Show when no models are available
                       !modelsLoading &&
                       <SelectItem value="no-models" disabled>
-                        {modelSearchTerm ? "No matching models" : "No models available"}
+                        {modelSearchTerm ? t('filters.modelNotFound') : t('filters.modelNotAvailable')}
                       </SelectItem>
                     )}
                   </SelectContent>
@@ -707,62 +761,62 @@ function InventoryPage() {
 
               {/* Body Type */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium mb-2">Body Type</label>
+                <label className="block text-sm font-medium mb-2">{t('filters.bodyTypeLabel')}</label>
                 <Select
                   value={filters.bodyType}
                   onValueChange={(value) => handleFilterChange("bodyType", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select body type" />
+                    <SelectValue placeholder={t('filters.bodyTypePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {['Any', 'Sedan', 'SUV', 'Coupe', 'Convertible', 'Hatchback', 'Wagon', 'Truck', 'Van'].map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    {Object.entries(bodyTypeOptions).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value as string}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            {/* Number Inputs Row: Price, Year, Mileage - REPLACED SLIDERS */}
+            {/* Number Inputs Row: Price, Year, Mileage */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mb-6">
               {/* Price */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="block text-sm font-medium">Price Range</label>
+                  <label className="block text-sm font-medium">{t('filters.priceLabel')}</label>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-muted-foreground">Min</label>
+                    <label className="text-xs text-muted-foreground">{t('filters.minLabel')}</label>
                     <Input
                       type="number"
                       min={0}
                       max={filters.priceMax}
                       value={filters.priceMin}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("priceMin", value);
+                        const newValue = e.target.value === '' ? defaultFilters.priceMin : parseInt(e.target.value);
+                        if (!isNaN(newValue)) {
+                          handleFilterChange("priceMin", newValue);
                         }
                       }}
-                      placeholder="Min Price"
+                      placeholder={t('filters.priceMinPlaceholder')}
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground">Max</label>
+                    <label className="text-xs text-muted-foreground">{t('filters.maxLabel')}</label>
                     <Input
                       type="number"
                       min={filters.priceMin}
-                      max={defaultFilters.priceMax}
+                      max={defaultFilters.priceMax} // Use default max as ceiling
                       value={filters.priceMax}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("priceMax", value);
+                        const newValue = e.target.value === '' ? defaultFilters.priceMax : parseInt(e.target.value);
+                        if (!isNaN(newValue)) {
+                          handleFilterChange("priceMax", newValue);
                         }
                       }}
-                      placeholder="Max Price"
+                      placeholder={t('filters.priceMaxPlaceholder')}
                       className="mt-1"
                     />
                   </div>
@@ -772,40 +826,40 @@ function InventoryPage() {
               {/* Year */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="block text-sm font-medium">Year Range</label>
+                  <label className="block text-sm font-medium">{t('filters.yearLabel')}</label>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-muted-foreground">From</label>
+                    <label className="text-xs text-muted-foreground">{t('filters.fromLabel')}</label>
                     <Input
                       type="number"
-                      min={defaultFilters.yearMin}
+                      min={defaultFilters.yearMin} // Use default min as floor
                       max={filters.yearMax}
                       value={filters.yearMin}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("yearMin", value);
+                        const newValue = e.target.value === '' ? defaultFilters.yearMin : parseInt(e.target.value);
+                        if (!isNaN(newValue)) {
+                          handleFilterChange("yearMin", newValue);
                         }
                       }}
-                      placeholder="From Year"
+                      placeholder={t('filters.yearMinPlaceholder')}
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground">To</label>
+                    <label className="text-xs text-muted-foreground">{t('filters.toLabel')}</label>
                     <Input
                       type="number"
                       min={filters.yearMin}
-                      max={defaultFilters.yearMax}
+                      max={defaultFilters.yearMax} // Use default max as ceiling
                       value={filters.yearMax}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("yearMax", value);
+                        const newValue = e.target.value === '' ? defaultFilters.yearMax : parseInt(e.target.value);
+                        if (!isNaN(newValue)) {
+                          handleFilterChange("yearMax", newValue);
                         }
                       }}
-                      placeholder="To Year"
+                      placeholder={t('filters.yearMaxPlaceholder')}
                       className="mt-1"
                     />
                   </div>
@@ -815,40 +869,40 @@ function InventoryPage() {
               {/* Mileage */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="block text-sm font-medium">Mileage Range</label>
+                  <label className="block text-sm font-medium">{t('filters.mileageLabel')}</label>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-muted-foreground">Min</label>
+                    <label className="text-xs text-muted-foreground">{t('filters.minLabel')}</label>
                     <Input
                       type="number"
                       min={0}
                       max={filters.mileageMax}
                       value={filters.mileageMin}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("mileageMin", value);
+                        const newValue = e.target.value === '' ? defaultFilters.mileageMin : parseInt(e.target.value);
+                        if (!isNaN(newValue)) {
+                          handleFilterChange("mileageMin", newValue);
                         }
                       }}
-                      placeholder="Min Mileage"
+                      placeholder={t('filters.mileageMinPlaceholder')}
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground">Max</label>
+                    <label className="text-xs text-muted-foreground">{t('filters.maxLabel')}</label>
                     <Input
                       type="number"
                       min={filters.mileageMin}
-                      max={defaultFilters.mileageMax}
+                      max={defaultFilters.mileageMax} // Use default max as ceiling
                       value={filters.mileageMax}
                       onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("mileageMax", value);
+                        const newValue = e.target.value === '' ? defaultFilters.mileageMax : parseInt(e.target.value);
+                        if (!isNaN(newValue)) {
+                          handleFilterChange("mileageMax", newValue);
                         }
                       }}
-                      placeholder="Max Mileage"
+                      placeholder={t('filters.mileageMaxPlaceholder')}
                       className="mt-1"
                     />
                   </div>
@@ -860,17 +914,17 @@ function InventoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 mb-6">
               {/* Fuel */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium mb-2">Fuel Type</label>
+                <label className="block text-sm font-medium mb-2">{t('filters.fuelTypeLabel')}</label>
                 <Select
                   value={filters.fuelType}
                   onValueChange={(value) => handleFilterChange("fuelType", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select fuel type" />
+                    <SelectValue placeholder={t('filters.fuelTypePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {['Any', 'Gasoline', 'Diesel', 'Hybrid', 'Electric'].map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    {Object.entries(fuelTypeOptions).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value as string}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -878,17 +932,17 @@ function InventoryPage() {
 
               {/* Transmission */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium mb-2">Transmission</label>
+                <label className="block text-sm font-medium mb-2">{t('filters.transmissionLabel')}</label>
                 <Select
                   value={filters.transmission}
                   onValueChange={(value) => handleFilterChange("transmission", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select transmission" />
+                    <SelectValue placeholder={t('filters.transmissionPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {['Any', 'Automatic', 'Manual', 'CVT', 'PDK'].map(transmission => (
-                      <SelectItem key={transmission} value={transmission}>{transmission}</SelectItem>
+                    {Object.entries(transmissionOptions).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value as string}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -896,17 +950,17 @@ function InventoryPage() {
 
               {/* Condition */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium mb-2">Condition</label>
+                <label className="block text-sm font-medium mb-2">{t('filters.conditionLabel')}</label>
                 <Select
                   value={filters.condition}
                   onValueChange={(value) => handleFilterChange("condition", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select condition" />
+                    <SelectValue placeholder={t('filters.conditionPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {['Any', 'New', 'Used'].map(condition => (
-                      <SelectItem key={condition} value={condition}>{condition}</SelectItem>
+                    {Object.entries(conditionOptions).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value as string}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -917,26 +971,28 @@ function InventoryPage() {
             <div className="flex flex-col sm:flex-row gap-2 items-center justify-between mt-4">
               <div className="flex gap-2 w-full sm:w-auto">
                 <Button onClick={applyFilters} className="flex-1 sm:flex-none">
-                  <Filter className="mr-2 h-4 w-4" /> Apply Filters
+                  <Filter className="mr-2 h-4 w-4" /> {t('filters.applyButton')}
                 </Button>
                 <Button variant="outline" onClick={resetFilters} className="flex items-center gap-2">
-                  <RefreshCcw className="h-4 w-4" /> Reset
+                  <RefreshCcw className="h-4 w-4" /> {t('filters.resetButton')}
                 </Button>
               </div>
               <Button onClick={toggleAdvancedFilters} className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0" variant="outline" size="sm">
                 {showAdvancedFilters ?
-                  (<><ChevronUp className="h-4 w-4" /> Hide Advanced</>) :
-                  (<><Filter className="h-4 w-4" /> Show Advanced</>)
+                  (<><ChevronUp className="h-4 w-4" /> {t('filters.hideAdvancedButton')}</>) :
+                  (<><Filter className="h-4 w-4" /> {t('filters.showAdvancedButton')}</>)
                 }
               </Button>
             </div>
 
             {/* Advanced Filters Panel */}
             <div className={`${showAdvancedFilters ? 'block mt-6 border-t pt-6' : 'hidden'}`}>
+              {/* Pass translation function 't' down if AdvancedCarFilters needs it */}
               <AdvancedCarFilters
                 filters={filters} // Pass the full state
                 setFilters={setFilters}
                 onClose={toggleAdvancedFilters}
+              // t={t} // Example: Pass t if needed
               />
             </div>
           </div>
@@ -950,36 +1006,32 @@ function InventoryPage() {
               className="shadow-md"
             >
               <Filter className="h-4 w-4 mr-2" />
-              Back to Filters
+              {t('filters.backButton')}
             </Button>
           </div>
         )}
 
-        {/* Results Count and Sort - Add filter toggle button */}
+        {/* Results Count and Sort */}
         <div className="flex flex-col sm:flex-row justify-between items-center my-6 pt-4">
           <div className="flex items-center gap-3">
             <div className="text-muted-foreground">
-              Showing {cars.length} vehicles
+              {t('results.count', { count: cars.length })}
             </div>
           </div>
 
           <div className="flex items-center gap-2 mt-4 sm:mt-0">
-            <span className="text-sm">Sort by:</span>
+            <span className="text-sm">{t('results.sortByLabel')}</span>
             <Select
               value={sortOption}
               onValueChange={handleSortChange}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t('results.sortPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                <SelectItem value="year-desc">Year: Newest First</SelectItem>
-                <SelectItem value="year-asc">Year: Oldest First</SelectItem>
-                <SelectItem value="mileage-asc">Mileage: Low to High</SelectItem>
-                <SelectItem value="mileage-desc">Mileage: High to Low</SelectItem>
-                <SelectItem value="created_at-desc">Newest Listings</SelectItem>
+                {Object.entries(sortOptions).map(([key, value]) => (
+                  <SelectItem key={key} value={key}>{value as string}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -993,7 +1045,7 @@ function InventoryPage() {
             </div>
           ) : cars.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {cars.map((car) => {
+              {cars.map((car, carIndex) => {
                 // Skip rendering if the car doesn't have an ID
                 if (!car.id) {
                   console.warn("Car missing ID, skipping render:", car);
@@ -1001,6 +1053,7 @@ function InventoryPage() {
                 }
 
                 const carImageCount = car.images?.length || 0;
+                const altText = car.make && car.model ? t('card.imageAlt', { make: car.make, model: car.model, index: (activeImageIndex[car.id] || 0) + 1 }) : t('card.imageAltFallback');
 
                 return (
                   <Card
@@ -1023,13 +1076,15 @@ function InventoryPage() {
                             >
                               <Image
                                 src={image}
-                                alt={`${car.make} ${car.model} - view ${index + 1}`}
+                                alt={car.make && car.model ? t('card.imageAlt', { make: car.make, model: car.model, index: index + 1 }) : t('card.imageAltFallback')}
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover"
+                                priority={carIndex < 3} // Prioritize loading images for the first few cards
                                 onError={(e) => {
                                   // Fallback for broken image links
                                   (e.target as HTMLImageElement).src = '/images/car-placeholder.jpg';
+                                  (e.target as HTMLImageElement).srcset = ''; // Clear srcset as well
                                 }}
                               />
                             </div>
@@ -1039,7 +1094,7 @@ function InventoryPage() {
                           <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                             <div className="text-center">
                               <AlertCircle className="h-10 w-10 mx-auto text-muted-foreground opacity-50" />
-                              <p className="text-sm text-muted-foreground mt-2">No image available</p>
+                              <p className="text-sm text-muted-foreground mt-2">{t('card.noImage')}</p>
                             </div>
                           </div>
                         )}
@@ -1055,7 +1110,7 @@ function InventoryPage() {
                                 e.currentTarget.blur(); // Remove focus after click
                               }}
                               className="absolute left-2 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-1"
-                              aria-label="Previous image"
+                              aria-label={t('card.prevImageLabel')}
                             >
                               <ChevronLeft className="h-5 w-5" />
                             </button>
@@ -1068,7 +1123,7 @@ function InventoryPage() {
                                 e.currentTarget.blur(); // Remove focus after click
                               }}
                               className="absolute right-2 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-1"
-                              aria-label="Next image"
+                              aria-label={t('card.nextImageLabel')}
                             >
                               <ChevronRight className="h-5 w-5" />
                             </button>
@@ -1096,7 +1151,7 @@ function InventoryPage() {
                       <div className="grid grid-cols-2 gap-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Fuel className="h-4 w-4" />
-                          <span>{car.fuel_type || "N/A"}</span>
+                          <span>{car.fuel_type || t('card.fuelNA')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Gauge className="h-4 w-4" />
@@ -1104,11 +1159,11 @@ function InventoryPage() {
                         </div>
                         <div className="flex items-center gap-1">
                           <Tag className="h-4 w-4" />
-                          <span>{car.transmission || "N/A"}</span>
+                          <span>{car.transmission || t('card.transmissionNA')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          <span>{car.year || "N/A"}</span>
+                          <span>{car.year || t('card.yearNA')}</span>
                         </div>
                       </div>
 
@@ -1136,12 +1191,12 @@ function InventoryPage() {
                         size="sm"
                         onClick={() => {
                           toast({
-                            title: "Added to compare",
-                            description: `${car.make} ${car.model} added to compare list.`,
+                            title: t('toastMessages.compareAddedTitle'),
+                            description: t('toastMessages.compareAddedDesc', { make: car.make, model: car.model }),
                           });
                         }}
                       >
-                        Add to Compare
+                        {t('card.addToCompareButton')}
                       </Button>
                       <Link
                         href={car && car.id ? `/inventory/${car.id}` : '#'}
@@ -1151,8 +1206,8 @@ function InventoryPage() {
                             e.preventDefault();
                             console.error("View Details clicked with invalid car.id:", car?.id);
                             toast({
-                              title: "Error",
-                              description: "Cannot view details: Car ID is missing.",
+                              title: t('toastMessages.errorTitle'),
+                              description: t('toastMessages.errorViewDetails'),
                               variant: "destructive"
                             });
                             return;
@@ -1174,7 +1229,7 @@ function InventoryPage() {
                         aria-disabled={!car || !car.id}
                         tabIndex={!car || !car.id ? -1 : undefined}
                       >
-                        View Details
+                        {t('card.viewDetailsButton')}
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </CardFooter>
@@ -1186,10 +1241,10 @@ function InventoryPage() {
             <div className="w-full p-8 text-center">
               <div className="bg-muted/50 rounded-lg p-8 max-w-md mx-auto">
                 <AlertCircle className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">No vehicles found matching your criteria.</p>
+                <p className="text-muted-foreground mb-4">{t('results.emptyTitle')}</p>
                 <Button onClick={resetFilters} variant="outline" className="mt-2">
                   <RefreshCcw className="mr-2 h-4 w-4" />
-                  Reset Filters
+                  {t('results.resetFiltersButton')}
                 </Button>
               </div>
             </div>
@@ -1202,20 +1257,15 @@ function InventoryPage() {
             <div className="flex space-x-1">
               <Button variant="outline" size="icon" className="h-8 w-8">
                 <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Previous page</span>
+                <span className="sr-only">{t('pagination.previous')}</span>
               </Button>
-              <Button variant="default" size="sm" className="px-4 h-8">
-                1
-              </Button>
-              <Button variant="outline" size="sm" className="px-4 h-8">
-                2
-              </Button>
-              <Button variant="outline" size="sm" className="px-4 h-8">
-                3
-              </Button>
+              {/* Placeholder pagination numbers */}
+              <Button variant="default" size="sm" className="px-4 h-8">1</Button>
+              <Button variant="outline" size="sm" className="px-4 h-8">2</Button>
+              <Button variant="outline" size="sm" className="px-4 h-8">3</Button>
               <Button variant="outline" size="icon" className="h-8 w-8">
                 <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Next page</span>
+                <span className="sr-only">{t('pagination.next')}</span>
               </Button>
             </div>
           </div>

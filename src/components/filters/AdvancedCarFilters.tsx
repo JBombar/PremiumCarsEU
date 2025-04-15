@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react"; // Import X icon for close button
+import { useTranslations } from 'next-intl'; // Import useTranslations
 
 // Define the shape of the main filter state expected from the parent.
 // This needs to include the advanced fields.
@@ -56,8 +57,9 @@ const advancedDefaultValues = {
 
 // --- Make the component accept and use the props ---
 export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCarFiltersProps) {
+  const t = useTranslations('InventoryPage.advancedFilters'); // Initialize translations
 
-  // Handler to update the PARENT's state for advanced fields
+  // Handler to update the PARENT's state for advanced fields (unchanged)
   const handleAdvancedFilterChange = (
     name: keyof FilterState, // Use keyof the extended FilterState
     value: string | number
@@ -69,7 +71,7 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
     }));
   };
 
-  // Handler specifically for sliders updating min/max pairs
+  // Handler specifically for sliders updating min/max pairs (unchanged)
   const handleAdvancedSliderChange = (
     nameMin: keyof FilterState,
     nameMax: keyof FilterState,
@@ -90,9 +92,9 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
   return (
     <div className="space-y-6 p-4 border rounded-md bg-muted/50">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Advanced Filters</h3>
+        <h3 className="text-lg font-semibold">{t('title')}</h3>
         {/* Use the onClose prop for the close button */}
-        <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close advanced filters">
+        <Button variant="ghost" size="icon" onClick={onClose} aria-label={t('closeAriaLabel')}>
           <X className="h-4 w-4" />
         </Button>
       </div>
@@ -101,7 +103,7 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
         {/* Horsepower Filter */}
         <div className="bg-background rounded-lg border p-4">
           <div className="flex justify-between items-center mb-4">
-            <h4 className="font-medium">Horsepower (PS)</h4>
+            <h4 className="font-medium">{t('horsepowerLabel')}</h4>
             {/* Removed unit toggle for simplicity, add back if needed */}
           </div>
 
@@ -130,10 +132,11 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
                   // Update parent state
                   onChange={(e) => handleAdvancedFilterChange("horsepowerMin", parseInt(e.target.value) || advancedDefaultValues.horsepowerMin)}
                   className="h-8 text-sm w-full"
+                  aria-label={`${t('horsepowerLabel')} ${t('minLabel')}`} // Add aria-label
                 />
-                <span className="ml-2 text-sm text-muted-foreground">PS</span>
+                <span className="ml-2 text-sm text-muted-foreground">{t('horsepowerUnit')}</span>
               </div>
-              <label className="text-xs text-muted-foreground mt-1">Min</label>
+              <label className="text-xs text-muted-foreground mt-1">{t('minLabel')}</label>
             </div>
             <div>
               <div className="flex items-center">
@@ -145,17 +148,18 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
                   // Update parent state
                   onChange={(e) => handleAdvancedFilterChange("horsepowerMax", parseInt(e.target.value) || advancedDefaultValues.horsepowerMax)}
                   className="h-8 text-sm w-full"
+                  aria-label={`${t('horsepowerLabel')} ${t('maxLabel')}`} // Add aria-label
                 />
-                <span className="ml-2 text-sm text-muted-foreground">PS</span>
+                <span className="ml-2 text-sm text-muted-foreground">{t('horsepowerUnit')}</span>
               </div>
-              <label className="text-xs text-muted-foreground mt-1">Max</label>
+              <label className="text-xs text-muted-foreground mt-1">{t('maxLabel')}</label>
             </div>
           </div>
         </div>
 
         {/* Engine Displacement */}
         <div className="bg-background rounded-lg border p-4">
-          <h4 className="font-medium mb-4">Engine Displacement (cm³)</h4>
+          <h4 className="font-medium mb-4">{t('displacementLabel')}</h4>
           <Slider
             value={[
               filters.displacementMin ?? advancedDefaultValues.displacementMin,
@@ -176,10 +180,11 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
                   placeholder={String(advancedDefaultValues.displacementMin)}
                   onChange={(e) => handleAdvancedFilterChange("displacementMin", parseInt(e.target.value) || advancedDefaultValues.displacementMin)}
                   className="h-8 text-sm w-full"
+                  aria-label={`${t('displacementLabel')} ${t('minLabel')}`} // Add aria-label
                 />
-                <span className="ml-2 text-sm text-muted-foreground">cm³</span>
+                <span className="ml-2 text-sm text-muted-foreground">{t('displacementUnit')}</span>
               </div>
-              <label className="text-xs text-muted-foreground mt-1">Min</label>
+              <label className="text-xs text-muted-foreground mt-1">{t('minLabel')}</label>
             </div>
             <div>
               <div className="flex items-center">
@@ -189,17 +194,18 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
                   placeholder={String(advancedDefaultValues.displacementMax)}
                   onChange={(e) => handleAdvancedFilterChange("displacementMax", parseInt(e.target.value) || advancedDefaultValues.displacementMax)}
                   className="h-8 text-sm w-full"
+                  aria-label={`${t('displacementLabel')} ${t('maxLabel')}`} // Add aria-label
                 />
-                <span className="ml-2 text-sm text-muted-foreground">cm³</span>
+                <span className="ml-2 text-sm text-muted-foreground">{t('displacementUnit')}</span>
               </div>
-              <label className="text-xs text-muted-foreground mt-1">Max</label>
+              <label className="text-xs text-muted-foreground mt-1">{t('maxLabel')}</label>
             </div>
           </div>
         </div>
 
         {/* Cylinders */}
         <div className="bg-background rounded-lg border p-4">
-          <h4 className="font-medium mb-4">Cylinders</h4>
+          <h4 className="font-medium mb-4">{t('cylindersLabel')}</h4>
           <Slider
             value={[
               filters.cylindersMin ?? advancedDefaultValues.cylindersMin,
@@ -219,8 +225,9 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
                 placeholder={String(advancedDefaultValues.cylindersMin)}
                 onChange={(e) => handleAdvancedFilterChange("cylindersMin", parseInt(e.target.value) || advancedDefaultValues.cylindersMin)}
                 className="h-8 text-sm w-full"
+                aria-label={`${t('cylindersLabel')} ${t('minLabel')}`} // Add aria-label
               />
-              <label className="text-xs text-muted-foreground mt-1">Min</label>
+              <label className="text-xs text-muted-foreground mt-1">{t('minLabel')}</label>
             </div>
             <div>
               <Input
@@ -229,8 +236,9 @@ export function AdvancedCarFilters({ filters, setFilters, onClose }: AdvancedCar
                 placeholder={String(advancedDefaultValues.cylindersMax)}
                 onChange={(e) => handleAdvancedFilterChange("cylindersMax", parseInt(e.target.value) || advancedDefaultValues.cylindersMax)}
                 className="h-8 text-sm w-full"
+                aria-label={`${t('cylindersLabel')} ${t('maxLabel')}`} // Add aria-label
               />
-              <label className="text-xs text-muted-foreground mt-1">Max</label>
+              <label className="text-xs text-muted-foreground mt-1">{t('maxLabel')}</label>
             </div>
           </div>
         </div>
