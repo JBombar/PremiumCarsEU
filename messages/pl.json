@@ -180,8 +180,8 @@
             "additionalInfo": "Dodatkowe Uwagi"
         },
         "labels": {
-            "fullName": "Imię i Nazwisko<span class=\"text-red-500\">*</span>",
-            "email": "Adres Email<span class=\"text-red-500\">*</span>",
+            "fullName": "Imię i Nazwisko",
+            "email": "Adres Email",
             "phone": "Numer Telefonu",
             "location": "Lokalizacja / Region",
             "make": "Preferowana Marka Samochodu",
@@ -335,11 +335,11 @@
             "description": "Wypełnij poniższy formularz ze swoim zapytaniem, a my odpowiemy jak najszybciej."
         },
         "labels": {
-            "fullName": "Imię i Nazwisko<span class=\"text-red-500\">*</span>",
-            "email": "Adres Email<span class=\"text-red-500\">*</span>",
+            "fullName": "Imię i Nazwisko",
+            "email": "Adres Email",
             "phone": "Numer Telefonu (Opcjonalnie)",
-            "subject": "Temat<span class=\"text-red-500\">*</span>",
-            "message": "Wiadomość<span class=\"text-red-500\">*</span>"
+            "subject": "Temat",
+            "message": "Wiadomość"
         },
         "placeholders": {
             "fullName": "Wpisz swoje imię i nazwisko",
@@ -424,17 +424,17 @@
             "additionalInfo": "Dodatkowe Informacje"
         },
         "labels": {
-            "fullName": "Imię i Nazwisko<span class=\"text-red-500\">*</span>",
-            "email": "Adres Email<span class=\"text-red-500\">*</span>",
-            "phone": "Numer Telefonu<span class=\"text-red-500\">*</span>",
-            "make": "Marka Samochodu<span class=\"text-red-500\">*</span>",
-            "model": "Model Samochodu<span class=\"text-red-500\">*</span>",
-            "year": "Rok<span class=\"text-red-500\">*</span>",
-            "mileage": "Przebieg<span class=\"text-red-500\">*</span>",
-            "fuelType": "Typ Paliwa<span class=\"text-red-500\">*</span>",
-            "transmission": "Skrzynia Biegów<span class=\"text-red-500\">*</span>",
-            "condition": "Stan<span class=\"text-red-500\">*</span>",
-            "city": "Miasto<span class=\"text-red-500\">*</span>",
+            "fullName": "Imię i Nazwisko",
+            "email": "Adres Email",
+            "phone": "Numer Telefonu",
+            "make": "Marka Samochodu",
+            "model": "Model Samochodu",
+            "year": "Rok",
+            "mileage": "Przebieg",
+            "fuelType": "Typ Paliwa",
+            "transmission": "Skrzynia Biegów",
+            "condition": "Stan",
+            "city": "Miasto",
             "askingPrice": "Cena Oczekiwana (Opcjonalnie)",
             "photos": "Prześlij Zdjęcia",
             "description": "Opis / Uwagi"

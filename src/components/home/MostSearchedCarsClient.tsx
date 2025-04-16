@@ -1,7 +1,7 @@
 // src/components/home/MostSearchedCarsClient.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LuChevronLeft, LuChevronRight, LuFuel, LuGauge } from 'react-icons/lu';
@@ -66,10 +66,39 @@ export function MostSearchedCarsClient({ cars }: MostSearchedCarsClientProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
 
+    // Responsive number of visible cars based on screen size
+    const [visibleCars, setVisibleCars] = useState(4);
+
+    useEffect(() => {
+        // Set initial value based on window width
+        const handleResize = () => {
+            if (window.innerWidth < 640) {
+                setVisibleCars(1); // Mobile: 1 card
+            } else if (window.innerWidth < 1024) {
+                setVisibleCars(2); // Tablet: 2 cards
+            } else {
+                setVisibleCars(4); // Desktop: 4 cards
+            }
+        };
+
+        // Set initial value
+        handleResize();
+
+        // Update on resize
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const validCars = Array.isArray(cars) ? cars.filter(isValidCar) : [];
     const safeCars = validCars;
-    const visibleCars = 4; // Assuming 4 visible cars
     const maxIndex = Math.max(0, safeCars.length - visibleCars);
+
+    // Reset current index if it's out of bounds after a resize
+    useEffect(() => {
+        if (currentIndex > maxIndex) {
+            setCurrentIndex(maxIndex);
+        }
+    }, [visibleCars, maxIndex, currentIndex]);
 
     const slideLeft = () => { if (currentIndex > 0 && !isAnimating) { setIsAnimating(true); setCurrentIndex(prev => prev - 1); setTimeout(() => setIsAnimating(false), 300); } };
     const slideRight = () => { if (currentIndex < maxIndex && !isAnimating) { setIsAnimating(true); setCurrentIndex(prev => prev + 1); setTimeout(() => setIsAnimating(false), 300); } };
@@ -78,7 +107,6 @@ export function MostSearchedCarsClient({ cars }: MostSearchedCarsClientProps) {
         return (<div className="flex justify-center items-center h-64"><div className="text-gray-500">{t('empty')}</div></div>);
     }
 
-    // --- *** Return Statement Start (Ensure this part is correct) *** ---
     return (
         <div className="relative">
             {/* Left arrow */}
@@ -99,14 +127,13 @@ export function MostSearchedCarsClient({ cars }: MostSearchedCarsClientProps) {
             <div className="overflow-hidden mx-12">
                 <div
                     className="flex transition-transform duration-300 ease-in-out"
-                    style={{ transform: `translateX(-${currentIndex * (100 / visibleCars)}%)` }} // Correct transform calculation
+                    style={{ transform: `translateX(-${currentIndex * (100 / visibleCars)}%)` }}
                 >
                     {safeCars.map((car) => (
-                        // Correct JSX syntax for the mapped element
                         <div
-                            key={car.id || Math.random().toString()} // Key prop
-                            style={{ width: `${100 / visibleCars}%` }} // Style prop with correct width
-                            className="p-3 flex-shrink-0" // ClassName prop
+                            key={car.id || Math.random().toString()}
+                            style={{ width: `${100 / visibleCars}%` }}
+                            className="p-3 flex-shrink-0"
                         >
                             <CarCard car={car} t={t} />
                         </div>
@@ -129,6 +156,5 @@ export function MostSearchedCarsClient({ cars }: MostSearchedCarsClientProps) {
             </Button>
         </div>
     );
-    // --- *** Return Statement End *** ---
 }
 // --- Component Function End ---

@@ -180,8 +180,8 @@
             "additionalInfo": "További megjegyzések"
         },
         "labels": {
-            "fullName": "Teljes név<span class=\"text-red-500\">*</span>",
-            "email": "Email cím<span class=\"text-red-500\">*</span>",
+            "fullName": "Teljes név",
+            "email": "Email cím",
             "phone": "Telefonszám",
             "location": "Hely / Régió",
             "make": "Kívánt autómárka",
@@ -335,11 +335,11 @@
             "description": "Töltse ki az alábbi űrlapot érdeklődésével, és a lehető leghamarabb válaszolunk."
         },
         "labels": {
-            "fullName": "Teljes név<span class=\"text-red-500\">*</span>",
-            "email": "Email cím<span class=\"text-red-500\">*</span>",
+            "fullName": "Teljes név",
+            "email": "Email cím",
             "phone": "Telefonszám (opcionális)",
-            "subject": "Tárgy<span class=\"text-red-500\">*</span>",
-            "message": "Üzenet<span class=\"text-red-500\">*</span>"
+            "subject": "Tárgy",
+            "message": "Üzenet"
         },
         "placeholders": {
             "fullName": "Adja meg teljes nevét",
@@ -424,17 +424,17 @@
             "additionalInfo": "További információk"
         },
         "labels": {
-            "fullName": "Teljes név<span class=\"text-red-500\">*</span>",
-            "email": "Email cím<span class=\"text-red-500\">*</span>",
-            "phone": "Telefonszám<span class=\"text-red-500\">*</span>",
-            "make": "Autómárka<span class=\"text-red-500\">*</span>",
-            "model": "Autómodell<span class=\"text-red-500\">*</span>",
-            "year": "Évjárat<span class=\"text-red-500\">*</span>",
-            "mileage": "Futásteljesítmény<span class=\"text-red-500\">*</span>",
-            "fuelType": "Üzemanyag típusa<span class=\"text-red-500\">*</span>",
-            "transmission": "Váltó<span class=\"text-red-500\">*</span>",
-            "condition": "Állapot<span class=\"text-red-500\">*</span>",
-            "city": "Város<span class=\"text-red-500\">*</span>",
+            "fullName": "Teljes név",
+            "email": "Email cím",
+            "phone": "Telefonszám",
+            "make": "Autómárka",
+            "model": "Autómodell",
+            "year": "Évjárat",
+            "mileage": "Futásteljesítmény",
+            "fuelType": "Üzemanyag típusa",
+            "transmission": "Váltó",
+            "condition": "Állapot",
+            "city": "Város",
             "askingPrice": "Kért ár (opcionális)",
             "photos": "Fényképek feltöltése",
             "description": "Leírás / Megjegyzések"
