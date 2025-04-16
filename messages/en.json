@@ -47,7 +47,7 @@
     "Footer": {
         "brand": {
             "slogan": "Modern Car Dealership Websites, Made Simple.",
-            "copyright": "© {year} CarBiz. All rights reserved."
+            "copyright": "© {year} PremiumCarsEU. All rights reserved."
         },
         "quickLinks": {
             "title": "Quick Links",
@@ -70,7 +70,8 @@
             "socialAriaLabels": {
                 "facebook": "Facebook",
                 "instagram": "Instagram",
-                "linkedIn": "LinkedIn"
+                "linkedIn": "LinkedIn",
+                "twitter": "Twitter"
             }
         }
     },
@@ -99,7 +100,7 @@
             {
                 "id": 1,
                 "name": "Thomas Weber",
-                "quote": "CarBiz helped me find the perfect car for my family. Their team was professional and made the process stress-free."
+                "quote": "PremiumCarsEU helped me find the perfect car for my family. Their team was professional and made the process stress-free."
             },
             {
                 "id": 2,
@@ -109,7 +110,7 @@
             {
                 "id": 3,
                 "name": "Daniel Meier",
-                "quote": "The team at CarBiz went above and beyond to help me find a car within my budget. Highly recommend!"
+                "quote": "The team at PremiumCarsEU went above and beyond to help me find a car within my budget. Highly recommend!"
             }
         ]
     },
@@ -274,10 +275,10 @@
         },
         "story": {
             "title": "Our Story",
-            "paragraph1": "Founded in 2005, CarBiz began with a simple mission: to transform the car buying experience in Switzerland. Our founder, Michael Brunner, was frustrated with the traditional dealership model and envisioned a more transparent, customer-focused approach to selling vehicles.",
-            "paragraph2": "What started as a small showroom in Zurich has grown into Switzerland's most trusted automotive marketplace, with three locations across the country and an ever-expanding digital presence. Throughout our growth, we've remained committed to our core principles: fair pricing, exceptional service, and absolute transparency.",
-            "paragraph3": "Today, we're proud to have helped over 10,000 customers find their perfect vehicle, earning a reputation as the dealership that truly puts customers first. Our journey continues as we embrace new technologies and innovative approaches to make car buying and selling simpler, more enjoyable, and more accessible than ever before.",
-            "imageAlt": "CarBiz showroom and team"
+            "paragraph1": "With over 15 years of dedicated experience in the premium vehicle market, our expertise lies in the sale, brokerage, import, and export of exceptional premium and sports cars. We leverage our deep industry knowledge to connect discerning clients with extraordinary automobiles.",
+            "paragraph2": "The vehicles we offer are meticulously sourced through a network of trusted clients and business partners, relationships cultivated over years and built firmly on mutual trust. We primarily feature new vehicles, and any pre-owned cars undergo rigorous verification, always accompanied by a full service history.",
+            "paragraph3": "Our extensive experience and robust partner network empower us to go beyond the conventional. We specialize in procuring specific vehicles on demand, including hard-to-find models, limited editions, and even securing advantageous production quotas for new vehicles across various prestigious brands.",
+            "imageAlt": "PremiumCarsEU showroom and team"
         },
         "values": {
             "title": "Our Values",
@@ -301,8 +302,8 @@
         "team": {
             "title": "Meet the Team",
             "member1": {
-                "imageAlt": "Michael Brunner",
-                "name": "Michael Brunner",
+                "imageAlt": "Marco Varga",
+                "name": "Marco Varga",
                 "title": "Founder & CEO",
                 "quote": "\"Our goal is to reinvent how people buy and sell cars, making it the most enjoyable purchase they'll ever make.\""
             },
@@ -310,7 +311,7 @@
                 "imageAlt": "Sarah Mueller",
                 "name": "Sarah Mueller",
                 "title": "Sales Director",
-                "quote": "\"I believe in building relationships, not just selling cars. Our customers become part of the CarBiz family.\""
+                "quote": "\"I believe in building relationships, not just selling cars. Our customers become part of the PremiumCarsEU family.\""
             },
             "member3": {
                 "imageAlt": "Thomas Weber",
@@ -389,7 +390,7 @@
     "SellPage": {
         "hero": {
             "title": "Sell Your Car with Confidence",
-            "subtitle": "Get a fair price and hassle-free experience when you sell your car through CarBiz. No middlemen, no hidden fees - just straightforward service."
+            "subtitle": "Get a fair price and hassle-free experience when you sell your car through PremiumCarsEU. No middlemen, no hidden fees - just straightforward service."
         },
         "benefits": {
             "title": "Why Sell With Us?",
@@ -696,7 +697,7 @@
         },
         "sellerInfo": {
             "title": "Seller Information",
-            "fallbackName": "CarBiz Dealer",
+            "fallbackName": "PremiumCarsEU Dealer",
             "memberSince": "Member since {year}",
             "fallbackInitial": "S",
             "fallbackYear": "2022"
@@ -712,6 +713,105 @@
         "conditionValues": {
             "new": "New",
             "used": "Used"
+        }
+    },
+    "ContactFormModal": {
+        "triggerButton": "Contact Seller",
+        "title": "Contact Seller",
+        "description": "Fill out this form to inquire about the {carName}. The seller will reach out to you shortly.",
+        "labels": {
+            "name": "Your Name",
+            "phone": "Phone Number",
+            "email": "Email (optional)",
+            "message": "Message",
+            "whatsappConsent": "I consent to being contacted via WhatsApp"
+        },
+        "placeholders": {
+            "name": "Enter your name",
+            "phone": "Enter your phone number",
+            "email": "Your Email",
+            "message": "Enter your message"
+        },
+        "buttons": {
+            "cancel": "Cancel",
+            "submit": "Send Message",
+            "submitting": "Sending..."
+        },
+        "defaultMessage": "I'm interested in the {carName}. Please contact me with more information.",
+        "toast": {
+            "successTitle": "Message Sent!",
+            "successDescription": "Thanks! We'll reach out on WhatsApp shortly.",
+            "errorTitle": "Error",
+            "errorDescription": "There was a problem sending your message. Please try again."
+        }
+    },
+    "ReservationModal": {
+        "triggerButton": "Reserve This Vehicle",
+        "title": "Reserve Vehicle",
+        "description": "Complete this form to reserve the {carName}. We'll contact you to confirm details.",
+        "labels": {
+            "name": "Full Name",
+            "email": "Email",
+            "phone": "Phone Number"
+        },
+        "placeholders": {
+            "name": "Enter your full name",
+            "email": "Enter your email address",
+            "phone": "Enter your phone number"
+        },
+        "validation": {
+            "nameMin": "Name must be at least 2 characters.",
+            "emailInvalid": "Please enter a valid email address.",
+            "phoneMin": "Please enter a valid phone number."
+        },
+        "reservingVehicle": "Reserving: {carName}",
+        "termsNotice": "By submitting this form, you agree to our reservation terms and policies.",
+        "buttons": {
+            "cancel": "Cancel",
+            "submit": "Reserve Vehicle",
+            "submitting": "Submitting..."
+        },
+        "toast": {
+            "successTitle": "Reservation Submitted",
+            "successDescription": "We've received your reservation for the {carName}. We'll contact you shortly.",
+            "errorTitle": "Reservation Failed",
+            "errorDescription": "There was a problem submitting your reservation. Please try again."
+        }
+    },
+    "TestDriveModal": {
+        "triggerButton": "Schedule Test Drive",
+        "title": "Schedule a Test Drive",
+        "description": "Fill out the form below to schedule a test drive for {carName}.",
+        "labels": {
+            "fullName": "Full Name",
+            "email": "Email",
+            "phone": "Phone Number",
+            "date": "Preferred Date",
+            "time": "Preferred Time"
+        },
+        "placeholders": {
+            "fullName": "John Doe",
+            "email": "you@example.com",
+            "phone": "(123) 456-7890",
+            "date": "Pick a date",
+            "time": "Select time"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "emailRequired": "Valid email is required",
+            "phoneRequired": "Valid phone number is required",
+            "dateRequired": "Please select a date",
+            "timeRequired": "Please select a time"
+        },
+        "buttons": {
+            "submit": "Schedule Test Drive",
+            "submitting": "Submitting..."
+        },
+        "toast": {
+            "successTitle": "Test drive scheduled",
+            "successDescription": "We will contact you to confirm your appointment.",
+            "errorTitle": "Failed to schedule test drive",
+            "errorDescription": "Please try again later or contact support."
         }
     },
     "Common": {

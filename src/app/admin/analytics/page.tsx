@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/accordion";
 
 export const metadata: Metadata = {
-  title: "Analytics | CarBiz Admin",
+  title: "Analytics | PremiumCarsEU Admin",
 };
 
 // Define proper types for our data

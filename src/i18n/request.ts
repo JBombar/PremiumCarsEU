@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'; // Import cookies
 import { getRequestConfig } from 'next-intl/server';
 
 // Define your supported locales and a default locale
-const SUPPORTED_LOCALES = ['en', 'de']; // Add any other locales you support
+const SUPPORTED_LOCALES = ['en', 'de', 'fr', "it", 'sk', 'pl', 'hu']; // Add any other locales you support
 const DEFAULT_LOCALE = 'en';
 
 export default getRequestConfig(async () => {

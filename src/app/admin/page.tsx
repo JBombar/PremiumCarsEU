@@ -5,7 +5,7 @@ import { KpiCard } from "@/components/admin/KpiCard";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Dashboard | CarBiz Admin",
+  title: "Dashboard | PremiumCarsEU Admin",
 };
 
 // Define an interface for the inventory stats data
@@ -21,17 +21,17 @@ interface InventoryStats {
 
 async function getInventoryStats() {
   const supabase = createClient();
-  
+
   // Get current authenticated user securely with getUser()
   const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
+
   if (authError || !user) {
     console.error("Authentication error:", authError);
     return redirect('/login?callbackUrl=/admin');
   }
-  
+
   const dealerId = user.id;
-  
+
   // Fetch inventory stats for this dealer
   // Use "any" type to bypass TypeScript's strict checking until Database type is updated
   const { data, error } = await (supabase
@@ -39,22 +39,22 @@ async function getInventoryStats() {
     .select('*')
     .eq('dealer_id', dealerId)
     .maybeSingle() as any);
-  
+
   if (error) {
     console.error("Error fetching inventory stats:", error);
     return { error, data: null };
   }
-  
+
   // Cast the data to our defined interface
   return { data: data as InventoryStats | null, error: null };
 }
 
 export default async function AdminDashboard() {
   const { data: stats, error } = await getInventoryStats();
-  
+
   const isLoading = false; // We're using Server Components, so no client-side loading state
   const hasError = error !== null;
-  
+
   return (
     <div>
       <div className="flex flex-col gap-2 mb-8">
@@ -63,7 +63,7 @@ export default async function AdminDashboard() {
           Welcome back! Here's your dealership's current inventory status.
         </p>
       </div>
-      
+
       {hasError ? (
         <div className="bg-destructive/10 p-4 rounded-md text-destructive mb-8">
           <p>There was an error loading your inventory statistics. Please try refreshing the page.</p>
@@ -90,7 +90,7 @@ export default async function AdminDashboard() {
           />
         </div>
       )}
-      
+
       {/* When no data exists yet */}
       {!hasError && !stats && (
         <div className="bg-muted p-6 rounded-lg text-center mb-8">
@@ -103,7 +103,7 @@ export default async function AdminDashboard() {
           </a>
         </div>
       )}
-      
+
       {/* Additional dashboard content can go here */}
     </div>
   );

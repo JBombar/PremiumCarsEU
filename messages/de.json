@@ -47,7 +47,7 @@
     "Footer": {
         "brand": {
             "slogan": "Moderne Autohaus-Websites, einfach gemacht.",
-            "copyright": "© {year} CarBiz. Alle Rechte vorbehalten."
+            "copyright": "© {year} PremiumCarsEU. Alle Rechte vorbehalten."
         },
         "quickLinks": {
             "title": "Schnelllinks",
@@ -70,7 +70,8 @@
             "socialAriaLabels": {
                 "facebook": "Facebook",
                 "instagram": "Instagram",
-                "linkedIn": "LinkedIn"
+                "linkedIn": "LinkedIn",
+                "twitter": "Twitter"
             }
         }
     },
@@ -99,7 +100,7 @@
             {
                 "id": 1,
                 "name": "Thomas Weber",
-                "quote": "CarBiz hat mir geholfen, das perfekte Auto für meine Familie zu finden. Ihr Team war professionell und hat den Prozess stressfrei gestaltet."
+                "quote": "PremiumCarsEU hat mir geholfen, das perfekte Auto für meine Familie zu finden. Ihr Team war professionell und hat den Prozess stressfrei gestaltet."
             },
             {
                 "id": 2,
@@ -109,7 +110,7 @@
             {
                 "id": 3,
                 "name": "Daniel Meier",
-                "quote": "Das Team von CarBiz hat alles getan, um mir zu helfen, ein Auto innerhalb meines Budgets zu finden. Sehr zu empfehlen!"
+                "quote": "Das Team von PremiumCarsEU hat alles getan, um mir zu helfen, ein Auto innerhalb meines Budgets zu finden. Sehr zu empfehlen!"
             }
         ]
     },
@@ -179,8 +180,8 @@
             "additionalInfo": "Zusätzliche Anmerkungen"
         },
         "labels": {
-            "fullName": "Vollständiger Name<span class=\"text-red-500\">*</span>",
-            "email": "E-Mail-Adresse<span class=\"text-red-500\">*</span>",
+            "fullName": "Vollständiger Name",
+            "email": "E-Mail-Adresse",
             "phone": "Telefonnummer",
             "location": "Standort / Region",
             "make": "Gewünschte Automarke",
@@ -274,10 +275,10 @@
         },
         "story": {
             "title": "Unsere Geschichte",
-            "paragraph1": "Gegründet 2005, begann CarBiz mit einer einfachen Mission: das Autokauferlebnis in der Schweiz zu transformieren. Unser Gründer, Michael Brunner, war frustriert vom traditionellen Händlermodell und stellte sich einen transparenteren, kundenorientierteren Ansatz beim Fahrzeugverkauf vor.",
-            "paragraph2": "Was als kleiner Showroom in Zürich begann, ist zu Schweizers vertrauenswürdigstem Automobilmarktplatz herangewachsen, mit drei Standorten im ganzen Land und einer ständig wachsenden digitalen Präsenz. Während unseres Wachstums sind wir unseren Kernprinzipien treu geblieben: faire Preise, außergewöhnlicher Service und absolute Transparenz.",
-            "paragraph3": "Heute sind wir stolz darauf, über 10.000 Kunden geholfen zu haben, ihr perfektes Fahrzeug zu finden, und uns einen Ruf als das Autohaus erworben zu haben, das den Kunden wirklich an erste Stelle setzt. Unsere Reise geht weiter, während wir neue Technologien und innovative Ansätze nutzen, um den Kauf und Verkauf von Autos einfacher, angenehmer und zugänglicher als je zuvor zu gestalten.",
-            "imageAlt": "CarBiz Showroom und Team"
+            "paragraph1": "Mit über 15 Jahren engagierter Erfahrung im Markt für Premiumfahrzeuge liegt unsere Expertise im Verkauf, der Vermittlung, dem Import und Export außergewöhnlicher Premium- und Sportwagen. Wir nutzen unser tiefgreifendes Branchenwissen, um anspruchsvolle Kunden mit außergewöhnlichen Automobilen zusammenzubringen.",
+            "paragraph2": "Die von uns angebotenen Fahrzeuge werden sorgfältig über ein Netzwerk vertrauenswürdiger Kunden und Geschäftspartner bezogen – Beziehungen, die über Jahre hinweg gepflegt wurden und fest auf gegenseitigem Vertrauen basieren. Wir führen hauptsächlich Neufahrzeuge, und alle Gebrauchtwagen werden streng geprüft und stets mit einer vollständigen Servicehistorie geliefert.",
+            "paragraph3": "Unsere umfangreiche Erfahrung und unser starkes Partnernetzwerk ermöglichen es uns, über das Konventionelle hinauszugehen. Wir sind spezialisiert auf die Beschaffung spezifischer Fahrzeuge auf Anfrage, einschließlich schwer zu findender Modelle, limitierter Editionen und sogar der Sicherung vorteilhafter Produktionskontingente für Neufahrzeuge verschiedener renommierter Marken.",
+            "imageAlt": "PremiumCarsEU Showroom und Team"
         },
         "values": {
             "title": "Unsere Werte",
@@ -301,8 +302,8 @@
         "team": {
             "title": "Lernen Sie das Team kennen",
             "member1": {
-                "imageAlt": "Michael Brunner",
-                "name": "Michael Brunner",
+                "imageAlt": "Marco Varga",
+                "name": "Marco Varga",
                 "title": "Gründer & CEO",
                 "quote": "\"Unser Ziel ist es, die Art und Weise, wie Menschen Autos kaufen und verkaufen, neu zu erfinden und es zum angenehmsten Kauf zu machen, den sie jemals tätigen werden.\""
             },
@@ -310,7 +311,7 @@
                 "imageAlt": "Sarah Mueller",
                 "name": "Sarah Mueller",
                 "title": "Verkaufsdirektorin",
-                "quote": "\"Ich glaube daran, Beziehungen aufzubauen, nicht nur Autos zu verkaufen. Unsere Kunden werden Teil der CarBiz-Familie.\""
+                "quote": "\"Ich glaube daran, Beziehungen aufzubauen, nicht nur Autos zu verkaufen. Unsere Kunden werden Teil der PremiumCarsEU-Familie.\""
             },
             "member3": {
                 "imageAlt": "Thomas Weber",
@@ -334,11 +335,11 @@
             "description": "Füllen Sie das folgende Formular mit Ihrer Anfrage aus und wir werden so schnell wie möglich antworten."
         },
         "labels": {
-            "fullName": "Vollständiger Name<span class=\"text-red-500\">*</span>",
-            "email": "E-Mail-Adresse<span class=\"text-red-500\">*</span>",
+            "fullName": "Vollständiger Name",
+            "email": "E-Mail-Adresse",
             "phone": "Telefonnummer (Optional)",
-            "subject": "Betreff<span class=\"text-red-500\">*</span>",
-            "message": "Nachricht<span class=\"text-red-500\">*</span>"
+            "subject": "Betreff",
+            "message": "Nachricht"
         },
         "placeholders": {
             "fullName": "Geben Sie Ihren vollständigen Namen ein",
@@ -389,7 +390,7 @@
     "SellPage": {
         "hero": {
             "title": "Verkaufen Sie Ihr Auto mit Vertrauen",
-            "subtitle": "Erhalten Sie einen fairen Preis und eine problemlose Erfahrung, wenn Sie Ihr Auto über CarBiz verkaufen. Keine Zwischenhändler, keine versteckten Gebühren - nur ein unkomplizierter Service."
+            "subtitle": "Erhalten Sie einen fairen Preis und eine problemlose Erfahrung, wenn Sie Ihr Auto über PremiumCarsEU verkaufen. Keine Zwischenhändler, keine versteckten Gebühren - nur ein unkomplizierter Service."
         },
         "benefits": {
             "title": "Warum mit uns verkaufen?",
@@ -423,17 +424,17 @@
             "additionalInfo": "Zusätzliche Informationen"
         },
         "labels": {
-            "fullName": "Vollständiger Name<span class=\"text-red-500\">*</span>",
-            "email": "E-Mail-Adresse<span class=\"text-red-500\">*</span>",
-            "phone": "Telefonnummer<span class=\"text-red-500\">*</span>",
-            "make": "Automarke<span class=\"text-red-500\">*</span>",
-            "model": "Automodell<span class=\"text-red-500\">*</span>",
-            "year": "Baujahr<span class=\"text-red-500\">*</span>",
-            "mileage": "Laufleistung<span class=\"text-red-500\">*</span>",
-            "fuelType": "Kraftstoffart<span class=\"text-red-500\">*</span>",
-            "transmission": "Getriebe<span class=\"text-red-500\">*</span>",
-            "condition": "Zustand<span class=\"text-red-500\">*</span>",
-            "city": "Stadt<span class=\"text-red-500\">*</span>",
+            "fullName": "Vollständiger Name",
+            "email": "E-Mail-Adresse",
+            "phone": "Telefonnummer",
+            "make": "Automarke",
+            "model": "Automodell",
+            "year": "Baujahr",
+            "mileage": "Laufleistung",
+            "fuelType": "Kraftstoffart",
+            "transmission": "Getriebe",
+            "condition": "Zustand",
+            "city": "Stadt",
             "askingPrice": "Preisvorstellung (Optional)",
             "photos": "Fotos hochladen",
             "description": "Beschreibung / Anmerkungen"
@@ -696,7 +697,7 @@
         },
         "sellerInfo": {
             "title": "Verkäuferinformationen",
-            "fallbackName": "CarBiz Händler",
+            "fallbackName": "PremiumCarsEU Händler",
             "memberSince": "Mitglied seit {year}",
             "fallbackInitial": "H",
             "fallbackYear": "2022"
@@ -712,6 +713,105 @@
         "conditionValues": {
             "new": "Neu",
             "used": "Gebraucht"
+        }
+    },
+    "ContactFormModal": {
+        "triggerButton": "Verkäufer kontaktieren",
+        "title": "Verkäufer kontaktieren",
+        "description": "Füllen Sie dieses Formular aus, um sich nach dem {carName} zu erkundigen. Der Verkäufer wird sich in Kürze bei Ihnen melden.",
+        "labels": {
+            "name": "Ihr Name",
+            "phone": "Telefonnummer",
+            "email": "E-Mail (optional)",
+            "message": "Nachricht",
+            "whatsappConsent": "Ich stimme der Kontaktaufnahme per WhatsApp zu"
+        },
+        "placeholders": {
+            "name": "Geben Sie Ihren Namen ein",
+            "phone": "Geben Sie Ihre Telefonnummer ein",
+            "email": "Ihre E-Mail",
+            "message": "Geben Sie Ihre Nachricht ein"
+        },
+        "buttons": {
+            "cancel": "Abbrechen",
+            "submit": "Nachricht senden",
+            "submitting": "Wird gesendet..."
+        },
+        "defaultMessage": "Ich interessiere mich für den {carName}. Bitte kontaktieren Sie mich mit weiteren Informationen.",
+        "toast": {
+            "successTitle": "Nachricht gesendet!",
+            "successDescription": "Danke! Wir werden uns in Kürze per WhatsApp bei Ihnen melden.",
+            "errorTitle": "Fehler",
+            "errorDescription": "Beim Senden Ihrer Nachricht ist ein Problem aufgetreten. Bitte versuchen Sie es erneut."
+        }
+    },
+    "ReservationModal": {
+        "triggerButton": "Dieses Fahrzeug reservieren",
+        "title": "Fahrzeug reservieren",
+        "description": "Füllen Sie dieses Formular aus, um den {carName} zu reservieren. Wir werden Sie kontaktieren, um die Details zu bestätigen.",
+        "labels": {
+            "name": "Vollständiger Name",
+            "email": "E-Mail",
+            "phone": "Telefonnummer"
+        },
+        "placeholders": {
+            "name": "Geben Sie Ihren vollständigen Namen ein",
+            "email": "Geben Sie Ihre E-Mail-Adresse ein",
+            "phone": "Geben Sie Ihre Telefonnummer ein"
+        },
+        "validation": {
+            "nameMin": "Der Name muss mindestens 2 Zeichen lang sein.",
+            "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+            "phoneMin": "Bitte geben Sie eine gültige Telefonnummer ein."
+        },
+        "reservingVehicle": "Reservierung für: {carName}",
+        "termsNotice": "Durch das Absenden dieses Formulars stimmen Sie unseren Reservierungsbedingungen und -richtlinien zu.",
+        "buttons": {
+            "cancel": "Abbrechen",
+            "submit": "Fahrzeug reservieren",
+            "submitting": "Wird gesendet..."
+        },
+        "toast": {
+            "successTitle": "Reservierung übermittelt",
+            "successDescription": "Wir haben Ihre Reservierung für den {carName} erhalten. Wir werden Sie in Kürze kontaktieren.",
+            "errorTitle": "Reservierung fehlgeschlagen",
+            "errorDescription": "Beim Übermitteln Ihrer Reservierung ist ein Problem aufgetreten. Bitte versuchen Sie es erneut."
+        }
+    },
+    "TestDriveModal": {
+        "triggerButton": "Probefahrt vereinbaren",
+        "title": "Probefahrt vereinbaren",
+        "description": "Füllen Sie das folgende Formular aus, um eine Probefahrt für {carName} zu vereinbaren.",
+        "labels": {
+            "fullName": "Vollständiger Name",
+            "email": "E-Mail",
+            "phone": "Telefonnummer",
+            "date": "Bevorzugtes Datum",
+            "time": "Bevorzugte Zeit"
+        },
+        "placeholders": {
+            "fullName": "Max Mustermann",
+            "email": "ihre@email.com",
+            "phone": "(0123) 4567890",
+            "date": "Datum auswählen",
+            "time": "Zeit auswählen"
+        },
+        "validation": {
+            "nameRequired": "Name ist erforderlich",
+            "emailRequired": "Gültige E-Mail ist erforderlich",
+            "phoneRequired": "Gültige Telefonnummer ist erforderlich",
+            "dateRequired": "Bitte wählen Sie ein Datum aus",
+            "timeRequired": "Bitte wählen Sie eine Zeit aus"
+        },
+        "buttons": {
+            "submit": "Probefahrt vereinbaren",
+            "submitting": "Wird gesendet..."
+        },
+        "toast": {
+            "successTitle": "Probefahrt vereinbart",
+            "successDescription": "Wir werden Sie kontaktieren, um Ihren Termin zu bestätigen.",
+            "errorTitle": "Probefahrt konnte nicht vereinbart werden",
+            "errorDescription": "Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support."
         }
     },
     "Common": {

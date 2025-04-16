@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Settings | CarBiz Admin",
+  title: "Settings | PremiumCarsEU Admin",
 };
 
 export default function SettingsPage() {

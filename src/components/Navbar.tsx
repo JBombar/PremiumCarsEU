@@ -1,5 +1,3 @@
-// src/components/Navbar.tsx
-
 "use client";
 
 import { useState } from "react";
@@ -13,22 +11,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-// Imports for language switching AND translation
-import { useLocale, useTranslations } from 'next-intl'; // Added useTranslations
-import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // --- Internationalization Hooks ---
   const currentLocale = useLocale();
   const router = useRouter();
-  const tNav = useTranslations('Navbar');    // Hook for Navbar specific translations
-  const tCommon = useTranslations('Common'); // Hook for common translations like Sign In/Register
-  // --- End Internationalization Hooks ---
+  const tNav = useTranslations("Navbar");
+  const tCommon = useTranslations("Common");
 
-  const supportedLocales = ['en', 'de'];
+  const supportedLocales = ["en", "de", "fr", "it", "sk", "pl", "hu"];
 
   const switchLocale = (newLocale: string) => {
     if (newLocale === currentLocale) return;
@@ -39,7 +32,6 @@ export function Navbar() {
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  // Modify navLinks: Use keys instead of hardcoded labels
   const navLinks = [
     { key: "home", href: "/" },
     { key: "requestCar", href: "#request-car-form" },
@@ -49,12 +41,15 @@ export function Navbar() {
     { key: "contact", href: "/contact" },
   ];
 
-  // Component for the language switcher dropdown content (remains the same)
   const LanguageSwitcherContent = () => (
     <>
       {supportedLocales.map((loc) => (
-        <DropdownMenuItem key={loc} disabled={currentLocale === loc} onSelect={() => switchLocale(loc)}
-          className={`${currentLocale === loc ? "font-semibold bg-muted" : ""} px-3 py-2 text-sm cursor-pointer hover:bg-accent focus:bg-accent focus:outline-none`}
+        <DropdownMenuItem
+          key={loc}
+          disabled={currentLocale === loc}
+          onSelect={() => switchLocale(loc)}
+          className={`${currentLocale === loc ? "font-semibold bg-muted" : ""
+            } px-3 py-2 text-sm cursor-pointer hover:bg-accent focus:bg-accent focus:outline-none`}
         >
           {loc.toUpperCase()}
         </DropdownMenuItem>
@@ -64,50 +59,63 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 flex h-16 items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 flex flex-wrap items-center gap-y-2 h-auto min-h-16">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="flex items-center mr-4">
           <Link href="/" className="flex items-center space-x-2">
             <Hexagon className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block">CarBiz</span> {/* Keep Brand Name Untranslated */}
+            <span className="hidden font-bold sm:inline-block">PremiumCarsEU</span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
-          <ul className="flex items-center space-x-8">
-            {/* Use tNav to translate link labels */}
+        <nav className="hidden md:flex flex-1 justify-center min-w-0">
+          <ul className="flex items-center justify-center gap-x-4 lg:gap-x-6 whitespace-nowrap overflow-hidden">
             {navLinks.map(({ key, href }) => (
               <li key={key}>
-                <Link href={href} className="text-sm font-medium relative px-3 py-2 transition-all duration-300 group">
-                  <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
-                    {tNav(`links.${key}`)} {/* Use translation key */}
+                <Link
+                  href={href}
+                  className="relative text-sm font-medium px-3 py-2 rounded-md transition-all duration-300 group overflow-hidden"
+                >
+                  <span className="relative z-10 group-hover:text-white">
+                    {tNav(`links.${key}`)}
                   </span>
-                  <span className="absolute inset-0 rounded-md bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out z-0"></span>
+                  <span className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out rounded-md bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900" />
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        {/* Right Side: Language Dropdown, Auth, Mobile Toggle */}
-        <div className="flex items-center space-x-3">
-          {/* Avatar & Auth Buttons */}
-          <Avatar className="h-8 w-8"><AvatarFallback></AvatarFallback></Avatar>
+        {/* Right Side Controls */}
+        <div className="flex items-center ml-auto space-x-3 shrink-0 max-w-full">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback />
+          </Avatar>
           <Link href="/login">
-            {/* Use tCommon for button text */}
-            <Button variant="outline" size="sm" className="hidden sm:inline-flex">{tCommon('signIn')}</Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden sm:inline-flex whitespace-nowrap"
+            >
+              {tCommon("signIn")}
+            </Button>
           </Link>
           <Link href="/register">
-            {/* Use tCommon for button text */}
-            <Button size="sm" className="hidden sm:inline-flex">{tCommon('register')}</Button>
+            <Button size="sm" className="hidden sm:inline-flex whitespace-nowrap">
+              {tCommon("register")}
+            </Button>
           </Link>
 
-          {/* Desktop Language Switcher Dropdown (moved after auth buttons) */}
+          {/* Language Switcher */}
           <div className="hidden sm:flex">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center gap-1 text-xs font-medium">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1 text-xs font-medium"
+                >
                   {currentLocale.toUpperCase()} <ChevronDown className="h-3 w-3" />
                 </Button>
               </DropdownMenuTrigger>
@@ -121,42 +129,59 @@ export function Navbar() {
             </DropdownMenu>
           </div>
 
-          {/* Mobile Menu Toggle Button */}
-          <button onClick={toggleMobileMenu} className="md:hidden p-2 focus:outline-none"
-            // Use tNav for aria-label
-            aria-label={isMobileMenuOpen ? tNav('mobileMenu.closeLabel') : tNav('mobileMenu.openLabel')}
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={toggleMobileMenu}
+            className="md:hidden p-2 focus:outline-none"
+            aria-label={
+              isMobileMenuOpen
+                ? tNav("mobileMenu.closeLabel")
+                : tNav("mobileMenu.openLabel")
+            }
           >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute w-full bg-background border-b border-border/40 shadow-lg">
           <nav className="px-6 py-4">
             <ul className="space-y-4">
-              {/* Mobile Nav Links */}
-              {/* Use tNav to translate link labels */}
               {navLinks.map(({ key, href }) => (
                 <li key={key}>
-                  <Link href={href} className="block text-sm font-medium py-2 hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>
-                    {tNav(`links.${key}`)} {/* Use translation key */}
+                  <Link
+                    href={href}
+                    className="block text-sm font-medium py-2 hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {tNav(`links.${key}`)}
                   </Link>
                 </li>
               ))}
 
-              {/* Mobile Language Switcher Dropdown */}
+              {/* Mobile Language Switcher */}
               <li className="pt-4 border-t border-border/40">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="w-full flex justify-between items-center">
-                      {/* Use tNav for prefix */}
-                      <span>{tNav('languageSwitcher.labelPrefix')}{currentLocale.toUpperCase()}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full flex justify-between items-center"
+                    >
+                      <span>{tNav("languageSwitcher.labelPrefix")}{currentLocale.toUpperCase()}</span>
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[--radix-dropdown-menu-trigger-width] bg-background border border-border rounded-md shadow-md overflow-hidden">
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-[--radix-dropdown-menu-trigger-width] bg-background border border-border rounded-md shadow-md overflow-hidden"
+                  >
                     <LanguageSwitcherContent />
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -165,13 +190,23 @@ export function Navbar() {
               {/* Mobile Auth Buttons */}
               <li className="pt-4 border-t border-border/40">
                 <div className="flex flex-col space-y-3">
-                  <Link href="/login" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                    {/* Use tCommon for button text */}
-                    <Button variant="outline" size="sm" className="w-full">{tCommon('signIn')}</Button>
+                  <Link
+                    href="/login"
+                    className="w-full"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Button variant="outline" size="sm" className="w-full">
+                      {tCommon("signIn")}
+                    </Button>
                   </Link>
-                  <Link href="/register" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                    {/* Use tCommon for button text */}
-                    <Button size="sm" className="w-full">{tCommon('register')}</Button>
+                  <Link
+                    href="/register"
+                    className="w-full"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Button size="sm" className="w-full">
+                      {tCommon("register")}
+                    </Button>
                   </Link>
                 </div>
               </li>

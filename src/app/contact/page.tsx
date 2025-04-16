@@ -201,7 +201,7 @@ export default function ContactPage() {
                   <Mail className="h-5 w-5 text-primary mt-0.5" />
                   <div>
                     <h3 className="font-medium">{t('infoCard.emailTitle')}</h3>
-                    <p className="text-muted-foreground">info@carbiz.ch</p> {/* Keep email static */}
+                    <p className="text-muted-foreground">info@PremiumCarsEU.ch</p> {/* Keep email static */}
                   </div>
                 </div>
                 {/* Working Hours */}

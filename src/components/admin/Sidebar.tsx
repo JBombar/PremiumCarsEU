@@ -65,7 +65,7 @@ export default function Sidebar() {
           <>
             <div className="flex items-center gap-2">
               <Car className="h-6 w-6" />
-              <span className="font-semibold text-lg">CarBiz Admin</span>
+              <span className="font-semibold text-lg">PremiumCarsEU Admin</span>
             </div>
           </>
         )}

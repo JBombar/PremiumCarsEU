@@ -18,7 +18,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Column */}
           <div className="space-y-4 pl-0 md:pl-4">
-            <div className="font-bold text-xl">CarBiz</div> {/* Assuming 'CarBiz' is a brand name, not translated */}
+            <div className="font-bold text-xl">PremiumCarsEU</div> {/* Assuming 'PremiumCarsEU' is a brand name, not translated */}
             <p className="text-gray-400 max-w-xs">
               {tFooter('brand.slogan')}
             </p>

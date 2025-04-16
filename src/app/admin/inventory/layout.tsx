@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Inventory | CarBiz Admin",
+  title: "Inventory | PremiumCarsEU Admin",
 };
 
 export default function InventoryLayout({

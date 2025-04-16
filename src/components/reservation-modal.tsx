@@ -1,3 +1,4 @@
+// src/components/reservation-modal.tsx
 'use client';
 
 import { useState } from 'react';
@@ -14,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/label'; // Keep Label import if needed elsewhere, though FormLabel is used now
 import { toast } from '@/components/ui/use-toast';
 import { Calendar, Car } from 'lucide-react';
 import {
@@ -25,15 +26,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-
-// Define validation schema using zod
-const reservationSchema = z.object({
-    customer_name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-    email: z.string().email({ message: 'Please enter a valid email address.' }),
-    phone: z.string().min(10, { message: 'Please enter a valid phone number.' }),
-});
-
-type ReservationFormValues = z.infer<typeof reservationSchema>;
+import { useTranslations } from 'next-intl'; // Import useTranslations
 
 interface ReservationModalProps {
     carId: string;
@@ -41,8 +34,18 @@ interface ReservationModalProps {
 }
 
 export function ReservationModal({ carId, carName }: ReservationModalProps) {
+    const t = useTranslations('ReservationModal'); // Initialize translations
     const [open, setOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Define validation schema using zod with translated messages
+    const reservationSchema = z.object({
+        customer_name: z.string().min(2, { message: t('validation.nameMin') }),
+        email: z.string().email({ message: t('validation.emailInvalid') }),
+        phone: z.string().min(10, { message: t('validation.phoneMin') }), // Assuming min 10 is still the validation rule
+    });
+
+    type ReservationFormValues = z.infer<typeof reservationSchema>;
 
     // Initialize react-hook-form with zod validation
     const form = useForm<ReservationFormValues>({
@@ -68,13 +71,23 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
                     customer_name: data.customer_name,
                     email: data.email,
                     phone: data.phone,
-                    vehicle: carName,
+                    vehicle: carName, // Keep sending original carName
                     car_id: carId,
                 }),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit reservation');
+                // Try to get a more specific error message if backend provides one
+                let errorMsg = t('toast.errorDescription');
+                try {
+                    const errorData = await response.json();
+                    if (errorData && errorData.message) {
+                        errorMsg = errorData.message;
+                    }
+                } catch (parseError) {
+                    // Ignore if response is not JSON or parsing fails
+                }
+                throw new Error(errorMsg);
             }
 
             // Reset form
@@ -85,15 +98,15 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
 
             // Show success toast
             toast({
-                title: 'Reservation Submitted',
-                description: `We've received your reservation for the ${carName}. We'll contact you shortly.`,
+                title: t('toast.successTitle'),
+                description: t('toast.successDescription', { carName }),
                 duration: 5000,
             });
         } catch (error) {
             console.error('Error submitting reservation:', error);
             toast({
-                title: 'Reservation Failed',
-                description: 'There was a problem submitting your reservation. Please try again.',
+                title: t('toast.errorTitle'),
+                description: error instanceof Error ? error.message : t('toast.errorDescription'),
                 variant: 'destructive',
             });
         } finally {
@@ -109,15 +122,15 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
                 onClick={() => setOpen(true)}
             >
                 <Calendar className="mr-2 h-4 w-4" />
-                Reserve This Vehicle
+                {t('triggerButton')}
             </Button>
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Reserve Vehicle</DialogTitle>
+                        <DialogTitle>{t('title')}</DialogTitle>
                         <DialogDescription>
-                            Complete this form to reserve the {carName}. We'll contact you to confirm details.
+                            {t('description', { carName })}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -128,14 +141,14 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
                                 name="customer_name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Full Name</FormLabel>
+                                        <FormLabel>{t('labels.name')}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Enter your full name"
+                                                placeholder={t('placeholders.name')}
                                                 {...field}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage /> {/* RHF handles showing Zod message */}
                                     </FormItem>
                                 )}
                             />
@@ -145,15 +158,15 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>{t('labels.email')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="email"
-                                                placeholder="Enter your email address"
+                                                placeholder={t('placeholders.email')}
                                                 {...field}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage /> {/* RHF handles showing Zod message */}
                                     </FormItem>
                                 )}
                             />
@@ -163,15 +176,15 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
                                 name="phone"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormLabel>{t('labels.phone')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="tel"
-                                                placeholder="Enter your phone number"
+                                                placeholder={t('placeholders.phone')}
                                                 {...field}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage /> {/* RHF handles showing Zod message */}
                                     </FormItem>
                                 )}
                             />
@@ -179,10 +192,10 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
                             <div className="pt-2 mt-2 border-t text-sm text-muted-foreground">
                                 <div className="flex items-center gap-2 mb-1">
                                     <Car className="h-4 w-4" />
-                                    <span>Reserving: {carName}</span>
+                                    <span>{t('reservingVehicle', { carName })}</span>
                                 </div>
                                 <p>
-                                    By submitting this form, you agree to our reservation terms and policies.
+                                    {t('termsNotice')}
                                 </p>
                             </div>
 
@@ -193,10 +206,10 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
                                     onClick={() => setOpen(false)}
                                     disabled={isSubmitting}
                                 >
-                                    Cancel
+                                    {t('buttons.cancel')}
                                 </Button>
                                 <Button type="submit" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Submitting...' : 'Reserve Vehicle'}
+                                    {isSubmitting ? t('buttons.submitting') : t('buttons.submit')}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -205,4 +218,4 @@ export function ReservationModal({ carId, carName }: ReservationModalProps) {
             </Dialog>
         </>
     );
-} 
+}

@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ['latin'] });
 // Note: Metadata title/description might also need translation later,
 // but we'll keep them static for now as per the current scope.
 export const metadata: Metadata = {
-  title: 'CarBiz - Find Your Perfect Car',
+  title: 'PremiumCarsEU - Find Your Perfect Car',
   description: 'Your premium destination for new and pre-owned vehicles',
 };
 

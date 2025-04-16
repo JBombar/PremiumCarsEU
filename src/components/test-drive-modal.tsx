@@ -1,3 +1,4 @@
+// src/components/test-drive-modal.tsx
 "use client";
 
 import { useState } from "react";
@@ -9,8 +10,8 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogPortal,
-    DialogOverlay,
+    // DialogPortal, // Not explicitly used, can be removed if not needed
+    // DialogOverlay, // Not explicitly used, can be removed if not needed
 } from "@/components/ui/dialog";
 import {
     Form,
@@ -38,24 +39,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client"; // Assuming correct path
 import { toast } from "@/components/ui/use-toast";
 import { Calendar as CalendarIcon } from "lucide-react";
-
-// ✅ Schema for test drive form
-const testDriveFormSchema = z.object({
-    fullName: z.string().min(2, "Name is required"),
-    email: z.string().email("Valid email is required"),
-    phone: z.string().min(10, "Valid phone number is required"),
-    date: z.date({
-        required_error: "Please select a date",
-    }),
-    time: z.string({
-        required_error: "Please select a time",
-    }),
-});
-
-type TestDriveFormValues = z.infer<typeof testDriveFormSchema>;
+import { useTranslations } from 'next-intl'; // Import useTranslations
 
 interface TestDriveModalProps {
     carId: string;
@@ -64,8 +51,24 @@ interface TestDriveModalProps {
 }
 
 export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) {
+    const t = useTranslations('TestDriveModal'); // Initialize translations
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+
+    // Define validation schema using zod with translated messages
+    const testDriveFormSchema = z.object({
+        fullName: z.string().min(2, t('validation.nameRequired')),
+        email: z.string().email(t('validation.emailRequired')),
+        phone: z.string().min(10, t('validation.phoneRequired')),
+        date: z.date({
+            required_error: t('validation.dateRequired'),
+        }),
+        time: z.string({
+            required_error: t('validation.timeRequired'),
+        }),
+    });
+
+    type TestDriveFormValues = z.infer<typeof testDriveFormSchema>;
 
     const form = useForm<TestDriveFormValues>({
         resolver: zodResolver(testDriveFormSchema),
@@ -74,6 +77,7 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
             email: "",
             phone: "",
             time: "",
+            // date: undefined // default is handled by RHF/Zod
         },
     });
 
@@ -85,11 +89,11 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
 
             const { error } = await supabase.from("test_drive_reservations").insert({
                 car_id: carId,
-                vehicle: carName,
+                vehicle: carName, // Keep original carName for backend
                 customer_name: data.fullName,
                 email: data.email,
                 phone: data.phone,
-                date: format(data.date, "yyyy-MM-dd"),
+                date: format(data.date, "yyyy-MM-dd"), // Keep standard format for DB
                 time: data.time,
                 status: "pending", // ✅ ENUM-compatible value
                 user_id: userId || null,
@@ -99,8 +103,8 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
             if (error) throw error;
 
             toast({
-                title: "Test drive scheduled",
-                description: "We will contact you to confirm your appointment.",
+                title: t('toast.successTitle'),
+                description: t('toast.successDescription'),
                 variant: "default",
             });
 
@@ -108,9 +112,11 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
             setIsOpen(false);
         } catch (error) {
             console.error("Error scheduling test drive:", error);
+            // Attempt to provide a more specific error if possible
+            const errorMessage = error instanceof Error ? error.message : t('toast.errorDescription');
             toast({
-                title: "Failed to schedule test drive",
-                description: "Please try again later or contact support.",
+                title: t('toast.errorTitle'),
+                description: errorMessage,
                 variant: "destructive",
             });
         } finally {
@@ -118,29 +124,35 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
         }
     }
 
+    // Time slots generation logic remains the same
     const timeSlots = Array.from({ length: 17 }, (_, i) => {
-        const hour = Math.floor((i + 18) / 2) % 12 || 12;
-        const minute = (i + 18) % 2 === 0 ? "00" : "30";
-        const period = Math.floor((i + 18) / 2) < 12 ? "AM" : "PM";
+        const hour24 = Math.floor((i + 18) / 2); // 9 AM to 5 PM (17 slots, starting at 9:00) -> 9 to 17
+        const hour12 = hour24 % 12 || 12; // Convert to 12-hour format
+        const minute = i % 2 === 0 ? "00" : "30";
+        const period = hour24 < 12 ? "AM" : "PM";
+        const value = `${String(hour24).padStart(2, '0')}:${minute}`; // Store as 24hr format for consistency? Or keep 12hr? Let's keep 12hr for display consistency.
+        const label = `${hour12}:${minute} ${period}`;
         return {
-            value: `${hour}:${minute} ${period}`,
-            label: `${hour}:${minute} ${period}`,
+            value: label, // Use the display label as the value for simplicity here
+            label: label,
         };
     });
+
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" className="w-full flex items-center justify-center gap-2">
                     <CalendarIcon className="h-4 w-4" />
-                    Schedule Test Drive
+                    {t('triggerButton')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] overflow-visible">
+            {/* Removed overflow-visible as PopoverContent handles its own positioning */}
+            <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                    <DialogTitle>Schedule a Test Drive</DialogTitle>
+                    <DialogTitle>{t('title')}</DialogTitle>
                     <DialogDescription>
-                        Fill out the form below to schedule a test drive for {carName}.
+                        {t('description', { carName })}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -151,9 +163,9 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
                             name="fullName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Full Name</FormLabel>
+                                    <FormLabel>{t('labels.fullName')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="John Doe" {...field} />
+                                        <Input placeholder={t('placeholders.fullName')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -165,9 +177,9 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>{t('labels.email')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="you@example.com" type="email" {...field} />
+                                        <Input placeholder={t('placeholders.email')} type="email" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -179,9 +191,9 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
                             name="phone"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
+                                    <FormLabel>{t('labels.phone')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="(123) 456-7890" {...field} />
+                                        <Input placeholder={t('placeholders.phone')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -193,19 +205,25 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
                             name="date"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <FormLabel>Preferred Date</FormLabel>
+                                    <FormLabel>{t('labels.date')}</FormLabel>
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <FormControl>
-                                                <Button variant="outline" className="pl-3 text-left font-normal h-10">
+                                                {/* Added explicit height h-10 to match Input */}
+                                                <Button
+                                                    variant="outline"
+                                                    className="w-full justify-start pl-3 text-left font-normal h-10" // Ensure consistent height
+                                                >
+                                                    <CalendarIcon className="mr-2 h-4 w-4" /> {/* Added Icon */}
                                                     {field.value ? format(field.value, "PPP") : (
-                                                        <span className="text-muted-foreground">Pick a date</span>
+                                                        <span className="text-muted-foreground">{t('placeholders.date')}</span>
                                                     )}
                                                 </Button>
                                             </FormControl>
                                         </PopoverTrigger>
+                                        {/* Removed z-50, Popover handles layering. Removed pointer-events-auto */}
                                         <PopoverContent
-                                            className="w-auto p-0 z-50 bg-white shadow-md border rounded-md pointer-events-auto"
+                                            className="w-auto p-0 bg-background shadow-md border rounded-md" // Use bg-background for theme consistency
                                             align="start"
                                             sideOffset={5}
                                         >
@@ -214,11 +232,10 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
                                                 selected={field.value}
                                                 onSelect={field.onChange}
                                                 disabled={(date) =>
-                                                    date < new Date(new Date().setHours(0, 0, 0, 0)) ||
-                                                    date.getDay() === 0
+                                                    date < new Date(new Date().setHours(0, 0, 0, 0)) || // Disable past dates
+                                                    date.getDay() === 0 // Disable Sundays
                                                 }
                                                 initialFocus
-                                                className="pointer-events-auto"
                                             />
                                         </PopoverContent>
                                     </Popover>
@@ -232,11 +249,12 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
                             name="time"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Preferred Time</FormLabel>
+                                    <FormLabel>{t('labels.time')}</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select time" />
+                                                {/* Use SelectValue for placeholder */}
+                                                <SelectValue placeholder={t('placeholders.time')} />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -253,7 +271,7 @@ export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) 
                         />
 
                         <Button type="submit" className="w-full" disabled={isSubmitting}>
-                            {isSubmitting ? "Submitting..." : "Schedule Test Drive"}
+                            {isSubmitting ? t('buttons.submitting') : t('buttons.submit')}
                         </Button>
                     </form>
                 </Form>

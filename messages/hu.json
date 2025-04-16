@@ -1,0 +1,822 @@
+{
+    "HomePage": {
+        "hero": {
+            "title": "Találja meg tökéletes autóját",
+            "subtitle": "Prémium úti célja új és használt járművek számára",
+            "browseButton": "Készlet böngészése",
+            "contactButton": "Lépjen kapcsolatba velünk",
+            "imageAlt": "Luxus fekete autó"
+        },
+        "testimonials": {
+            "title": "Mit mondanak az ügyfelek",
+            "trustpilot": {
+                "title": "TrustPilot értékelések",
+                "quote": "A csapat segített megtalálni a tökéletes autót a családom számára. Szolgáltatásuk professzionális volt, és stresszmentessé tette a folyamatot.",
+                "author": "- Michael Weber"
+            },
+            "google": {
+                "title": "Google értékelések",
+                "quote": "Lenyűgözött, hogy milyen gyorsan megtalálták pontosan azt, amit kerestem. Nagyszerű ügyfélszolgálat!",
+                "author": "- Laura Schmid"
+            }
+        },
+        "stats": {
+            "title": "Több ezren bíznak bennünk",
+            "carsSoldLabel": "Eladott autók",
+            "averageRatingLabel": "Átlagos értékelés",
+            "locationsLabel": "Telephelyek Svájcban"
+        }
+    },
+    "Navbar": {
+        "links": {
+            "home": "Kezdőlap",
+            "requestCar": "Autó kérése",
+            "sellCar": "Autó eladása",
+            "searchCars": "Autók keresése",
+            "aboutUs": "Rólunk",
+            "contact": "Kapcsolat"
+        },
+        "mobileMenu": {
+            "openLabel": "Menü megnyitása",
+            "closeLabel": "Menü bezárása"
+        },
+        "languageSwitcher": {
+            "labelPrefix": "Nyelv: "
+        }
+    },
+    "Footer": {
+        "brand": {
+            "slogan": "Modern autókereskedés weboldalak, egyszerűen.",
+            "copyright": "© {year} PremiumCarsEU. Minden jog fenntartva."
+        },
+        "quickLinks": {
+            "title": "Gyors linkek",
+            "search": "Keresés",
+            "newCars": "Új autók",
+            "preowned": "Használt autók"
+        },
+        "supportLegal": {
+            "title": "Támogatás és jogi információk",
+            "privacyPolicy": "Adatvédelmi irányelvek",
+            "terms": "Szolgáltatási feltételek",
+            "faq": "GYIK",
+            "customerSupport": "Ügyfélszolgálat"
+        },
+        "contactUs": {
+            "title": "Lépjen kapcsolatba velünk"
+        },
+        "followUs": {
+            "title": "Kövessen minket",
+            "socialAriaLabels": {
+                "facebook": "Facebook",
+                "instagram": "Instagram",
+                "linkedIn": "LinkedIn",
+                "twitter": "Twitter"
+            }
+        }
+    },
+    "BrowseByType": {
+        "title": "Böngészés típus szerint",
+        "types": {
+            "suv": "SUV",
+            "sedan": "Szedán",
+            "hatchback": "Ferdehátú",
+            "electric": "Elektromos",
+            "convertible": "Kabrió",
+            "hybrid": "Hibrid",
+            "coupe": "Kupé",
+            "van": "Kisbusz"
+        }
+    },
+    "CredibilitySection": {
+        "widgets": {
+            "trustpilotPlaceholder": "TrustPilot értékelések Widget",
+            "googlePlaceholder": "Google értékelések Widget"
+        },
+        "carousel": {
+            "ariaLabel": "{index}. ajánlás megtekintése"
+        },
+        "sampleTestimonials": [
+            {
+                "id": 1,
+                "name": "Thomas Weber",
+                "quote": "A PremiumCarsEU segített megtalálni a tökéletes autót a családom számára. Csapatuk professzionális volt, és stresszmentessé tette a folyamatot."
+            },
+            {
+                "id": 2,
+                "name": "Laura Schmid",
+                "quote": "Lenyűgözött, hogy milyen gyorsan megtalálták pontosan azt, amit kerestem. Nagyszerű választék és kiváló szolgáltatás."
+            },
+            {
+                "id": 3,
+                "name": "Daniel Meier",
+                "quote": "A PremiumCarsEU csapata mindent megtett, hogy segítsen nekem autót találni a költségvetésemen belül. Nagyon ajánlom!"
+            }
+        ]
+    },
+    "WhyChooseUs": {
+        "title": "Miért válasszon minket?",
+        "features": {
+            "quality": {
+                "title": "Tanúsított minőség",
+                "description": "Minden autónk 150 pontos ellenőrzésen esik át a biztonság és a teljesítmény biztosítása érdekében."
+            },
+            "process": {
+                "title": "Gyors és egyszerű folyamat",
+                "description": "Kapjon jóváhagyást és vezessen el kevesebb mint 24 órán belül egyszerűsített folyamatunkkal."
+            },
+            "customer": {
+                "title": "Az ügyfél az első",
+                "description": "Előtérbe helyezzük az átláthatóságot és a támogatást – a vásárlás előtt, alatt és után is."
+            }
+        }
+    },
+    "SpecialOfferCarousel": {
+        "title": "Különleges ajánlatok",
+        "loadingError": "Nem sikerült betölteni a különleges ajánlatokat",
+        "emptyState": "Jelenleg nincsenek elérhető különleges ajánlatok.",
+        "defaultOfferLabel": "🔥 Különleges ajánlat",
+        "imageAlt": "{carTitle}",
+        "kmUnit": "km",
+        "viewOfferButton": "Ajánlat megtekintése",
+        "srPrevious": "Előző",
+        "srNext": "Következő",
+        "indicatorAriaLabel": "Ugrás a(z) {index}. diára"
+    },
+    "OurServices": {
+        "title": "Szolgáltatásaink",
+        "services": {
+            "maintenance": {
+                "title": "Karbantartási csomagok",
+                "description": "Megfizethető szerviztervek az autója igényeihez szabva."
+            },
+            "tradeIn": {
+                "title": "Beszámítási program",
+                "description": "Könnyedén beszámíthatja jelenlegi járművét a következő vásárlásához."
+            },
+            "financing": {
+                "title": "Rugalmas finanszírozás",
+                "description": "Vezető pénzintézetekkel működünk együtt, hogy a legjobb kamatokat biztosítsuk Önnek."
+            }
+        }
+    },
+    "CTASection": {
+        "title": "Készen áll álmai autóját vezetni?",
+        "subtitle": "Lépjen kapcsolatba velünk még ma, és segítünk megtalálni a tökéletes járművet."
+    },
+    "RequestCarForm": {
+        "section": {
+            "title": "Nem találja, amit keres?",
+            "subtitle": "Segítsen nekünk megtalálni ideális autóját kereskedői hálózatunkon keresztül, tudassa velünk preferenciáit."
+        },
+        "card": {
+            "title": "Autó kérése",
+            "description": "Töltse ki az alábbi űrlapot járműpreferenciáival, és szakembereink hamarosan felveszik Önnel a kapcsolatot."
+        },
+        "subheadings": {
+            "contactInfo": "Elérhetőségek",
+            "vehicleDetails": "Jármű adatai",
+            "specifications": "Jármű specifikációi",
+            "additionalInfo": "További megjegyzések"
+        },
+        "labels": {
+            "fullName": "Teljes név<span class=\"text-red-500\">*</span>",
+            "email": "Email cím<span class=\"text-red-500\">*</span>",
+            "phone": "Telefonszám",
+            "location": "Hely / Régió",
+            "make": "Kívánt autómárka",
+            "model": "Kívánt autómodell",
+            "yearFrom": "Évjárat (tól)",
+            "yearTo": "Évjárat (ig)",
+            "budget": "Preferált költségvetés",
+            "color": "Preferált szín(ek)",
+            "condition": "Autó állapota",
+            "transmission": "Váltó típusa",
+            "fuelType": "Üzemanyag típusa",
+            "maxMileage": "Maximális futásteljesítmény",
+            "notes": "További megjegyzések"
+        },
+        "placeholders": {
+            "fullName": "Minta János",
+            "email": "janos@pelda.hu",
+            "phone": "+36 1 123 4567",
+            "location": "Város, Megye vagy Irányítószám",
+            "make": "BMW, Toyota, stb.",
+            "model": "X5, Camry, stb.",
+            "yearFrom": "Évjárattól",
+            "yearTo": "Évjáratig",
+            "budget": "10 000 000 Ft",
+            "color": "Fekete, Ezüst, stb.",
+            "transmission": "Válasszon váltótípust",
+            "fuelType": "Válasszon üzemanyagtípust",
+            "maxMileage": "50000",
+            "notes": "Van valamilyen konkrét igénye vagy preferenciája?"
+        },
+        "options": {
+            "conditionNew": "Új",
+            "conditionPreowned": "Használt",
+            "conditionEither": "Mindegy",
+            "transmissionAutomatic": "Automata",
+            "transmissionManual": "Manuális",
+            "transmissionAny": "Mindegy",
+            "fuelGasoline": "Benzin",
+            "fuelDiesel": "Dízel",
+            "fuelHybrid": "Hibrid",
+            "fuelElectric": "Elektromos",
+            "fuelAny": "Mindegy"
+        },
+        "buttons": {
+            "submit": "Kérés beküldése",
+            "submitting": "Küldés...",
+            "submitAnother": "Újabb kérés küldése"
+        },
+        "success": {
+            "title": "Kérés beküldve!",
+            "description": "Köszönjük autó iránti kérését. Csapatunk áttekinti preferenciáit és hamarosan felveszi Önnel a kapcsolatot.",
+            "confirmation": "Hamarosan felvesszük Önnel a kapcsolatot a(z) {email} címen."
+        },
+        "error": {
+            "prefix": "Nem sikerült menteni a kérését: ",
+            "fallback": "Hiba történt a kérés beküldése közben. Kérjük, próbálja újra."
+        }
+    },
+    "MostSearchedCars": {
+        "title": "Legkeresettebb autók",
+        "loading": "Népszerű járművek betöltése...",
+        "error": "Nem sikerült betölteni a népszerű autókat. Kérjük, próbálja újra később.",
+        "errorPrefix": "Nem sikerült lekérni az autókat: ",
+        "empty": "Jelenleg nincsenek népszerű járművek.",
+        "card": {
+            "badgeNew": "Új",
+            "badgeSold": "Eladva",
+            "unitMiles": "km",
+            "viewDetailsButton": "Részletek megtekintése",
+            "imageAltFallback": "Autó hirdetés"
+        },
+        "fuelTypes": {
+            "Electric": "Elektromos",
+            "Hybrid": "Hibrid",
+            "Diesel": "Dízel",
+            "Gasoline": "Benzin",
+            "Unknown": "Ismeretlen"
+        },
+        "transmissions": {
+            "Manual": "Manuális",
+            "CVT": "CVT",
+            "DCT": "DCT",
+            "Automatic": "Automata",
+            "Unknown": "Ismeretlen"
+        }
+    },
+    "AboutPage": {
+        "hero": {
+            "title": "Kiválóságra törekedve",
+            "subtitle": "Ismerje meg, kik vagyunk és mi vezérli küldetésünket."
+        },
+        "story": {
+            "title": "Történetünk",
+            "paragraph1": "Több mint 15 éves elkötelezett tapasztalattal a prémium járműpiacon, szakértelmünk a kivételes prémium és sportautók értékesítésében, közvetítésében, importjában és exportjában rejlik. Mély iparági ismereteinket felhasználva kötjük össze az igényes ügyfeleket a rendkívüli autókkal.",
+            "paragraph2": "Az általunk kínált járműveket gondosan válogatjuk össze megbízható ügyfelekből és üzleti partnerekből álló hálózatunkon keresztül, mely kapcsolatokat évek alatt építettünk ki, és amelyek szilárdan a kölcsönös bizalmon alapulnak. Elsősorban új járműveket kínálunk, és minden használt autó szigorú ellenőrzésen esik át, mindig teljes szerviztörténettel együtt.",
+            "paragraph3": "Széleskörű tapasztalatunk és robusztus partnerhálózatunk lehetővé teszi számunkra, hogy túllépjünk a megszokott kereteken. Szakterületünk a specifikus járművek beszerzése igény szerint, beleértve a nehezen fellelhető modelleket, limitált kiadásokat, sőt, előnyös gyártási kvóták biztosítását is új járművekre különböző presztízsmárkák esetében.",
+            "imageAlt": "PremiumCarsEU bemutatóterem és csapat"
+        },
+        "values": {
+            "title": "Értékeink",
+            "trust": {
+                "title": "Bizalom",
+                "description": "Tartós kapcsolatokat építünk az őszinteség, integritás és megbízhatóság alapján az ügyfélút minden lépésében."
+            },
+            "transparency": {
+                "title": "Átláthatóság",
+                "description": "Hiszünk a tiszta kommunikációban, a tisztességes árazásban és a teljes körű járműinformációk nyújtásában rejtett meglepetések nélkül."
+            },
+            "innovation": {
+                "title": "Innováció",
+                "description": "Folyamatosan alkalmazzuk az új technológiákat és megközelítéseket az autóvásárlási és -eladási élmény javítása érdekében."
+            },
+            "customerFirst": {
+                "title": "Az ügyfél az első",
+                "description": "Minden döntésünk során az ügyfeleink igényeit, preferenciáit és elégedettségét helyezzük előtérbe mindenek felett."
+            }
+        },
+        "team": {
+            "title": "Ismerje meg a csapatot",
+            "member1": {
+                "imageAlt": "Marco Varga",
+                "name": "Marco Varga",
+                "title": "Alapító és Vezérigazgató",
+                "quote": "\"Célunk, hogy újra feltaláljuk, hogyan vásárolnak és adnak el autót az emberek, a lehető legélvezetesebb vásárlási élménnyé téve azt számukra.\""
+            },
+            "member2": {
+                "imageAlt": "Sarah Mueller",
+                "name": "Sarah Mueller",
+                "title": "Értékesítési Igazgató",
+                "quote": "\"Hiszek a kapcsolatépítésben, nem csak az autóeladásban. Ügyfeleink a PremiumCarsEU család részévé válnak.\""
+            },
+            "member3": {
+                "imageAlt": "Thomas Weber",
+                "name": "Thomas Weber",
+                "title": "Technológiai Vezető (CTO)",
+                "quote": "\"A technológiának könnyebbé és átláthatóbbá kell tennie az autóvásárlást. Ez hajtja digitális innovációnkat.\""
+            }
+        },
+        "cta": {
+            "title": "Szeretne csatlakozni utunkhoz?",
+            "subtitle": "Mindig keresünk tehetséges embereket, akik osztják szenvedélyünket az autós kiválóság és az ügyfélszolgálat iránt."
+        }
+    },
+    "ContactPage": {
+        "hero": {
+            "title": "Lépjen kapcsolatba velünk",
+            "subtitle": "Örömmel hallanánk Önről. Töltse ki az űrlapot, és csapatunk hamarosan felveszi Önnel a kapcsolatot."
+        },
+        "formCard": {
+            "title": "Küldjön nekünk üzenetet",
+            "description": "Töltse ki az alábbi űrlapot érdeklődésével, és a lehető leghamarabb válaszolunk."
+        },
+        "labels": {
+            "fullName": "Teljes név<span class=\"text-red-500\">*</span>",
+            "email": "Email cím<span class=\"text-red-500\">*</span>",
+            "phone": "Telefonszám (opcionális)",
+            "subject": "Tárgy<span class=\"text-red-500\">*</span>",
+            "message": "Üzenet<span class=\"text-red-500\">*</span>"
+        },
+        "placeholders": {
+            "fullName": "Adja meg teljes nevét",
+            "email": "on@pelda.hu",
+            "phone": "Adja meg telefonszámát",
+            "subject": "Válasszon tárgyat",
+            "message": "Írja ide az üzenetét..."
+        },
+        "subjectOptions": {
+            "general": "Általános érdeklődés",
+            "availability": "Jármű elérhetősége",
+            "collaboration": "Együttműködés",
+            "other": "Egyéb"
+        },
+        "validation": {
+            "nameRequired": "Név megadása kötelező",
+            "emailRequired": "Email megadása kötelező",
+            "emailInvalid": "Kérjük, érvényes email címet adjon meg",
+            "subjectRequired": "Kérjük, válasszon tárgyat",
+            "messageRequired": "Üzenet megadása kötelező"
+        },
+        "buttons": {
+            "send": "Üzenet küldése",
+            "sending": "Küldés..."
+        },
+        "infoCard": {
+            "title": "Elérhetőségek",
+            "description": "Az alábbi információk segítségével közvetlenül is elérhet minket.",
+            "addressTitle": "Cím",
+            "phoneTitle": "Telefon",
+            "emailTitle": "Email",
+            "hoursTitle": "Nyitvatartás",
+            "connectTitle": "Lépjen kapcsolatba velünk",
+            "addressLine1": "Központi iroda — Zürich, Svájc",
+            "addressLine2": "Bahnhofstrasse 42, 8001 Zürich",
+            "hoursLine1": "Hétfő - Péntek: 9:00 – 18:00",
+            "hoursLine2": "Szombat: 10:00 – 16:00",
+            "hoursLine3": "Vasárnap: Zárva"
+        },
+        "success": {
+            "title": "Üzenet sikeresen elküldve!",
+            "description": "Köszönjük, hogy kapcsolatba lépett velünk. Megkaptuk üzenetét, és hamarosan jelentkezünk.",
+            "heading": "Hamarosan felvesszük a kapcsolatot",
+            "confirmation": "Csapatunk általában 24-48 órán belül válaszol munkanapokon.",
+            "button": "Újabb üzenet küldése"
+        }
+    },
+    "SellPage": {
+        "hero": {
+            "title": "Adja el autóját magabiztosan",
+            "subtitle": "Kapjon méltányos árat és problémamentes élményt, amikor autóját a PremiumCarsEU-n keresztül adja el. Nincsenek közvetítők, nincsenek rejtett díjak - csak egyszerű szolgáltatás."
+        },
+        "benefits": {
+            "title": "Miért velünk adja el?",
+            "pricing": {
+                "title": "Versenyképes árazás",
+                "description": "Méltányos piaci értéket kínálunk járművéért annak állapota, története és aktuális piaci trendjei alapján."
+            },
+            "process": {
+                "title": "Problémamentes folyamat",
+                "description": "Egyszerűsített értékesítési folyamatunk kevesebb papírmunkát és gyorsabb tranzakciókat jelent. A legtöbb üzlet 48 órán belül lezárul."
+            },
+            "service": {
+                "title": "Megbízható szolgáltatás",
+                "description": "Több mint 10 éves üzleti tapasztalattal az átláthatóság és az ügyfél-elégedettség iránti hírnevünk önmagáért beszél."
+            }
+        },
+        "trustIndicator": {
+            "title": "Több mint 2300 sofőr bízik bennünk",
+            "description": "Csatlakozzon több ezer elégedett ügyfélhez, akik sikeresen eladták járműveiket platformunkon keresztül."
+        }
+    },
+    "CarSellForm": {
+        "card": {
+            "title": "Adja el autóját",
+            "description": "Töltse ki az alábbi űrlapot autója adataival. Csapatunk áttekinti és 24-48 órán belül felveszi Önnel a kapcsolatot."
+        },
+        "sections": {
+            "ownerInfo": "Tulajdonos adatai",
+            "carInfo": "Autó adatai",
+            "pricingMedia": "Árazás és Média",
+            "additionalInfo": "További információk"
+        },
+        "labels": {
+            "fullName": "Teljes név<span class=\"text-red-500\">*</span>",
+            "email": "Email cím<span class=\"text-red-500\">*</span>",
+            "phone": "Telefonszám<span class=\"text-red-500\">*</span>",
+            "make": "Autómárka<span class=\"text-red-500\">*</span>",
+            "model": "Autómodell<span class=\"text-red-500\">*</span>",
+            "year": "Évjárat<span class=\"text-red-500\">*</span>",
+            "mileage": "Futásteljesítmény<span class=\"text-red-500\">*</span>",
+            "fuelType": "Üzemanyag típusa<span class=\"text-red-500\">*</span>",
+            "transmission": "Váltó<span class=\"text-red-500\">*</span>",
+            "condition": "Állapot<span class=\"text-red-500\">*</span>",
+            "city": "Város<span class=\"text-red-500\">*</span>",
+            "askingPrice": "Kért ár (opcionális)",
+            "photos": "Fényképek feltöltése",
+            "description": "Leírás / Megjegyzések"
+        },
+        "placeholders": {
+            "fullName": "Minta János",
+            "email": "az.on@email.com",
+            "phone": "+36 1 123 4567",
+            "make": "pl. Toyota",
+            "model": "pl. Camry",
+            "year": "pl. 2019",
+            "mileage": "pl. 45000",
+            "fuelType": "Válasszon üzemanyagtípust",
+            "transmission": "Válasszon váltótípust",
+            "city": "pl. Budapest",
+            "askingPrice": "pl. 8000000",
+            "description": "Kérjük, adjon meg további részleteket autójáról..."
+        },
+        "options": {
+            "fuelGasoline": "Benzin",
+            "fuelDiesel": "Dízel",
+            "fuelElectric": "Elektromos",
+            "fuelHybrid": "Hibrid",
+            "transmissionManual": "Manuális",
+            "transmissionAutomatic": "Automata",
+            "conditionNew": "Új",
+            "conditionUsed": "Használt"
+        },
+        "descriptions": {
+            "askingPrice": "Hagyja üresen, ha szeretné, hogy piaci értékelést adjunk.",
+            "filesSelected": "{count} fájl kiválasztva:",
+            "fileTypes": "PNG, JPG, GIF, HEIC egyenként legfeljebb 10MB"
+        },
+        "fileUpload": {
+            "upload": "Fájlok feltöltése",
+            "dragDrop": "vagy húzza ide"
+        },
+        "validation": {
+            "nameRequired": "Név megadása kötelező",
+            "emailRequired": "Email megadása kötelező",
+            "emailInvalid": "Érvénytelen email formátum",
+            "phoneRequired": "Telefon megadása kötelező",
+            "makeRequired": "Márka megadása kötelező",
+            "modelRequired": "Modell megadása kötelező",
+            "yearRequired": "Évjárat megadása kötelező",
+            "yearInvalid": "Érvénytelen évjárat formátum",
+            "mileageRequired": "Futásteljesítmény megadása kötelező",
+            "mileageInvalid": "A futásteljesítménynek számnak kell lennie",
+            "fuelTypeRequired": "Üzemanyagtípus megadása kötelező",
+            "transmissionRequired": "Váltó megadása kötelező",
+            "conditionRequired": "Állapot megadása kötelező",
+            "cityRequired": "Város megadása kötelező",
+            "priceInvalid": "Az árnak számnak kell lennie"
+        },
+        "buttons": {
+            "submit": "Autó beküldése felülvizsgálatra",
+            "submitting": "Küldés...",
+            "submitAnother": "Újabb autó beküldése"
+        },
+        "success": {
+            "title": "Beküldés fogadva!",
+            "description": "Köszönjük! Áttekintjük autója adatait, és hamarosan felvesszük Önnel a kapcsolatot.",
+            "heading": "Adatok beküldve",
+            "confirmation": "A(z) {email} címen fogjuk Önnel felvenni a kapcsolatot."
+        },
+        "error": {
+            "submitFallback": "Hiba történt az adatok beküldése közben. Kérjük, próbálja újra.",
+            "updatePhotoUrlError": "A fényképek feltöltve, de az URL-eket nem sikerült menteni: {message}",
+            "updatePhotoUrlException": "A fényképek feltöltve, de hiba történt az URL-ek mentésekor",
+            "noPhotosUploaded": "Nem töltöttek fel sikeresen fényképeket"
+        }
+    },
+    "InventoryPage": {
+        "loading": "Készlet betöltése...",
+        "errorTitle": "Hiba",
+        "errorLoading": "Nem sikerült betölteni a készletet. {message}",
+        "errorTryAgain": "Próbálja újra",
+        "hero": {
+            "title": "Böngésszen készletünkben",
+            "subtitle": "Fedezze fel prémium járműveink széles választékát. Használja a szűrőket a tökéletes találat megtalálásához."
+        },
+        "aiSearch": {
+            "title": "Mit keres?",
+            "placeholder": "pl. Hétvégi kupé 15 millió alatt",
+            "buttonIdle": "Keresés",
+            "buttonLoading": "Keresés...",
+            "errorPrefix": "Nem sikerült feldolgozni a keresést",
+            "errorCouldNotUnderstand": "Nem sikerült értelmezni a keresését. Kérjük, próbálja újra más megfogalmazással.",
+            "toastTitle": "Keresés feldolgozva",
+            "toastDescSuccess": "Pontosan megtaláltuk, amit keresett!",
+            "toastDescPotential": "Potenciális találatokat találtunk. Szükség esetén módosíthatja a szűrőket."
+        },
+        "filters": {
+            "makeLabel": "Márka",
+            "modelLabel": "Modell",
+            "bodyTypeLabel": "Karosszéria típusa",
+            "priceLabel": "Árkategória",
+            "yearLabel": "Évjárat tartomány",
+            "mileageLabel": "Futásteljesítmény tartomány",
+            "fuelTypeLabel": "Üzemanyag típusa",
+            "transmissionLabel": "Váltó",
+            "conditionLabel": "Állapot",
+            "minLabel": "Min",
+            "maxLabel": "Max",
+            "fromLabel": "Tól",
+            "toLabel": "Ig",
+            "makePlaceholderLoading": "Márkák betöltése...",
+            "makePlaceholder": "Válasszon márkát",
+            "modelPlaceholderLoading": "Modellek betöltése...",
+            "modelPlaceholder": "Válasszon modellt",
+            "modelSearchPlaceholder": "Modellek keresése...",
+            "modelNotFound": "Nincs egyező modell",
+            "modelNotAvailable": "Nincsenek elérhető modellek",
+            "bodyTypePlaceholder": "Válasszon karosszériatípust",
+            "fuelTypePlaceholder": "Válasszon üzemanyagtípust",
+            "transmissionPlaceholder": "Válasszon váltótípust",
+            "conditionPlaceholder": "Válasszon állapotot",
+            "priceMinPlaceholder": "Min ár",
+            "priceMaxPlaceholder": "Max ár",
+            "yearMinPlaceholder": "Évjárattól",
+            "yearMaxPlaceholder": "Évjáratig",
+            "mileageMinPlaceholder": "Min km",
+            "mileageMaxPlaceholder": "Max km",
+            "applyButton": "Szűrők alkalmazása",
+            "resetButton": "Visszaállítás",
+            "showAdvancedButton": "Speciális szűrők",
+            "hideAdvancedButton": "Speciális szűrők elrejtése",
+            "backButton": "Vissza a szűrőkhöz",
+            "optionAny": "Bármelyik"
+        },
+        "advancedFilters": {
+            "title": "Speciális szűrők",
+            "closeAriaLabel": "Speciális szűrők bezárása",
+            "horsepowerLabel": "Lóerő (LE)",
+            "horsepowerUnit": "LE",
+            "displacementLabel": "Motor hengerűrtartalma (cm³)",
+            "displacementUnit": "cm³",
+            "cylindersLabel": "Hengerek száma",
+            "minLabel": "Min",
+            "maxLabel": "Max"
+        },
+        "results": {
+            "count": "{count} jármű megjelenítése",
+            "sortByLabel": "Rendezés:",
+            "sortPlaceholder": "Rendezés",
+            "emptyTitle": "Nem található a kritériumainak megfelelő jármű.",
+            "resetFiltersButton": "Szűrők visszaállítása"
+        },
+        "sortOptions": {
+            "price-asc": "Ár: Növekvő",
+            "price-desc": "Ár: Csökkenő",
+            "year-desc": "Évjárat: Legújabb elöl",
+            "year-asc": "Évjárat: Legrégebbi elöl",
+            "mileage-asc": "Futásteljesítmény: Növekvő",
+            "mileage-desc": "Futásteljesítmény: Csökkenő",
+            "created_at-desc": "Legújabb hirdetések"
+        },
+        "card": {
+            "imageAlt": "{make} {model} - {index}. nézet",
+            "imageAltFallback": "Autó képe",
+            "noImage": "Nincs kép",
+            "prevImageLabel": "Előző kép",
+            "nextImageLabel": "Következő kép",
+            "priceNA": "N/A",
+            "mileageNA": "N/A",
+            "fuelNA": "N/A",
+            "transmissionNA": "N/A",
+            "yearNA": "N/A",
+            "unitMiles": "km",
+            "addToCompareButton": "Összehasonlításhoz ad",
+            "viewDetailsButton": "Részletek megtekintése"
+        },
+        "pagination": {
+            "previous": "Előző oldal",
+            "next": "Következő oldal"
+        },
+        "toastMessages": {
+            "compareAddedTitle": "Összehasonlításhoz adva",
+            "compareAddedDesc": "{make} {model} hozzáadva az összehasonlító listához.",
+            "errorTitle": "Hiba",
+            "errorViewDetails": "Nem lehet megtekinteni a részleteket: Hiányzik az autó azonosítója."
+        },
+        "bodyTypes": {
+            "Any": "Bármelyik",
+            "Sedan": "Szedán",
+            "SUV": "SUV",
+            "Coupe": "Kupé",
+            "Convertible": "Kabrió",
+            "Hatchback": "Ferdehátú",
+            "Wagon": "Kombi",
+            "Truck": "Pickup",
+            "Van": "Kisbusz"
+        },
+        "fuelTypes": {
+            "Any": "Bármelyik",
+            "Gasoline": "Benzin",
+            "Diesel": "Dízel",
+            "Hybrid": "Hibrid",
+            "Electric": "Elektromos"
+        },
+        "transmissions": {
+            "Any": "Bármelyik",
+            "Automatic": "Automata",
+            "Manual": "Manuális",
+            "CVT": "CVT",
+            "PDK": "PDK"
+        },
+        "conditions": {
+            "Any": "Bármelyik",
+            "New": "Új",
+            "Used": "Használt"
+        }
+    },
+    "CarListingPage": {
+        "backToInventory": "Vissza a készlethez",
+        "carIdLabel": "ID:",
+        "tabs": {
+            "overview": "Áttekintés",
+            "specifications": "Specifikációk",
+            "features": "Felszereltség"
+        },
+        "overview": {
+            "descriptionTitle": "Leírás",
+            "noDescription": "Ehhez a járműhöz nem áll rendelkezésre leírás.",
+            "locationTitle": "Helyszín",
+            "noLocation": "Helyszín nincs megadva"
+        },
+        "specifications": {
+            "title": "Specifikációk",
+            "make": "Márka",
+            "model": "Modell",
+            "year": "Évjárat",
+            "bodyType": "Karosszéria típusa",
+            "fuelType": "Üzemanyag típusa",
+            "transmission": "Váltó",
+            "mileage": "Futásteljesítmény",
+            "interiorColor": "Belső szín",
+            "exteriorColor": "Külső szín",
+            "vin": "Alvázszám",
+            "engine": "Motor",
+            "condition": "Állapot",
+            "notAvailable": "-"
+        },
+        "features": {
+            "title": "Felszereltség és Opciók",
+            "noFeatures": "Ehhez a járműhöz nincs felsorolva felszereltség."
+        },
+        "pricing": {
+            "contactForPrice": "Érdeklődjön az árról",
+            "dailyRentalLabel": "Napi bérlés",
+            "perDaySuffix": "/nap"
+        },
+        "quickFacts": {
+            "year": "Évjárat",
+            "mileage": "Km",
+            "fuel": "Üzemanyag",
+            "transmission": "Váltó",
+            "notAvailable": "-",
+            "unitMiles": "km"
+        },
+        "sellerInfo": {
+            "title": "Eladó adatai",
+            "fallbackName": "PremiumCarsEU Kereskedő",
+            "memberSince": "Tag {year} óta",
+            "fallbackInitial": "K",
+            "fallbackYear": "2022"
+        },
+        "imageGallery": {
+            "imageAlt": "{year} {make} {model} - {index}. kép",
+            "imageAltFallback": "Autó képe {index}",
+            "conditionBadgeNew": "Új",
+            "conditionBadgeUsed": "Használt",
+            "listingTypeBadgeSale": "Eladó",
+            "listingTypeBadgeRent": "Bérelhető"
+        },
+        "conditionValues": {
+            "new": "Új",
+            "used": "Használt"
+        }
+    },
+    "ContactFormModal": {
+        "triggerButton": "Kapcsolatfelvétel az eladóval",
+        "title": "Kapcsolatfelvétel az eladóval",
+        "description": "Töltse ki ezt az űrlapot a(z) {carName} iránti érdeklődéshez. Az eladó hamarosan felveszi Önnel a kapcsolatot.",
+        "labels": {
+            "name": "Az Ön neve",
+            "phone": "Telefonszám",
+            "email": "Email (opcionális)",
+            "message": "Üzenet",
+            "whatsappConsent": "Hozzájárulok a WhatsApp-on keresztüli kapcsolatfelvételhez"
+        },
+        "placeholders": {
+            "name": "Adja meg a nevét",
+            "phone": "Adja meg a telefonszámát",
+            "email": "Az Ön Email címe",
+            "message": "Írja be az üzenetét"
+        },
+        "buttons": {
+            "cancel": "Mégse",
+            "submit": "Üzenet küldése",
+            "submitting": "Küldés..."
+        },
+        "defaultMessage": "Érdeklődöm a(z) {carName} iránt. Kérem, vegye fel velem a kapcsolatot további információkkal.",
+        "toast": {
+            "successTitle": "Üzenet elküldve!",
+            "successDescription": "Köszönjük! Hamarosan jelentkezünk a WhatsApp-on.",
+            "errorTitle": "Hiba",
+            "errorDescription": "Hiba történt az üzenet küldésekor. Kérjük, próbálja újra."
+        }
+    },
+    "ReservationModal": {
+        "triggerButton": "Jármű lefoglalása",
+        "title": "Jármű lefoglalása",
+        "description": "Töltse ki ezt az űrlapot a(z) {carName} lefoglalásához. Felvesszük Önnel a kapcsolatot a részletek megerősítése érdekében.",
+        "labels": {
+            "name": "Teljes név",
+            "email": "Email",
+            "phone": "Telefonszám"
+        },
+        "placeholders": {
+            "name": "Adja meg teljes nevét",
+            "email": "Adja meg email címét",
+            "phone": "Adja meg telefonszámát"
+        },
+        "validation": {
+            "nameMin": "A névnek legalább 2 karakter hosszúnak kell lennie.",
+            "emailInvalid": "Kérjük, érvényes email címet adjon meg.",
+            "phoneMin": "Kérjük, érvényes telefonszámot adjon meg."
+        },
+        "reservingVehicle": "Lefoglalás alatt: {carName}",
+        "termsNotice": "Az űrlap beküldésével elfogadja foglalási feltételeinket és irányelveinket.",
+        "buttons": {
+            "cancel": "Mégse",
+            "submit": "Jármű lefoglalása",
+            "submitting": "Küldés..."
+        },
+        "toast": {
+            "successTitle": "Foglalás beküldve",
+            "successDescription": "Megkaptuk a(z) {carName} foglalását. Hamarosan felvesszük Önnel a kapcsolatot.",
+            "errorTitle": "Foglalás sikertelen",
+            "errorDescription": "Hiba történt a foglalás beküldésekor. Kérjük, próbálja újra."
+        }
+    },
+    "TestDriveModal": {
+        "triggerButton": "Tesztvezetés ütemezése",
+        "title": "Tesztvezetés ütemezése",
+        "description": "Töltse ki az alábbi űrlapot a(z) {carName} tesztvezetésének ütemezéséhez.",
+        "labels": {
+            "fullName": "Teljes név",
+            "email": "Email",
+            "phone": "Telefonszám",
+            "date": "Preferált dátum",
+            "time": "Preferált időpont"
+        },
+        "placeholders": {
+            "fullName": "Minta János",
+            "email": "on@pelda.hu",
+            "phone": "+36 1 123 4567",
+            "date": "Válasszon dátumot",
+            "time": "Válasszon időpontot"
+        },
+        "validation": {
+            "nameRequired": "Név megadása kötelező",
+            "emailRequired": "Érvényes email cím megadása kötelező",
+            "phoneRequired": "Érvényes telefonszám megadása kötelező",
+            "dateRequired": "Kérjük, válasszon dátumot",
+            "timeRequired": "Kérjük, válasszon időpontot"
+        },
+        "buttons": {
+            "submit": "Tesztvezetés ütemezése",
+            "submitting": "Küldés..."
+        },
+        "toast": {
+            "successTitle": "Tesztvezetés ütemezve",
+            "successDescription": "Felvesszük Önnel a kapcsolatot az időpont megerősítése érdekében.",
+            "errorTitle": "Tesztvezetés ütemezése sikertelen",
+            "errorDescription": "Kérjük, próbálja újra később, vagy lépjen kapcsolatba az ügyfélszolgálattal."
+        }
+    },
+    "Common": {
+        "signIn": "Bejelentkezés",
+        "register": "Regisztráció",
+        "requiredIndicator": "*"
+    }
+}
