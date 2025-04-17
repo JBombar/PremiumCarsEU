@@ -45,6 +45,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from '@/hooks/useAuth';
+import Link from "next/link";
 
 //=================================================
 // TYPE DEFINITIONS (Applying the refined structure)
@@ -110,6 +112,8 @@ interface ProjectionsData {
 //=================================================
 
 export default function TransactionsPage() {
+  // Add the auth hook to check authentication status
+  const { user, isLoading: authLoading } = useAuth();
   // State uses the final 'Transaction' type with transformed fields
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -129,6 +133,23 @@ export default function TransactionsPage() {
 
   const supabase = createClient();
 
+  // Update the useEffect hook to check authentication before fetching
+  useEffect(() => {
+    if (!authLoading) {
+      if (user) {
+        // User is authenticated, proceed with data fetching
+        fetchTransactions();
+        fetchProjections();
+      } else {
+        // User is not authenticated, set empty state and no loading
+        setLoading(false);
+        setProjectionsLoading(false);
+        // Could set an auth error here if desired
+        // setError('You must be logged in to view transactions');
+      }
+    }
+  }, [authLoading, user]);
+
   // Calculate summary statistics (use the transformed 'transactions' state)
   const totalTransactions = transactions.length;
   const totalSalesValue = transactions.reduce((sum, trans) => sum + (trans.agreed_price || 0), 0);
@@ -136,12 +157,6 @@ export default function TransactionsPage() {
   const completedSalesValue = transactions
     .filter(t => t.status === 'completed')
     .reduce((sum, trans) => sum + (trans.agreed_price || 0), 0);
-
-  useEffect(() => {
-    fetchTransactions();
-    fetchProjections();
-  }, []);
-
 
   //=================================================
   // FETCH TRANSACTIONS (Corrected Select String - NO comments)
@@ -485,307 +500,320 @@ export default function TransactionsPage() {
 
   return (
     <div className="space-y-8 p-6">
-      <h3 className="text-lg font-medium mb-4">Total Transactions</h3>
-      {/* Main Summary Cards Grid - Now only has original 3 cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {/* Card 1 */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Transactions</p>
-                <h2 className="text-2xl md:text-3xl font-bold">{totalTransactions}</h2>
-              </div>
-              <div className="bg-primary/10 p-3 rounded-full">
-                <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        {/* Card 2 */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Sales Value</p>
-                <h2 className="text-2xl md:text-3xl font-bold">{formatCurrency(totalSalesValue)}</h2>
-              </div>
-              <div className="bg-primary/10 p-3 rounded-full">
-                <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        {/* Card 3 */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Completed Sales</p>
-                <h2 className="text-2xl md:text-3xl font-bold">{completedSales}</h2>
-                <p className="text-sm text-muted-foreground mt-1">{formatCurrency(completedSalesValue)}</p>
-              </div>
-              <div className="bg-primary/10 p-3 rounded-full">
-                <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* MOVED: Projections Cards Grid - Now in a separate section with heading */}
-      <div className="mt-8">
-        <h3 className="text-md font-medium mb-4">Sales Projections</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Card 4 - Projected Profit */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Projected Profit</p>
-                  <h2 className="text-2xl md:text-3xl font-bold">
-                    {projectionsLoading ? (
-                      <span className="text-muted-foreground text-sm">Loading...</span>
-                    ) : (
-                      formatCurrency(projections.projected_profit)
-                    )}
-                  </h2>
-                </div>
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <BarChart4 className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          {/* Card 5 - Average Profit Margin */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Avg Profit Margin</p>
-                  <h2 className="text-2xl md:text-3xl font-bold">
-                    {projectionsLoading ? (
-                      <span className="text-muted-foreground text-sm">Loading...</span>
-                    ) : (
-                      formatPercent(projections.avg_margin, true)
-                    )}
-                  </h2>
-                </div>
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <Percent className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Main Transactions Card */}
-      <Card>
-        <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-          <div>
-            <CardTitle>All Transactions</CardTitle>
-            <CardDescription>
-              View and manage all financial transactions for vehicle sales
-            </CardDescription>
-          </div>
-
-          {/* Export Button */}
-          <Button
-            variant="outline"
-            onClick={handleExport}
-            disabled={exporting || transactions.length === 0}
-            className="mt-4 sm:mt-0"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Export CSV
-            {exporting && <RefreshCcw className="ml-2 h-4 w-4 animate-spin" />}
+      {/* You could add authentication check here if needed */}
+      {!user && !authLoading ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <h3 className="text-lg font-medium mb-4">Authentication Required</h3>
+          <p className="text-muted-foreground mb-4">Please log in to view transactions</p>
+          <Button variant="default" asChild>
+            <Link href="/login">Log In</Link>
           </Button>
-        </CardHeader>
-        <CardContent>
-          {/* Controls */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by vehicle, buyer, seller or ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 w-full"
-              />
-            </div>
+        </div>
+      ) : (
+        <>
+          <h3 className="text-lg font-medium mb-4">Total Transactions</h3>
+          {/* Main Summary Cards Grid - Now only has original 3 cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {/* Card 1 */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Total Transactions</p>
+                    <h2 className="text-2xl md:text-3xl font-bold">{totalTransactions}</h2>
+                  </div>
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            {/* Card 2 */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Total Sales Value</p>
+                    <h2 className="text-2xl md:text-3xl font-bold">{formatCurrency(totalSalesValue)}</h2>
+                  </div>
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <DollarSign className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            {/* Card 3 */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Completed Sales</p>
+                    <h2 className="text-2xl md:text-3xl font-bold">{completedSales}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{formatCurrency(completedSalesValue)}</p>
+                  </div>
+                  <div className="bg-primary/10 p-3 rounded-full">
+                    <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 md:gap-4">
-              <Select
-                value={statusFilter || "all"}
-                onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
-              >
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="confirmed">Confirmed</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleRefresh}
-                disabled={refreshing || loading}
-                className="w-full sm:w-auto"
-              >
-                <RefreshCcw className={`h-4 w-4 ${refreshing || loading ? 'animate-spin' : ''}`} />
-                <span className="sr-only">Refresh</span>
-              </Button>
+          {/* MOVED: Projections Cards Grid - Now in a separate section with heading */}
+          <div className="mt-8">
+            <h3 className="text-md font-medium mb-4">Sales Projections</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Card 4 - Projected Profit */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Projected Profit</p>
+                      <h2 className="text-2xl md:text-3xl font-bold">
+                        {projectionsLoading ? (
+                          <span className="text-muted-foreground text-sm">Loading...</span>
+                        ) : (
+                          formatCurrency(projections.projected_profit)
+                        )}
+                      </h2>
+                    </div>
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <BarChart4 className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              {/* Card 5 - Average Profit Margin */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Avg Profit Margin</p>
+                      <h2 className="text-2xl md:text-3xl font-bold">
+                        {projectionsLoading ? (
+                          <span className="text-muted-foreground text-sm">Loading...</span>
+                        ) : (
+                          formatPercent(projections.avg_margin, true)
+                        )}
+                      </h2>
+                    </div>
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <Percent className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
-          {/* Transactions Table */}
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <RefreshCcw className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-          ) : error ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <p className="text-red-600 font-medium">{error}</p>
+          {/* Main Transactions Card */}
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+              <div>
+                <CardTitle>All Transactions</CardTitle>
+                <CardDescription>
+                  View and manage all financial transactions for vehicle sales
+                </CardDescription>
+              </div>
+
+              {/* Export Button */}
               <Button
                 variant="outline"
-                onClick={handleRefresh}
-                className="mt-4"
-                disabled={refreshing || loading}
+                onClick={handleExport}
+                disabled={exporting || transactions.length === 0}
+                className="mt-4 sm:mt-0"
               >
-                Try Again
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+                {exporting && <RefreshCcw className="ml-2 h-4 w-4 animate-spin" />}
               </Button>
-            </div>
-          ) : filteredTransactions.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              {searchTerm || statusFilter ? (
-                <p>No transactions match your filters</p>
-              ) : (
-                <p>No transactions found</p>
-              )}
-            </div>
-          ) : (
-            <div className="rounded-md border overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Transaction ID</TableHead>
-                    <TableHead>Vehicle</TableHead>
-                    <TableHead>Agreed Price</TableHead>
-                    <TableHead>Profit</TableHead>
-                    <TableHead>Margin</TableHead>
-                    <TableHead>Seller</TableHead>
-                    <TableHead>Buyer</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>
-                      <div className="flex items-center space-x-1">
-                        <span>Days in Stock</span>
-                        <Button
-                          variant="ghost"
-                          className="h-4 w-4 p-0"
-                          asChild
-                        >
-                          <div title="Number of days the vehicle was in inventory before being sold">
-                            <span className="sr-only">Information about days in stock</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 text-muted-foreground">
-                              <circle cx="12" cy="12" r="10" />
-                              <path d="M12 16v-4" />
-                              <path d="M12 8h.01" />
-                            </svg>
-                          </div>
-                        </Button>
-                      </div>
-                    </TableHead>
-                    <TableHead>Completed</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="w-[80px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredTransactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>
-                        <div
-                          className="font-mono text-sm break-all max-w-[160px]"
-                          title={transaction.id}
-                        >
-                          {transaction.id}
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-medium whitespace-nowrap">{transaction.vehicle_title}</TableCell>
-                      <TableCell className="whitespace-nowrap">{formatCurrency(transaction.agreed_price)}</TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {transaction.profit !== null ? formatCurrency(transaction.profit) : 'N/A'}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {transaction.margin !== null ? formatPercent(transaction.margin) : 'N/A'}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">{transaction.seller_name}</TableCell>
-                      <TableCell className="whitespace-nowrap">{transaction.buyer_name || 'Not specified'}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={getStatusBadgeVariant(transaction.status)}
-                          className="capitalize whitespace-nowrap"
-                        >
-                          {transaction.status || 'Unknown'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        <Badge
-                          className={getDaysInStockColorClass(transaction.time_in_stock_days)}
-                        >
-                          {formatDaysInStock(transaction.time_in_stock_days)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(transaction.completed_at)}</TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(transaction.created_at)}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteClick(transaction.id)}
-                          className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                          aria-label="Delete transaction"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          <span className="sr-only">Delete</span>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardHeader>
+            <CardContent>
+              {/* Controls */}
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by vehicle, buyer, seller or ID..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 w-full"
+                  />
+                </div>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the transaction record from the database.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+                <div className="flex flex-col sm:flex-row gap-2 md:gap-4">
+                  <Select
+                    value={statusFilter || "all"}
+                    onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
+                  >
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="confirmed">Confirmed</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleRefresh}
+                    disabled={refreshing || loading}
+                    className="w-full sm:w-auto"
+                  >
+                    <RefreshCcw className={`h-4 w-4 ${refreshing || loading ? 'animate-spin' : ''}`} />
+                    <span className="sr-only">Refresh</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Transactions Table */}
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <RefreshCcw className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <p className="text-red-600 font-medium">{error}</p>
+                  <Button
+                    variant="outline"
+                    onClick={handleRefresh}
+                    className="mt-4"
+                    disabled={refreshing || loading}
+                  >
+                    Try Again
+                  </Button>
+                </div>
+              ) : filteredTransactions.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  {searchTerm || statusFilter ? (
+                    <p>No transactions match your filters</p>
+                  ) : (
+                    <p>No transactions found</p>
+                  )}
+                </div>
+              ) : (
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[100px]">Transaction ID</TableHead>
+                        <TableHead>Vehicle</TableHead>
+                        <TableHead>Agreed Price</TableHead>
+                        <TableHead>Profit</TableHead>
+                        <TableHead>Margin</TableHead>
+                        <TableHead>Seller</TableHead>
+                        <TableHead>Buyer</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>
+                          <div className="flex items-center space-x-1">
+                            <span>Days in Stock</span>
+                            <Button
+                              variant="ghost"
+                              className="h-4 w-4 p-0"
+                              asChild
+                            >
+                              <div title="Number of days the vehicle was in inventory before being sold">
+                                <span className="sr-only">Information about days in stock</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 text-muted-foreground">
+                                  <circle cx="12" cy="12" r="10" />
+                                  <path d="M12 16v-4" />
+                                  <path d="M12 8h.01" />
+                                </svg>
+                              </div>
+                            </Button>
+                          </div>
+                        </TableHead>
+                        <TableHead>Completed</TableHead>
+                        <TableHead>Created</TableHead>
+                        <TableHead className="w-[80px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredTransactions.map((transaction) => (
+                        <TableRow key={transaction.id}>
+                          <TableCell>
+                            <div
+                              className="font-mono text-sm break-all max-w-[160px]"
+                              title={transaction.id}
+                            >
+                              {transaction.id}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-medium whitespace-nowrap">{transaction.vehicle_title}</TableCell>
+                          <TableCell className="whitespace-nowrap">{formatCurrency(transaction.agreed_price)}</TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {transaction.profit !== null ? formatCurrency(transaction.profit) : 'N/A'}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {transaction.margin !== null ? formatPercent(transaction.margin) : 'N/A'}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">{transaction.seller_name}</TableCell>
+                          <TableCell className="whitespace-nowrap">{transaction.buyer_name || 'Not specified'}</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={getStatusBadgeVariant(transaction.status)}
+                              className="capitalize whitespace-nowrap"
+                            >
+                              {transaction.status || 'Unknown'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            <Badge
+                              className={getDaysInStockColorClass(transaction.time_in_stock_days)}
+                            >
+                              {formatDaysInStock(transaction.time_in_stock_days)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">{formatDate(transaction.completed_at)}</TableCell>
+                          <TableCell className="whitespace-nowrap">{formatDate(transaction.created_at)}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteClick(transaction.id)}
+                              className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                              aria-label="Delete transaction"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              <span className="sr-only">Delete</span>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Delete Confirmation Dialog */}
+          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the transaction record from the database.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={confirmDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )}
     </div>
   );
 }

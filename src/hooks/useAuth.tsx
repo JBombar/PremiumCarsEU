@@ -7,6 +7,7 @@ import React, { useState, useEffect, createContext, useContext, ReactNode, useMe
 import { useRouter, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client'; // Assumes client.ts exports supabase instance
 import type { User, Session, AuthChangeEvent, SupabaseClient } from '@supabase/supabase-js'; // Import SupabaseClient type if needed elsewhere
+import { getOptionalUser } from '@/utils/supabase/auth-helpers';
 
 interface AuthContextType {
   user: User | null;
@@ -51,8 +52,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check initial auth state securely
     const getInitialAuth = async () => {
       try {
-        // Use getUser instead of getSession for secure validation
-        const { data: { user }, error } = await supabase.auth.getUser();
+        // Use our helper instead of direct getUser call
+        const { user, error } = await getOptionalUser(supabase);
 
         if (error) {
           console.error('Error getting authenticated user:', error);
