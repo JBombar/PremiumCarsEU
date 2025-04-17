@@ -599,7 +599,7 @@ export default function TransactionsPage() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">Avg Profit Margin</p>
+                      <p className="text-sm font-medium text-muted-foreground">Average Profit Margin</p>
                       <h2 className="text-2xl md:text-3xl font-bold">
                         {projectionsLoading ? (
                           <span className="text-muted-foreground text-sm">Loading...</span>
