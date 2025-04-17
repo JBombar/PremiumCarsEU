@@ -249,7 +249,7 @@
         "card": {
             "badgeNew": "New",
             "badgeSold": "Sold",
-            "unitMiles": "mi",
+            "unitMiles": "km",
             "viewDetailsButton": "View Details",
             "imageAltFallback": "Car listing"
         },
@@ -603,7 +603,7 @@
             "fuelNA": "N/A",
             "transmissionNA": "N/A",
             "yearNA": "N/A",
-            "unitMiles": "mi",
+            "unitMiles": "km",
             "addToCompareButton": "Add to Compare",
             "viewDetailsButton": "View Details"
         },
@@ -693,7 +693,7 @@
             "fuel": "Fuel",
             "transmission": "Transmission",
             "notAvailable": "-",
-            "unitMiles": "mi"
+            "unitMiles": "km"
         },
         "sellerInfo": {
             "title": "Seller Information",

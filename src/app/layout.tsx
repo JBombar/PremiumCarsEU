@@ -1,4 +1,3 @@
-// Existing imports
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import { Inter } from 'next/font/google';
@@ -6,34 +5,52 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { LayoutWrapper } from '@/components/layout/LayoutWrapper';
 import { Toaster } from '@/components/ui/toaster';
 
-// Imports required by next-intl documentation
+// GA4 + Next Script
+import Script from 'next/script';
+import Analytics from '@/components/Analytics'; // Your tracking component
+
+// i18n
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale } from 'next-intl/server'; // Make sure this path is correct based on your structure
+import { getLocale } from 'next-intl/server';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// Note: Metadata title/description might also need translation later,
-// but we'll keep them static for now as per the current scope.
 export const metadata: Metadata = {
   title: 'PremiumCarsEU - Find Your Perfect Car',
   description: 'Your premium destination for new and pre-owned vehicles',
 };
 
-// Add 'async' as required by getLocale()
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  // Fetch the locale configured in i18n/request.ts
   const locale = await getLocale();
 
   return (
-    // Set the lang attribute dynamically using the fetched locale
     <html lang={locale}>
+      <head>
+        {/* GA4 Script Tags */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-29ELS5GRQ1"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-29ELS5GRQ1', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+      </head>
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        {/* Wrap your main application structure with NextIntlClientProvider */}
-        {/* This makes the i18n context available to Client Components */}
         <NextIntlClientProvider>
           <AuthProvider>
             <LayoutWrapper>
@@ -41,9 +58,8 @@ export default async function RootLayout({
             </LayoutWrapper>
           </AuthProvider>
         </NextIntlClientProvider>
-        {/* Toaster can remain outside the provider if it doesn't need translations */}
-        {/* or be moved inside if it does */}
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );

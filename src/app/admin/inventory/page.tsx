@@ -1426,16 +1426,18 @@ export default function InventoryPage() {
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{car.make}</td>
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-800">{car.model}</td>
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{car.year}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">${car.price.toLocaleString()}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                        {new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 0 }).format(car.price)}
+                      </td>                      <td className="px-4 py-3 whitespace-nowrap text-sm">
                         <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${car.status === 'available' ? 'bg-green-100 text-green-800' :
                           car.status === 'sold' ? 'bg-red-100 text-red-800' :
                             'bg-yellow-100 text-yellow-800'}`}>
                           {car.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">{car.mileage.toLocaleString()} mi</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600 capitalize">{car.listing_type}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                        {new Intl.NumberFormat('de-CH').format(car.mileage)} km
+                      </td>                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600 capitalize">{car.listing_type}</td>
                       <td className="px-4 py-3 whitespace-nowrap text-sm">
                         {car.shared_with_trust_levels && car.shared_with_trust_levels.length > 0 ? (
                           <div className="flex flex-wrap gap-1">
@@ -1542,9 +1544,9 @@ export default function InventoryPage() {
                     <DetailItem label="Make" value={currentCar.make} />
                     <DetailItem label="Model" value={currentCar.model} />
                     <DetailItem label="Year" value={currentCar.year} />
-                    <DetailItem label="Price" value={`$${currentCar.price.toLocaleString()}`} />
+                    <DetailItem label="Price" value={new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 0 }).format(currentCar.price)} />
                     <DetailItem label="Status" value={currentCar.status} />
-                    <DetailItem label="Mileage" value={`${currentCar.mileage.toLocaleString()} mi`} />
+                    <DetailItem label="Mileage" value={`${new Intl.NumberFormat('de-CH').format(currentCar.mileage)} km`} />
                     <DetailItem label="Listing Type" value={currentCar.listing_type} />
                     <DetailItem label="Body Type" value={currentCar.body_type} />
                     <DetailItem label="Exterior Color" value={currentCar.exterior_color} />
@@ -1557,7 +1559,7 @@ export default function InventoryPage() {
                     <DetailItem label="Location" value={currentCar.location_city && currentCar.location_country ? `${currentCar.location_city}, ${currentCar.location_country}` : 'N/A'} />
                     <DetailItem label="Seller Name" value={currentCar.seller_name} />
                     <DetailItem label="Seller Since" value={currentCar.seller_since ? format(new Date(currentCar.seller_since), 'PP') : 'N/A'} />
-                    <DetailItem label="Purchasing Price" value={currentCar.purchasing_price ? `$${currentCar.purchasing_price.toLocaleString()}` : 'N/A'} />
+                    <DetailItem label="Purchasing Price" value={currentCar.purchasing_price ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 0 }).format(currentCar.purchasing_price) : 'N/A'} />
                   </dl>
                 </div>
 
@@ -1566,8 +1568,8 @@ export default function InventoryPage() {
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                     <h3 className="text-md font-semibold text-blue-800 mb-3">Rental Information</h3>
                     <dl className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4">
-                      <DetailItem label="Daily Price" value={currentCar.rental_daily_price ? `$${currentCar.rental_daily_price.toLocaleString()}` : 'N/A'} />
-                      <DetailItem label="Deposit Required" value={currentCar.rental_deposit_required ? `$${currentCar.rental_deposit_required.toLocaleString()}` : 'N/A'} />
+                      <DetailItem label="Daily Price" value={currentCar.rental_daily_price ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 2 }).format(currentCar.rental_daily_price) : 'N/A'} />
+                      <DetailItem label="Deposit Required" value={currentCar.rental_deposit_required ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 0 }).format(currentCar.rental_deposit_required) : 'N/A'} />
                       <DetailItem label="Rental Status" value={currentCar.rental_status} />
                       <DetailItem label="Min Rental Days" value={currentCar.min_rental_days} />
                       <DetailItem label="Max Rental Days" value={currentCar.max_rental_days} />

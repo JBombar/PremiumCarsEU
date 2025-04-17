@@ -450,10 +450,21 @@ export default function TransactionsPage() {
   };
 
   const formatCurrency = (amount: number | null) => {
-    if (amount === null) return '$0.00';
-    return new Intl.NumberFormat('en-US', {
+    if (amount === null) {
+      // Format zero CHF using the desired locale
+      return new Intl.NumberFormat('de-CH', {
+        style: 'currency',
+        currency: 'CHF',
+        // You might want 0 or 2 fraction digits for CHF, adjust as needed
+        // maximumFractionDigits: 0
+      }).format(0);
+    }
+    // Format the actual amount using the desired locale and currency
+    return new Intl.NumberFormat('de-CH', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'CHF',
+      // You might want 0 or 2 fraction digits for CHF, adjust as needed
+      // maximumFractionDigits: 0
     }).format(amount);
   };
 

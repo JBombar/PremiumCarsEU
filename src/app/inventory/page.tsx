@@ -109,17 +109,22 @@ function InventoryPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Helper function for price formatting (unchanged for now, locale handled by Intl.NumberFormat)
+  // Helper function for price formatting (CHANGED)
   const formatPrice = (price: number | null | undefined): string => {
     if (price == null) return t('card.priceNA');
-    // Consider using next-intl's number formatting for better locale support if needed
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+    // Use a Swiss locale (e.g., 'de-CH') and 'CHF' currency
+    // You can choose 'fr-CH' or 'it-CH' if that's more appropriate for your target audience
+    return new Intl.NumberFormat('de-CH', { // <-- Changed locale
+      style: 'currency',
+      currency: 'CHF', // <-- Changed currency code
+      maximumFractionDigits: 0 // Keep no decimals if desired
+    }).format(price);
   };
-
   // Helper function for mileage formatting (use translated unit)
   const formatMileage = (mileage: number | null | undefined): string => {
     if (mileage == null) return t('card.mileageNA');
-    return `${new Intl.NumberFormat('en-US').format(mileage)} ${t('card.unitMiles')}`;
+    return `${new Intl.NumberFormat('de-CH').format(mileage)} ${t('card.unitMiles')}`;
+
   };
 
   // **** CORRECTED HELPER FUNCTIONS (defined inside component or globally) ****
