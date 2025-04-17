@@ -42,7 +42,7 @@ const CarCard = ({ car, t }: { car: Car, t: ReturnType<typeof useTranslations<'M
     const carId = car.id && isValidUuid(car.id) ? car.id : "00000000-0000-4000-a000-000000000000";
     const imageUrl = car.images && Array.isArray(car.images) && car.images.length > 0 ? car.images[0] : "/images/car-placeholder.jpg";
     const mileageStr = typeof car.mileage === 'number' ? Math.floor(car.mileage).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : "0";
-    const priceStr = typeof car.price === 'number' ? `$${Math.floor(car.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : "$0";
+    const priceStr = typeof car.price === 'number' ? `CHF ${Math.floor(car.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : "CHF 0";
     const isNew = car.condition && car.condition.toLowerCase() === 'new';
     const isAvailable = car.status && car.status.toLowerCase() === 'available';
     const carTitle = `${car.year || ''} ${car.make || ''} ${car.model || ''}`.trim();

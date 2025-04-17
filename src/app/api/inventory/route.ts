@@ -1,7 +1,6 @@
-export const dynamic = 'force-dynamic'; // <--- ADD THIS LINE
-
-
 // app/api/inventory/route.ts
+export const dynamic = 'force-dynamic'; // Ensure dynamic rendering
+
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
@@ -119,18 +118,18 @@ export async function GET(request: NextRequest) {
 
     // --- Apply Filters Dynamically ---
 
-    // Make Filter
+    // Make Filter (Corrected: Case-insensitive EXACT match)
     if (validatedParams.make && validatedParams.make !== 'Any') {
-      query = query.ilike('make', `%${validatedParams.make.trim()}%`);
-      console.log(`API: Filtering by make: "%${validatedParams.make.trim()}%"`);
+      query = query.ilike('make', validatedParams.make.trim()); // No wildcards '%'
+      console.log(`API: Filtering by make: "${validatedParams.make.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // Model Filter
+    // Model Filter (Corrected: Case-insensitive EXACT match)
     if (validatedParams.model &&
       validatedParams.model !== 'Any' &&
       validatedParams.model.toLowerCase() !== 'any') {
-      query = query.ilike('model', `%${validatedParams.model.trim()}%`);
-      console.log(`API: Filtering by model: "%${validatedParams.model.trim()}%"`);
+      query = query.ilike('model', validatedParams.model.trim()); // No wildcards '%'
+      console.log(`API: Filtering by model: "${validatedParams.model.trim()}" (Case-Insensitive Exact Match)`);
     }
 
     // Year Range Filters
@@ -143,39 +142,36 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by year_to: <= ${validatedParams.year_to}`);
     }
 
-    // ****** BODY TYPE FILTER (Added) ******
+    // Body Type Filter (Using case-insensitive exact match)
     if (validatedParams.body_type &&
       validatedParams.body_type !== 'Any' &&
       validatedParams.body_type.toLowerCase() !== 'any') {
-      // Use .ilike() for case-insensitive matching (e.g., 'suv' matches 'SUV')
-      // Use .eq() for exact case-sensitive matching if needed
-      query = query.ilike('body_type', validatedParams.body_type.trim());
-      console.log(`API: Filtering by body_type: "${validatedParams.body_type.trim()}"`);
+      query = query.ilike('body_type', validatedParams.body_type.trim()); // No wildcards
+      console.log(`API: Filtering by body_type: "${validatedParams.body_type.trim()}" (Case-Insensitive Exact Match)`);
     }
-    // **************************************
 
-    // Fuel Type Filter
+    // Fuel Type Filter (Using case-insensitive exact match)
     if (validatedParams.fuel_type &&
       validatedParams.fuel_type !== 'Any' &&
       validatedParams.fuel_type.toLowerCase() !== 'any') {
-      query = query.ilike('fuel_type', validatedParams.fuel_type.trim());
-      console.log(`API: Filtering by fuel_type: "${validatedParams.fuel_type.trim()}"`);
+      query = query.ilike('fuel_type', validatedParams.fuel_type.trim()); // No wildcards
+      console.log(`API: Filtering by fuel_type: "${validatedParams.fuel_type.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // Condition Filter
+    // Condition Filter (Using exact match)
     if (validatedParams.condition &&
       validatedParams.condition !== 'Any' &&
-      VALID_CONDITIONS.includes(validatedParams.condition)) { // Use .includes for enums
+      VALID_CONDITIONS.includes(validatedParams.condition)) {
       query = query.eq('condition', validatedParams.condition);
       console.log(`API: Filtering by condition: "${validatedParams.condition}"`);
     }
 
-    // Transmission Filter
+    // Transmission Filter (Using case-insensitive exact match)
     if (validatedParams.transmission &&
       validatedParams.transmission !== 'Any' &&
       validatedParams.transmission.toLowerCase() !== 'any') {
-      query = query.ilike('transmission', validatedParams.transmission.trim());
-      console.log(`API: Filtering by transmission: "${validatedParams.transmission.trim()}"`);
+      query = query.ilike('transmission', validatedParams.transmission.trim()); // No wildcards
+      console.log(`API: Filtering by transmission: "${validatedParams.transmission.trim()}" (Case-Insensitive Exact Match)`);
     }
 
     // Price Range Filters
@@ -183,7 +179,7 @@ export async function GET(request: NextRequest) {
       query = query.gte('price', validatedParams.price_min);
       console.log(`API: Filtering by price_min: >= ${validatedParams.price_min}`);
     }
-    if (validatedParams.price_max !== undefined && validatedParams.price_max > 0) { // Check > 0
+    if (validatedParams.price_max !== undefined && validatedParams.price_max > 0) {
       query = query.lte('price', validatedParams.price_max);
       console.log(`API: Filtering by price_max: <= ${validatedParams.price_max}`);
     }
@@ -194,14 +190,12 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by mileage_min: >= ${validatedParams.mileage_min}`);
     }
     if (validatedParams.mileage_max !== undefined && validatedParams.mileage_max >= 0) {
-      // If max mileage is 0, this finds cars with exactly 0 mileage.
-      // Adjust logic if 0 should mean something else (e.g., "up to 0")
       query = query.lte('mileage', validatedParams.mileage_max);
       console.log(`API: Filtering by mileage_max: <= ${validatedParams.mileage_max}`);
     }
 
-    // After the other filters, add is_public filter
-    // Always filter by is_public if it's provided in the params
+    // is_public Filter (Using exact match)
+    // Always filter by is_public based on the validated default or provided value
     if (validatedParams.is_public !== undefined) {
       query = query.eq('is_public', validatedParams.is_public);
       console.log(`API: Filtering by is_public: ${validatedParams.is_public}`);

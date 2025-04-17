@@ -133,12 +133,7 @@ export function CarImageGallery({
                     />
                 </div>
 
-                {/* Overlay with "View larger" hint */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/10">
-                    <div className="bg-black/70 text-white px-4 py-2 rounded-md">
-                        Click to enlarge
-                    </div>
-                </div>
+
 
                 {/* Navigation arrows - only show if multiple images */}
                 {images.length > 1 && (

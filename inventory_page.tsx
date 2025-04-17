@@ -585,21 +585,20 @@ function InventoryPage() {
         newFilters.model = 'Any';
       }
 
-      console.log('AI Search: Calculated new filters:', newFilters);
-
-      // Update filter state for UI
+      // Update filter state
       setFilters(newFilters);
 
-      // Immediately fetch with the new filters instead of waiting for state update
-      console.log('AI Search: Triggering fetch with new filters immediately.');
-      fetchAndSetCars(newFilters, sortOption, true);
+      // Auto-apply filters
+      setTimeout(() => {
+        applyFilters(); // applyFilters already calls fetchAndSetCars with the updated filters
 
-      // Show success message
-      toast({
-        title: t('aiSearch.toastTitle'),
-        description: t('aiSearch.toastDescSuccess'),
-        variant: "default"
-      });
+        // Show success message (without confidence check)
+        toast({
+          title: t('aiSearch.toastTitle'),
+          description: t('aiSearch.toastDescSuccess'),
+          variant: "default"
+        });
+      }, 100); // Small delay to allow state update
 
     } catch (error) {
       console.error('AI search error:', error);

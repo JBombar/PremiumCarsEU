@@ -213,7 +213,7 @@ export function SpecialOfferCarousel() {
                   <h3 className="text-2xl font-bold mb-2">{carTitle}</h3>
                   <div className="mb-4">
                     <span className="text-3xl font-bold text-primary">
-                      ${formattedPrice}
+                      CHF {formattedPrice}
                     </span>
                   </div>
                   <p className="text-gray-600 mb-6">
