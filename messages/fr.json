@@ -541,6 +541,8 @@
             "maxLabel": "Max",
             "fromLabel": "De",
             "toLabel": "À",
+            "exteriorColorLabel": "Couleur extérieure",
+            "interiorColorLabel": "Couleur intérieure",
             "makePlaceholderLoading": "Chargement des marques...",
             "makePlaceholder": "Sélectionner la marque",
             "modelPlaceholderLoading": "Chargement des modèles...",

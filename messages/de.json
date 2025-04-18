@@ -541,6 +541,8 @@
             "maxLabel": "Max",
             "fromLabel": "Von",
             "toLabel": "Bis",
+            "exteriorColorLabel": "Außenfarbe",
+            "interiorColorLabel": "Innenfarbe",
             "makePlaceholderLoading": "Lade Marken...",
             "makePlaceholder": "Marke auswählen",
             "modelPlaceholderLoading": "Lade Modelle...",

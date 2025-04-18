@@ -541,6 +541,8 @@
             "maxLabel": "Max",
             "fromLabel": "From",
             "toLabel": "To",
+            "exteriorColorLabel": "Exterior Color",
+            "interiorColorLabel": "Interior Color",
             "makePlaceholderLoading": "Loading makes...",
             "makePlaceholder": "Select make",
             "modelPlaceholderLoading": "Loading models...",

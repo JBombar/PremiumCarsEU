@@ -41,6 +41,8 @@ interface FilterState {
   transmission: string;
   condition: string;
   bodyType: string;
+  exteriorColor: string; // Added exterior color
+  interiorColor: string; // Added interior color
   // Advanced fields are optional numbers
   horsepowerMin?: number;
   horsepowerMax?: number;
@@ -65,6 +67,8 @@ const defaultFilters: FilterState = {
   transmission: "Any",
   condition: "Any",
   bodyType: "Any",
+  exteriorColor: "Any", // Default value for exterior color
+  interiorColor: "Any", // Default value for interior color
   // Defaults for advanced fields
   horsepowerMin: undefined,
   horsepowerMax: undefined,
@@ -108,6 +112,23 @@ function InventoryPage() {
   const t = useTranslations('InventoryPage'); // Initialize useTranslations
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // Define available colors list with common car colors
+  const availableColors = [
+    "anthracite", "beige", "blue", "bordeaux", "brown", "yellow", "gold",
+    "gray", "green", "multicolor", "orange", "pink", "red", "black",
+    "silver", "turquoise", "violet", "white"
+  ];
+
+  // Helper function to map color names to CSS colors (for colors that don't match CSS names)
+  const getColorValue = (colorName: string): string => {
+    const colorMap: Record<string, string> = {
+      anthracite: "#383838",
+      bordeaux: "#6D071A",
+      multicolor: "linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet)",
+    };
+    return colorMap[colorName] || colorName;
+  };
 
   // Helper function for price formatting (CHANGED)
   const formatPrice = (price: number | null | undefined): string => {
@@ -252,6 +273,10 @@ function InventoryPage() {
     if (currentFilters.cylindersMax !== undefined) queryParams.append('cyl_max', currentFilters.cylindersMax.toString());
     // Add others...
 
+    // Add these two lines to include color filters in the API call:
+    if (currentFilters.exteriorColor !== defaultFilters.exteriorColor) queryParams.append('exterior_color', currentFilters.exteriorColor);
+    if (currentFilters.interiorColor !== defaultFilters.interiorColor) queryParams.append('interior_color', currentFilters.interiorColor);
+
     // Sorting
     const [sortBy, sortOrder] = parseSortOption(currentSort);
     queryParams.append('sortBy', sortBy);
@@ -314,6 +339,8 @@ function InventoryPage() {
         transmission: getStringParam('transmission', defaultFilters.transmission),
         condition: getStringParam('condition', defaultFilters.condition),
         bodyType: getStringParam('body_type', defaultFilters.bodyType),
+        exteriorColor: getStringParam('exterior_color', defaultFilters.exteriorColor),
+        interiorColor: getStringParam('interior_color', defaultFilters.interiorColor),
 
         // Basic (Numbers - ensure they are numbers)
         priceMin: getIntParam('price_min', defaultFilters.priceMin) ?? defaultFilters.priceMin,
@@ -579,6 +606,10 @@ function InventoryPage() {
       newFilters.fuelType = parsed_filters.fuel_type ?? newFilters.fuelType;
       newFilters.transmission = parsed_filters.transmission ?? newFilters.transmission;
       newFilters.condition = parsed_filters.condition ?? newFilters.condition;
+
+      // Handle color filters from AI
+      newFilters.exteriorColor = parsed_filters.exterior_color ?? newFilters.exteriorColor;
+      newFilters.interiorColor = parsed_filters.interior_color ?? newFilters.interiorColor;
 
       // Ensure model is reset if make changed but model didn't
       if (parsed_filters.make && parsed_filters.make !== filters.make && !parsed_filters.model) {
@@ -965,6 +996,69 @@ function InventoryPage() {
                   <SelectContent>
                     {Object.entries(conditionOptions).map(([key, value]) => (
                       <SelectItem key={key} value={key}>{value as string}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Color Filters Row: Exterior Color, Interior Color */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
+              {/* Exterior Color */}
+              <div className="space-y-1">
+                <label className="block text-sm font-medium mb-2">{t('filters.exteriorColorLabel')}</label>
+                <Select
+                  value={filters.exteriorColor}
+                  onValueChange={(value) => handleFilterChange("exteriorColor", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('filters.colorPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Any">{t('filters.optionAny')}</SelectItem>
+                    {availableColors.map(color => (
+                      <SelectItem key={color} value={color}>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="w-3 h-3 rounded-full border border-gray-300 inline-block"
+                            style={{
+                              background: getColorValue(color),
+                              boxShadow: color === 'white' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
+                            }}
+                          />
+                          {color.charAt(0).toUpperCase() + color.slice(1)}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Interior Color */}
+              <div className="space-y-1">
+                <label className="block text-sm font-medium mb-2">{t('filters.interiorColorLabel')}</label>
+                <Select
+                  value={filters.interiorColor}
+                  onValueChange={(value) => handleFilterChange("interiorColor", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('filters.colorPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Any">{t('filters.optionAny')}</SelectItem>
+                    {availableColors.map(color => (
+                      <SelectItem key={color} value={color}>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="w-3 h-3 rounded-full border border-gray-300 inline-block"
+                            style={{
+                              background: getColorValue(color),
+                              boxShadow: color === 'white' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
+                            }}
+                          />
+                          {color.charAt(0).toUpperCase() + color.slice(1)}
+                        </div>
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

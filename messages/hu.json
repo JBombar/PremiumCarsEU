@@ -541,6 +541,8 @@
             "maxLabel": "Max",
             "fromLabel": "Tól",
             "toLabel": "Ig",
+            "exteriorColorLabel": "Külső szín",
+            "interiorColorLabel": "Belső szín",
             "makePlaceholderLoading": "Márkák betöltése...",
             "makePlaceholder": "Válasszon márkát",
             "modelPlaceholderLoading": "Modellek betöltése...",

@@ -194,6 +194,22 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by mileage_max: <= ${validatedParams.mileage_max}`);
     }
 
+    // Exterior Color Filter (Using case-insensitive exact match)
+    if (validatedParams.exterior_color &&
+      validatedParams.exterior_color !== 'Any' &&
+      validatedParams.exterior_color.toLowerCase() !== 'any') {
+      query = query.ilike('exterior_color', validatedParams.exterior_color.trim());
+      console.log(`API: Filtering by exterior_color: "${validatedParams.exterior_color.trim()}" (Case-Insensitive Exact Match)`);
+    }
+
+    // Interior Color Filter (Using case-insensitive exact match)
+    if (validatedParams.interior_color &&
+      validatedParams.interior_color !== 'Any' &&
+      validatedParams.interior_color.toLowerCase() !== 'any') {
+      query = query.ilike('interior_color', validatedParams.interior_color.trim());
+      console.log(`API: Filtering by interior_color: "${validatedParams.interior_color.trim()}" (Case-Insensitive Exact Match)`);
+    }
+
     // is_public Filter (Using exact match)
     // Always filter by is_public based on the validated default or provided value
     if (validatedParams.is_public !== undefined) {

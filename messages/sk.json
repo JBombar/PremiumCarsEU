@@ -541,6 +541,8 @@
             "maxLabel": "Max",
             "fromLabel": "Od",
             "toLabel": "Do",
+            "exteriorColorLabel": "Farba exteriéru",
+            "interiorColorLabel": "Farba interiéru",
             "makePlaceholderLoading": "Načítavam značky...",
             "makePlaceholder": "Vyberte značku",
             "modelPlaceholderLoading": "Načítavam modely...",

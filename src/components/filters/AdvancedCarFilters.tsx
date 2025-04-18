@@ -26,6 +26,8 @@ interface FilterState {
   transmission: string;
   condition: string;
   bodyType: string;
+  exteriorColor: string;
+  interiorColor: string;
   // Add advanced fields (ensure names match what you'll add to parent state)
   horsepowerMin?: number;
   horsepowerMax?: number;
