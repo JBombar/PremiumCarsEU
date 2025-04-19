@@ -580,6 +580,7 @@
         },
         "results": {
             "count": "Wyświetlanie {count} pojazdów",
+            "notFoundTitle": "Nie znaleźliśmy żadnych samochodów pasujących do Twojego wyszukiwania. Możesz nam dokładnie powiedzieć, czego szukasz, a nasz salon znajdzie dla Ciebie pasujący pojazd.",
             "sortByLabel": "Sortuj według:",
             "sortPlaceholder": "Sortuj według",
             "emptyTitle": "Nie znaleziono pojazdów pasujących do Twoich kryteriów.",

@@ -13,6 +13,7 @@ import { Slider } from "@/components/ui/slider"; // Keep if AdvancedCarFilters u
 import { Badge } from "@/components/ui/badge"; // Keep if used
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, Filter, Fuel, Gauge, RefreshCcw, Tag, Calendar, X, ChevronUp, ChevronDown, AlertCircle, Search, Sparkles } from "lucide-react";
 import { AdvancedCarFilters } from "@/components/filters/AdvancedCarFilters";
+import { RequestCarForm } from "@/components/home/RequestCarForm"; // Import the RequestCarForm component
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "@/components/ui/use-toast";
 import { useTranslations } from 'next-intl'; // Import useTranslations
@@ -1336,14 +1337,13 @@ function InventoryPage() {
               })}
             </div>
           ) : (
-            <div className="w-full p-8 text-center">
-              <div className="bg-muted/50 rounded-lg p-8 max-w-md mx-auto">
-                <AlertCircle className="h-10 w-10 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">{t('results.emptyTitle')}</p>
-                <Button onClick={resetFilters} variant="outline" className="mt-2">
-                  <RefreshCcw className="mr-2 h-4 w-4" />
-                  {t('results.resetFiltersButton')}
-                </Button>
+            <div className="w-full p-8">
+              <div className="bg-muted/50 rounded-lg p-8 max-w-2xl mx-auto">
+                <h3 className="text-xl font-medium mb-4">{t('results.notFoundTitle')}</h3>
+
+                <div className="border-t pt-6">
+                  <RequestCarForm />
+                </div>
               </div>
             </div>
           )}

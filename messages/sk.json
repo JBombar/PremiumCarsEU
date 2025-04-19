@@ -580,6 +580,7 @@
         },
         "results": {
             "count": "Zobrazuje sa {count} vozidiel",
+            "notFoundTitle": "Nenašli sme žiadne autá zodpovedajúce vášmu vyhľadávaniu. Môžete nám dať presne vedieť, čo hľadáte, a náš predajca vám nájde zodpovedajúce vozidlo.",
             "sortByLabel": "Zoradiť podľa:",
             "sortPlaceholder": "Zoradiť podľa",
             "emptyTitle": "Nenašli sa žiadne vozidlá zodpovedajúce vašim kritériám.",

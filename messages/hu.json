@@ -580,6 +580,7 @@
         },
         "results": {
             "count": "{count} jármű megjelenítése",
+            "notFoundTitle": "Nem találtunk a keresésének megfelelő autókat. Kérjük, jelezze számunkra, pontosan mit keres, és kereskedésünk megpróbálja megtalálni a megfelelő járművet Önnek.",
             "sortByLabel": "Rendezés:",
             "sortPlaceholder": "Rendezés",
             "emptyTitle": "Nem található a kritériumainak megfelelő jármű.",

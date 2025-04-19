@@ -580,6 +580,7 @@
         },
         "results": {
             "count": "Showing {count} vehicles",
+            "notFoundTitle": "We couldn't find any cars matching your search. You can let us know exactly what you're looking for, and our dealership will find a matching vehicle for you.",
             "sortByLabel": "Sort by:",
             "sortPlaceholder": "Sort by",
             "emptyTitle": "No vehicles found matching your criteria.",

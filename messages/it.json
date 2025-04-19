@@ -580,6 +580,7 @@
         },
         "results": {
             "count": "Mostrando {count} veicoli",
+            "notFoundTitle": "Non abbiamo trovato auto che corrispondano alla tua ricerca. Puoi dirci esattamente cosa stai cercando e la nostra concessionaria troverà un veicolo adatto a te.",
             "sortByLabel": "Ordina per:",
             "sortPlaceholder": "Ordina per",
             "emptyTitle": "Nessun veicolo trovato corrispondente ai tuoi criteri.",

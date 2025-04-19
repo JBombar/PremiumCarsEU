@@ -580,6 +580,7 @@
         },
         "results": {
             "count": "{count} Fahrzeuge angezeigt",
+            "notFoundTitle": "Wir konnten keine passenden Fahrzeuge zu Ihrer Suche finden. Teilen Sie uns einfach Ihre genauen Suchkriterien mit und unser Autohaus findet das passende Fahrzeug für Sie.",
             "sortByLabel": "Sortieren nach:",
             "sortPlaceholder": "Sortieren nach",
             "emptyTitle": "Keine Fahrzeuge gefunden, die Ihren Kriterien entsprechen.",

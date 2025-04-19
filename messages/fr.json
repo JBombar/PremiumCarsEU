@@ -580,6 +580,7 @@
         },
         "results": {
             "count": "Affichage de {count} véhicules",
+            "notFoundTitle": "Nous n'avons trouvé aucun véhicule correspondant à votre recherche. Indiquez-nous précisément ce que vous recherchez et notre concessionnaire trouvera un véhicule correspondant.",
             "sortByLabel": "Trier par :",
             "sortPlaceholder": "Trier par",
             "emptyTitle": "Aucun véhicule trouvé correspondant à vos critères.",
