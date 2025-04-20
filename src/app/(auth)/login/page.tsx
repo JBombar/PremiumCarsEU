@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
+import { useRouter, useSearchParams } from 'next/navigation'; // Added useSearchParams
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -14,54 +13,78 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null); // State for login errors
+
   const router = useRouter();
-  const { signIn } = useAuth();
-  const supabase = createClient();
+  const searchParams = useSearchParams(); // To read query params like ?message=
+  const { signIn } = useAuth(); // Get signIn from the updated hook
+
+  // Show message if redirected from registration
+  useEffect(() => {
+    const message = searchParams?.get('message');
+    if (message === 'check-email') {
+      toast({
+        title: "Check Your Email",
+        description: "Please click the confirmation link we sent you to activate your account.",
+        duration: 7000,
+      });
+      // Optional: Clear the query param after showing the message
+      // router.replace('/login', { scroll: false }); // Avoid adding to history
+    }
+    // Add other message checks if needed
+    const errorParam = searchParams?.get('error_description');
+    if (errorParam) {
+      setError(errorParam);
+      toast({
+        title: "Authentication Error",
+        description: errorParam,
+        variant: "destructive",
+      });
+      // router.replace('/login', { scroll: false });
+    }
+
+  }, [searchParams, router]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
     setIsLoading(true);
+    setError(null); // Clear previous errors
 
     try {
-      // Make a direct call to verify the credentials first
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      // ONLY call the signIn function from the useAuth hook.
+      // It handles Supabase auth and triggers profile check via onAuthStateChange.
+      const { error: signInError, user } = await signIn(email, password);
 
-      console.log('Direct Supabase auth result:', authData);
-
-      if (authError) {
-        // Handle direct auth error
-        console.error('Login error:', authError);
+      if (signInError) {
+        console.error('Login page: signIn error:', signInError);
+        const message = signInError.message || 'Authentication failed. Please check your credentials.';
+        setError(message); // Set error state to display below form
         toast({
           title: 'Login failed',
-          description: authError.message,
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Use the auth hook with the successful credentials
-      const { error } = await signIn(email, password);
-
-      if (error) {
-        console.error('Auth hook login error:', error);
-        toast({
-          title: 'Login failed',
-          description: error.message || 'Authentication failed',
+          description: message,
           variant: 'destructive',
         });
       } else {
-        // Only redirect on success
-        router.push('/admin');
+        // Success! User is logged in.
+        // The AuthProvider's onAuthStateChange listener handles profile check and redirects.
+        // No explicit redirect needed here unless you want custom logic.
+        toast({
+          title: 'Login Successful',
+          description: 'Welcome back!',
+        });
+        // AuthProvider should handle redirect to /admin/dashboard or appropriate page
+        // If redirect doesn't happen automatically, you might need: router.push('/admin/dashboard');
       }
     } catch (error) {
-      console.error('Unexpected login error:', error);
+      // Catch unexpected errors during the process
+      console.error('Login page: Unexpected login error:', error);
+      const message = 'An unexpected error occurred during login.';
+      setError(message);
       toast({
         title: 'Login failed',
-        description: 'An unexpected error occurred',
+        description: message,
         variant: 'destructive',
       });
     } finally {
@@ -70,30 +93,34 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
       <div className="w-full max-w-md">
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <h1 className="text-2xl font-bold text-center mb-6">Sign in to your account</h1>
+        <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200">
+          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Sign in to your account</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email Input */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
 
+            {/* Password Input */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
+                {/* Optional: Forgot Password Link */}
+                {/* <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
                   Forgot password?
-                </Link>
+                </Link> */}
               </div>
               <Input
                 id="password"
@@ -102,9 +129,18 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
 
+            {/* Error Display */}
+            {error && (
+              <div className="text-red-600 text-sm p-3 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
+
+            {/* Submit Button */}
             <Button
               type="submit"
               className="w-full"
@@ -114,10 +150,11 @@ export default function LoginPage() {
             </Button>
           </form>
 
+          {/* Link to Register */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link href="/register" className="text-blue-600 hover:text-blue-800">
+              <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
                 Register
               </Link>
             </p>
@@ -126,4 +163,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-} 
+}
