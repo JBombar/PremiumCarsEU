@@ -15,6 +15,8 @@ const nextConfig = {
     },
     env: {
         N8N_AI_INTENT_WEBHOOK: process.env.N8N_AI_INTENT_WEBHOOK, // Expose the n8n webhook to server-side runtime
+        SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+
     },
 };
 
