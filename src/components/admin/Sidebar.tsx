@@ -14,6 +14,7 @@ import {
   User,
   CalendarClock,
   Tag,
+  ClipboardList, // <-- Added icon import
   LogOut,
   ExternalLink,
   ChevronLeft,
@@ -30,6 +31,10 @@ export default function Sidebar() {
   const { collapsed, toggleSidebar } = useSidebar();
 
   const isActive = (path: string) => {
+    // Ensure exact match for dashboard, allow prefix match for others
+    if (path === "/admin") {
+      return pathname === path;
+    }
     return pathname === path || pathname.startsWith(`${path}/`);
   };
 
@@ -37,6 +42,7 @@ export default function Sidebar() {
     { name: "Dashboard", href: "/admin", icon: LayoutGrid },
     { name: "Inventory", href: "/admin/inventory", icon: Car },
     { name: "Car Offers", href: "/admin/car-offers", icon: Tag },
+    { name: "Dealer Listings", href: "/admin/dealer-listings", icon: ClipboardList }, // <-- Added new navigation item
     { name: "Partners", href: "/admin/partners", icon: Users },
     { name: "Leads", href: "/admin/leads", icon: Users },
     { name: "Reservations", href: "/admin/reservations", icon: Calendar },
@@ -50,7 +56,12 @@ export default function Sidebar() {
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
-      router.push("/login");
+      // Redirect to login, ensuring it's a full page reload if needed
+      // to clear any sensitive client-side state.
+      window.location.href = "/login";
+    } else {
+      console.error("Logout failed:", error);
+      // Optionally show a toast message on error
     }
   };
 
@@ -60,12 +71,12 @@ export default function Sidebar() {
         }`}
     >
       {/* Logo & Brand */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between h-16"> {/* Fixed height */}
         {!collapsed && (
           <>
-            <div className="flex items-center gap-2">
-              <Car className="h-6 w-6" />
-              <span className="font-semibold text-lg">PremiumCarsEU Admin</span>
+            <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap"> {/* Prevent wrap */}
+              <Car className="h-6 w-6 flex-shrink-0" /> {/* Prevent shrink */}
+              <span className="font-semibold text-lg">PremiumCarsEU</span>
             </div>
           </>
         )}
@@ -76,22 +87,22 @@ export default function Sidebar() {
           variant="ghost"
           size="sm"
           onClick={toggleSidebar}
-          className="p-1"
+          className="p-1 flex-shrink-0" // Prevent shrink
         >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </Button>
       </div>
 
       {/* User Info */}
-      <div className="border-b border-gray-200 p-4">
-        <div className="flex items-center gap-3">
-          <div className="rounded-full bg-gray-100 p-2">
+      <div className="border-b border-gray-200 p-4 h-16 flex items-center"> {/* Fixed height */}
+        <div className="flex items-center gap-3 overflow-hidden"> {/* Prevent overflow */}
+          <div className="rounded-full bg-gray-100 p-2 flex-shrink-0"> {/* Prevent shrink */}
             <User className="h-5 w-5 text-gray-600" />
           </div>
           {!collapsed && (
-            <div className="flex flex-col">
-              <span className="text-sm font-medium"></span>
-              <span className="text-xs text-gray-500">Admin</span>
+            <div className="flex flex-col overflow-hidden whitespace-nowrap"> {/* Prevent wrap */}
+              <span className="text-sm font-medium">Admin User</span> {/* Placeholder */}
+              <span className="text-xs text-gray-500">Administrator</span>
             </div>
           )}
         </div>
@@ -107,13 +118,13 @@ export default function Sidebar() {
                 <Link
                   href={item.href}
                   className={`flex items-center ${collapsed ? "justify-center" : "gap-3"} px-3 py-2 rounded-md text-sm ${isActive(item.href)
-                    ? "bg-gray-100 font-medium"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-gray-100 font-medium text-gray-900" // Ensure text color contrast on active
+                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   title={collapsed ? item.name : ""}
                 >
-                  <Icon className="h-5 w-5" />
-                  {!collapsed && item.name}
+                  <Icon className="h-5 w-5 flex-shrink-0" /> {/* Prevent shrink */}
+                  {!collapsed && <span className="truncate">{item.name}</span>} {/* Truncate text */}
                 </Link>
               </li>
             );
@@ -130,7 +141,7 @@ export default function Sidebar() {
                 variant="outline"
                 size="sm"
                 className="w-full justify-start text-gray-700"
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/")} // Use router for client-side nav
               >
                 <ExternalLink className="mr-2 h-4 w-4" />
                 Back to Website
@@ -150,9 +161,9 @@ export default function Sidebar() {
             <>
               <Button
                 variant="outline"
-                size="sm"
+                size="icon" // Use size="icon" for collapsed state
                 className="w-full justify-center text-gray-700 mb-2"
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/")} // Use router for client-side nav
                 title="Back to Website"
               >
                 <ExternalLink className="h-4 w-4" />
@@ -160,7 +171,7 @@ export default function Sidebar() {
 
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon" // Use size="icon" for collapsed state
                 className="w-full justify-center text-gray-700 hover:text-red-600 hover:bg-red-50"
                 onClick={handleLogout}
                 title="Log out"
@@ -173,4 +184,4 @@ export default function Sidebar() {
       </div>
     </aside>
   );
-} 
+}
