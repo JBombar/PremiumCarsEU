@@ -9,12 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Loader2, ArrowLeft, ArrowRight, ExternalLink } from "lucide-react"; // Ensure Loader2 is imported
+// --- Ensure necessary icons are imported ---
+import { Loader2, ArrowLeft, ArrowRight, ExternalLink, CheckCircle, UploadCloudIcon } from "lucide-react"; // Added UploadCloudIcon (or similar) for Add button
 import { format } from "date-fns";
 import Image from "next/image";
-import { PhotoIcon } from '@heroicons/react/24/outline';
+import { PhotoIcon } from '@heroicons/react/24/outline'; // Keep existing icons
 
-// --- Define Interface (remains the same) ---
+// --- Define Interface (Should match the one from previous correct version) ---
 type ApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 interface DealerListing {
@@ -34,11 +35,22 @@ interface DealerListing {
     approval_status: ApprovalStatus;
     created_at: string;
     partner_id: string;
-    approved_by?: string | null; // Optional: Add if you fetch/use it
+    approved_by?: string | null;
     dealer_business_name: string | null;
     dealer_contact_name: string | null;
     dealer_email: string | null;
     dealer_phone_number: string | null;
+    is_added_to_main_listings: boolean;
+    listing_type: string | null;
+    body_type: string | null;
+    engine: string | null;
+    exterior_color: string | null;
+    interior_color: string | null;
+    is_special_offer: boolean;
+    special_offer_label: string | null;
+    is_public: boolean;
+    fuel_type: string | null;
+    transmission: string | null;
 }
 
 // --- Helper Functions (remain the same) ---
@@ -99,19 +111,36 @@ export default function AdminDealerListingsPage() {
     const [selectedListing, setSelectedListing] = useState<DealerListing | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImageIndex, setModalImageIndex] = useState(0);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false); // For Approve/Reject
+    const [isAddingToListings, setIsAddingToListings] = useState(false); // For Add to Listings
 
-    // --- Data Fetching ---
+    // --- Data Fetching (Select the new fields) ---
     const fetchDealerListings = useCallback(async () => {
         setLoading(true);
         setError(null);
         console.log("Fetching dealer listings...");
 
         try {
+            // Select all needed fields, including the new one and those required for mapping
             const { data, error: fetchError } = await supabase
                 .from('partner_listings')
-                .select(`*, dealer_partners (business_name, contact_name, email, phone_number)`)
+                .select(`
+                    *,
+                    is_added_to_main_listings,
+                    listing_type,
+                    body_type,
+                    engine,
+                    exterior_color,
+                    interior_color,
+                    is_special_offer,
+                    special_offer_label,
+                    is_public,
+                    fuel_type,
+                    transmission,
+                    dealer_partners (business_name, contact_name, email, phone_number)
+                `)
                 .order('created_at', { ascending: false });
+
 
             if (fetchError) throw fetchError;
 
@@ -129,6 +158,17 @@ export default function AdminDealerListingsPage() {
                     created_at: item.created_at, partner_id: item.partner_id, approved_by: item.approved_by,
                     dealer_business_name: partnerData?.business_name ?? null, dealer_contact_name: partnerData?.contact_name ?? null,
                     dealer_email: partnerData?.email ?? null, dealer_phone_number: partnerData?.phone_number ?? null,
+                    is_added_to_main_listings: item.is_added_to_main_listings ?? false, // <-- Map new field
+                    listing_type: item.listing_type, // <-- Map new field
+                    body_type: item.body_type, // <-- Map new field
+                    engine: item.engine, // <-- Map new field
+                    exterior_color: item.exterior_color, // <-- Map new field
+                    interior_color: item.interior_color, // <-- Map new field
+                    is_special_offer: item.is_special_offer ?? false, // <-- Map new field
+                    special_offer_label: item.special_offer_label, // <-- Map new field
+                    is_public: item.is_public ?? true, // <-- Map new field
+                    fuel_type: item.fuel_type, // <-- Map new field
+                    transmission: item.transmission, // <-- Map new field
                 };
             });
             setListings(formattedListings);
@@ -152,7 +192,7 @@ export default function AdminDealerListingsPage() {
         fetchDealerListings();
     }, [fetchDealerListings]);
 
-    // --- Filtering Logic ---
+    // --- Filtering Logic (remains the same) ---
     useEffect(() => {
         if (!searchQuery.trim()) {
             setFilteredListings(listings); return;
@@ -167,7 +207,7 @@ export default function AdminDealerListingsPage() {
         setFilteredListings(filtered);
     }, [searchQuery, listings]);
 
-    // --- Modal Open/Close Handlers ---
+    // --- Modal Open/Close Handlers (remains the same) ---
     const openListingDetails = (listing: DealerListing) => {
         setSelectedListing(listing);
         setModalImageIndex(0);
@@ -176,10 +216,12 @@ export default function AdminDealerListingsPage() {
 
     const closeListingDetails = () => {
         setIsModalOpen(false);
+        setIsSubmitting(false);
+        setIsAddingToListings(false);
         setTimeout(() => { setSelectedListing(null); }, 300);
     };
 
-    // --- Modal Image Navigation ---
+    // --- Modal Image Navigation (remains the same) ---
     const nextModalImage = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         if (!selectedListing || !selectedListing.images || selectedListing.images.length <= 1) return;
@@ -191,7 +233,7 @@ export default function AdminDealerListingsPage() {
         setModalImageIndex(prev => (prev - 1 + selectedListing.images.length) % selectedListing.images.length);
     };
 
-    // --- Approve/Reject Actions ---
+    // --- Approve/Reject Actions (remain the same logic) ---
     const handleApprove = async (listingId: string) => {
         if (!listingId) return;
         setIsSubmitting(true);
@@ -201,33 +243,17 @@ export default function AdminDealerListingsPage() {
 
             const { error: updateError } = await supabase
                 .from('partner_listings')
-                .update({
-                    approval_status: 'approved',
-                    approved_by: user.id,
-                })
+                .update({ approval_status: 'approved', approved_by: user.id })
                 .eq('id', listingId);
-
             if (updateError) throw updateError;
 
             toast({ title: "Success", description: "Listing approved successfully.", variant: "default" });
-
-            // Function to update state immutably
             const updateListingsState = (prevListings: DealerListing[]): DealerListing[] =>
-                prevListings.map(listing =>
-                    listing.id === listingId
-                        ? {
-                            ...listing,
-                            approval_status: 'approved' as ApprovalStatus, // <-- Type Assertion
-                            approved_by: user.id
-                        }
-                        : listing
-                );
-
+                prevListings.map(listing => listing.id === listingId ? { ...listing, approval_status: 'approved', approved_by: user.id } : listing);
             setListings(updateListingsState);
-            setFilteredListings(updateListingsState);
-
-            closeListingDetails();
-
+            if (selectedListing?.id === listingId) {
+                setSelectedListing(prev => prev ? { ...prev, approval_status: 'approved', approved_by: user.id } : null);
+            }
         } catch (err: any) {
             console.error("Error approving listing:", err);
             toast({ title: "Approval Failed", description: err.message || "Could not approve the listing.", variant: "destructive" });
@@ -238,102 +264,95 @@ export default function AdminDealerListingsPage() {
 
     const handleReject = async (listingId: string) => {
         if (!listingId) return;
-        setIsSubmitting(true); // Start loading
+        setIsSubmitting(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("User not authenticated.");
 
-            // Update Database to 'rejected'
             const { error: updateError } = await supabase
                 .from('partner_listings')
-                .update({
-                    approval_status: 'rejected',
-                    approved_by: user.id, // Record who rejected it
-                })
+                .update({ approval_status: 'rejected', approved_by: user.id })
                 .eq('id', listingId);
-
             if (updateError) throw updateError;
 
             toast({ title: "Success", description: "Listing rejected successfully.", variant: "default" });
-
-            // Function to update state immutably
             const updateListingsState = (prevListings: DealerListing[]): DealerListing[] =>
-                prevListings.map(listing =>
-                    listing.id === listingId
-                        ? {
-                            ...listing,
-                            approval_status: 'rejected' as ApprovalStatus, // <-- Type Assertion
-                            approved_by: user.id
-                        }
-                        : listing
-                );
-
+                prevListings.map(listing => listing.id === listingId ? { ...listing, approval_status: 'rejected', approved_by: user.id } : listing);
             setListings(updateListingsState);
-            setFilteredListings(updateListingsState);
-
-            closeListingDetails(); // Close the modal
-
+            if (selectedListing?.id === listingId) {
+                setSelectedListing(prev => prev ? { ...prev, approval_status: 'rejected', approved_by: user.id } : null);
+            }
         } catch (err: any) {
             console.error("Error rejecting listing:", err);
             toast({ title: "Rejection Failed", description: err.message || "Could not reject the listing.", variant: "destructive" });
         } finally {
-            setIsSubmitting(false); // End loading
+            setIsSubmitting(false);
         }
     };
 
-    // --- Render Logic ---
+    // --- Add to Listings Action (remain the same logic) ---
+    const handleAddToListings = async (partnerListingId: string) => {
+        if (!partnerListingId) return;
+        setIsAddingToListings(true);
+        try {
+            const response = await fetch('/api/car_listings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ source_partner_listing_id: partnerListingId }),
+            });
+            const result = await response.json();
+            if (!response.ok) { throw new Error(result.error || `Failed to add listing (${response.status})`); }
+
+            toast({ title: "Success", description: "Listing added to main inventory.", variant: "default" });
+            const updateListingsState = (prevListings: DealerListing[]): DealerListing[] =>
+                prevListings.map(listing => listing.id === partnerListingId ? { ...listing, is_added_to_main_listings: true } : listing);
+            setListings(updateListingsState);
+            if (selectedListing?.id === partnerListingId) {
+                setSelectedListing(prev => prev ? { ...prev, is_added_to_main_listings: true } : null);
+            }
+        } catch (err: any) {
+            console.error("Error adding to listings:", err);
+            toast({ title: "Add Failed", description: err.message || "Could not add the listing to inventory.", variant: "destructive" });
+        } finally {
+            setIsAddingToListings(false);
+        }
+    };
+
+
+    // --- Render Logic (Table remains the same) ---
     return (
         <div className="container mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Dealer Partner Listings</h1>
             </div>
-
             <div className="mb-6">
                 <Input placeholder="Search by Dealer, Make, Model, VIN..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="max-w-md" />
             </div>
-
             {loading && (<div className="flex justify-center items-center min-h-[200px]"><Loader2 className="h-8 w-8 animate-spin text-primary" /><span className="ml-2">Loading Listings...</span></div>)}
             {!loading && error && (<div className="text-center py-10 border rounded-lg bg-red-50 text-red-700"><p>Error loading listings: {error}</p><Button onClick={fetchDealerListings} variant="outline" size="sm" className="mt-4">Retry</Button></div>)}
             {!loading && !error && filteredListings.length === 0 && (<div className="text-center py-10 border rounded-lg bg-muted/20"><p className="text-muted-foreground">{searchQuery ? "No listings match your search." : "No dealer partner listings found."}</p></div>)}
-
-            {/* Table Display */}
             {!loading && !error && filteredListings.length > 0 && (
                 <div className="overflow-auto rounded-lg border">
                     <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Dealer</TableHead>
-                                <TableHead>Vehicle</TableHead>
-                                <TableHead>Price</TableHead>
-                                <TableHead>Submitted</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
+                        <TableHeader> <TableRow> <TableHead>Dealer</TableHead> <TableHead>Vehicle</TableHead> <TableHead>Price</TableHead> <TableHead>Submitted</TableHead> <TableHead>Status</TableHead> <TableHead className="text-right">Actions</TableHead> </TableRow> </TableHeader>
                         <TableBody>
                             {filteredListings.map((listing) => (
                                 <TableRow key={listing.id}>
-                                    <TableCell className="font-medium">
-                                        {listing.dealer_business_name ?? listing.dealer_contact_name ?? 'N/A'}
-                                        {listing.dealer_email && (<div className="text-xs text-muted-foreground">{listing.dealer_email}</div>)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {listing.vehicle_make} {listing.vehicle_model}
-                                        <div className="text-xs text-muted-foreground">{listing.vehicle_year}</div>
-                                    </TableCell>
+                                    <TableCell className="font-medium"> {listing.dealer_business_name ?? listing.dealer_contact_name ?? 'N/A'} {listing.dealer_email && (<div className="text-xs text-muted-foreground">{listing.dealer_email}</div>)} </TableCell>
+                                    <TableCell> {listing.vehicle_make} {listing.vehicle_model} <div className="text-xs text-muted-foreground">{listing.vehicle_year}</div> </TableCell>
                                     <TableCell>{formatPriceAdmin(listing.price)}</TableCell>
+                                    <TableCell> {format(new Date(listing.created_at), "dd MMM yyyy")} <div className="text-xs text-muted-foreground">{format(new Date(listing.created_at), "HH:mm")}</div> </TableCell>
                                     <TableCell>
-                                        {format(new Date(listing.created_at), "dd MMM yyyy")}
-                                        <div className="text-xs text-muted-foreground">{format(new Date(listing.created_at), "HH:mm")}</div>
+                                        <div className="flex flex-col gap-1">
+                                            <Badge className={`text-xs ${getApprovalStatusBadgeClasses(listing.approval_status)}`}>
+                                                {capitalizeFirstLetter(listing.approval_status)}
+                                            </Badge>
+                                            {listing.is_added_to_main_listings && (
+                                                <span className="text-xs text-green-600 font-medium">Added to Main Listings</span>
+                                            )}
+                                        </div>
                                     </TableCell>
-                                    <TableCell>
-                                        <Badge className={`text-xs ${getApprovalStatusBadgeClasses(listing.approval_status)}`}>
-                                            {capitalizeFirstLetter(listing.approval_status)}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button variant="outline" size="sm" onClick={() => openListingDetails(listing)}>View Details</Button>
-                                    </TableCell>
+                                    <TableCell className="text-right"> <Button variant="outline" size="sm" onClick={() => openListingDetails(listing)}>View Details</Button> </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -342,7 +361,7 @@ export default function AdminDealerListingsPage() {
             )}
 
             {/* Modal Display */}
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <Dialog open={isModalOpen} onOpenChange={(open) => !open && closeListingDetails()}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     {selectedListing ? (
                         <>
@@ -356,16 +375,21 @@ export default function AdminDealerListingsPage() {
                                 <DialogDescription>
                                     Listing submitted by: {selectedListing.dealer_business_name ?? selectedListing.dealer_contact_name ?? 'N/A'}
                                     {' '} on {format(new Date(selectedListing.created_at), "PPp")}
+                                    {/* Display Added Status Here Too */}
+                                    {selectedListing.is_added_to_main_listings && (
+                                        <span className="ml-2 text-green-600 font-medium">(Added to Main Listings)</span>
+                                    )}
                                 </DialogDescription>
                             </DialogHeader>
 
-                            {/* --- Details Content --- */}
+                            {/* --- Details Content (remains the same structure) --- */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                                {/* Left Column: Images & Vehicle Details */}
+                                {/* Left Column */}
                                 <div className="space-y-6">
                                     {/* Image Gallery */}
                                     <div>
                                         <h3 className="text-md font-semibold text-gray-700 mb-2">Images</h3>
+                                        {/* ... Image Gallery JSX ... */}
                                         {(selectedListing.images?.length ?? 0) > 0 ? (
                                             <div className="relative h-64 bg-gray-100 overflow-hidden rounded-lg group border">
                                                 <Image
@@ -390,7 +414,6 @@ export default function AdminDealerListingsPage() {
                                             <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 border"><PhotoIcon className="h-12 w-12" /></div>
                                         )}
                                     </div>
-
                                     {/* Vehicle Details */}
                                     <div>
                                         <h3 className="text-lg font-semibold mb-2">Vehicle Details</h3>
@@ -403,9 +426,18 @@ export default function AdminDealerListingsPage() {
                                             <ModalDetailItem label="Condition" value={capitalizeFirstLetter(selectedListing.condition)} />
                                             <ModalDetailItem label="VIN" value={selectedListing.vin} />
                                             <ModalDetailItem label="Location" value={selectedListing.location_city && selectedListing.location_country ? `${selectedListing.location_city}, ${selectedListing.location_country}` : selectedListing.location_city || selectedListing.location_country || 'N/A'} />
+                                            <ModalDetailItem label="Body Type" value={selectedListing.body_type} />
+                                            <ModalDetailItem label="Engine" value={selectedListing.engine} />
+                                            <ModalDetailItem label="Exterior Color" value={selectedListing.exterior_color} />
+                                            <ModalDetailItem label="Interior Color" value={selectedListing.interior_color} />
+                                            <ModalDetailItem label="Fuel Type" value={selectedListing.fuel_type} />
+                                            <ModalDetailItem label="Transmission" value={selectedListing.transmission} />
+                                            <ModalDetailItem label="Listing Type" value={selectedListing.listing_type} />
+                                            <ModalDetailItem label="Is Public" value={selectedListing.is_public} />
+                                            <ModalDetailItem label="Is Special Offer" value={selectedListing.is_special_offer} />
+                                            {selectedListing.is_special_offer && <ModalDetailItem label="Offer Label" value={selectedListing.special_offer_label} />}
                                         </dl>
                                     </div>
-
                                     {/* Description */}
                                     {selectedListing.description && (
                                         <div>
@@ -414,12 +446,12 @@ export default function AdminDealerListingsPage() {
                                         </div>
                                     )}
                                 </div>
-
-                                {/* Right Column: Dealer Info & Features */}
+                                {/* Right Column */}
                                 <div className="space-y-6">
                                     {/* Dealer Details */}
                                     <div>
                                         <h3 className="text-lg font-semibold mb-2">Dealer Information</h3>
+                                        {/* ... Dealer Details JSX ... */}
                                         <dl className="space-y-3">
                                             <ModalDetailItem label="Business Name" value={selectedListing.dealer_business_name} />
                                             <ModalDetailItem label="Contact Name" value={selectedListing.dealer_contact_name} />
@@ -439,10 +471,9 @@ export default function AdminDealerListingsPage() {
                                             </ModalDetailItem>
                                         </dl>
                                     </div>
-
                                     {/* Features */}
                                     <div>
-                                        <h3 className="text-lg font-semibold mb-2">Features</h3>
+                                        <h3 className="text-lg font-semibold mb-2">Features / Equipment</h3>
                                         {(selectedListing.features?.length ?? 0) > 0 ? (
                                             <div className="flex flex-wrap gap-2 border p-3 rounded max-h-48 overflow-y-auto">
                                                 {selectedListing.features?.map((feature, index) => (
@@ -456,26 +487,64 @@ export default function AdminDealerListingsPage() {
                                 </div>
                             </div>
 
-                            {/* --- Updated Modal Footer --- */}
-                            <DialogFooter className="mt-6">
-                                <Button variant="outline" onClick={closeListingDetails} disabled={isSubmitting}>Close</Button>
-                                <Button
-                                    variant="destructive"
-                                    onClick={() => selectedListing?.id && handleReject(selectedListing.id)}
-                                    disabled={isSubmitting} // Disable while submitting
-                                >
-                                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    Reject
-                                </Button>
-                                <Button
-                                    variant="default"
-                                    onClick={() => selectedListing?.id && handleApprove(selectedListing.id)}
-                                    disabled={isSubmitting} // Disable while submitting
-                                >
-                                    {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    Approve
-                                </Button>
+                            {/* --- MODIFIED Modal Footer --- */}
+                            <DialogFooter className="mt-6 pt-4 border-t flex flex-wrap justify-end gap-2">
+                                {/* Close Button: Disabled during any submission */}
+                                <Button variant="outline" onClick={closeListingDetails} disabled={isSubmitting || isAddingToListings}>Close</Button>
+
+                                {/* Approve/Reject Buttons: Only show if status is 'pending' */}
+                                {selectedListing.approval_status === 'pending' && (
+                                    <>
+                                        <Button
+                                            variant="destructive"
+                                            onClick={() => selectedListing?.id && handleReject(selectedListing.id)}
+                                            disabled={isSubmitting || isAddingToListings} // Disable during any submission
+                                        >
+                                            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                            Reject
+                                        </Button>
+                                        <Button
+                                            variant="default" // Use default for Approve, maybe style with green later
+                                            onClick={() => selectedListing?.id && handleApprove(selectedListing.id)}
+                                            disabled={isSubmitting || isAddingToListings} // Disable during any submission
+                                            className="bg-green-600 hover:bg-green-700" // Optional: Green styling
+                                        >
+                                            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                            Approve
+                                        </Button>
+                                    </>
+                                )}
+
+                                {/* Add to Listings Button / Status Indicator: Only show if status is 'approved' */}
+                                {selectedListing.approval_status === 'approved' && (
+                                    <>
+                                        {selectedListing.is_added_to_main_listings ? (
+                                            // Display Label if already added
+                                            <div className="flex items-center justify-center px-4 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-md border border-green-200">
+                                                <CheckCircle className="mr-2 h-4 w-4" />
+                                                Added to Main Listings
+                                            </div>
+                                        ) : (
+                                            // Display Button if not yet added
+                                            <Button
+                                                onClick={() => selectedListing?.id && handleAddToListings(selectedListing.id)}
+                                                disabled={isAddingToListings || isSubmitting} // Disable during add or approve/reject
+                                                className="bg-blue-600 hover:bg-blue-700" // Optional: Blue styling
+                                            >
+                                                {isAddingToListings ? (
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    // Optional: Add an icon like UploadCloudIcon
+                                                    // <UploadCloudIcon className="mr-2 h-4 w-4" />
+                                                    null
+                                                )}
+                                                Add to Listings
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
                             </DialogFooter>
+                            {/* --- END MODIFIED Modal Footer --- */}
                         </>
                     ) : (
                         <div className="p-6 text-center text-muted-foreground">Loading details...</div>

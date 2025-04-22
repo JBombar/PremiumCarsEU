@@ -132,7 +132,7 @@ const formatPrice = (price: number | null): string => {
     }
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'CHF',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
     }).format(price);
@@ -160,9 +160,43 @@ const getApprovalStatusBadgeClasses = (status: ApprovalStatus | undefined | null
 
 // Define available options for Select components
 const AVAILABLE_FEATURES = [
-    'Air Conditioning', 'Power Steering', 'Power Windows', 'Sunroof', 'Navigation System',
-    'Leather Seats', 'Heated Seats', 'Backup Camera', 'Bluetooth', 'Alloy Wheels', 'Cruise Control'
+    // Driving Systems & Controls
+    '360° Camera', 'ABS', 'Adaptive Cruise Control', 'Cruise Control', 'Lane Departure Warning System',
+    'Parking Assistance', 'Rear Parking Sensors', 'Front Parking Sensors', 'Reversing Camera',
+    'Stability Control (ESP)', 'Emergency Braking Assistant', 'Brake Assist', 'Differential Lock',
+
+    // Comfort & Interior
+    'Air Conditioning', 'Automatic Air Conditioning', 'Manual Air Conditioning', 'Auxiliary Heating',
+    'Preheater', 'Heated Seats', 'Ventilated Seats', 'Electric Windows', 'Electric Tailgate',
+    'Electric Seat Adjustment', 'Keyless Entry/Start', 'Luggage Compartment', 'Sports Seats',
+    'Back Support Protection', 'Isofix', 'Start-Stop System',
+
+    // Entertainment & Technology
+    'Android Auto', 'Apple CarPlay', 'Bluetooth Interface', 'DAB Radio', 'Head-Up Display',
+    'Navigation System', 'Basic Navigation', 'Portable Navigation System', 'Speakers',
+
+    // Exterior Features
+    'Adaptive Headlights', 'LED Headlights', 'Xenon Headlights', 'Laser Headlights',
+    'Aluminum Rims', 'Chrome Package', 'Custom Exhaust System', 'Gullwing Doors',
+    'Hardtop', 'Panoramic Roof', 'Sunroof', 'Roof Rack', 'Sliding Door', 'Special Paint',
+    'Running Board', 'Reinforced Suspension',
+
+    // Trailer & Accessories
+    'Trailer Hitch', 'Detachable Trailer Hitch', 'Fixed Trailer Hitch', 'Swiveling Trailer Hitch',
+
+    // Security & Protection
+    'Alarm System', 'Anti-Theft Alarm System',
+
+    // EV Specific
+    'Fast Charging',
+
+    // Other
+    'Additional Instruments', 'Air Suspension',
 ];
+
+// Separate seat cover options for hierarchical display
+const SEAT_COVER_OPTIONS = ['Alcantara', 'Leather', 'Fabric Seats', 'Partial Leather Seats'];
+
 const AVAILABLE_FUEL_TYPES = ['gasoline', 'diesel', 'electric', 'hybrid', 'other'];
 const AVAILABLE_TRANSMISSIONS = ['automatic', 'manual', 'cvt', 'dct', 'other'];
 const AVAILABLE_CONDITIONS = ['new', 'used', 'certified'];
@@ -743,7 +777,14 @@ export default function DealerInventoryPage() {
                                     <h3 className="text-md font-semibold text-gray-700 mb-2">Images</h3>
                                     {(currentCar.images?.length ?? 0) > 0 ? (
                                         <div className="relative h-64 md:h-80 lg:h-96 bg-gray-100 overflow-hidden rounded-lg group border">
-                                            <img key={currentCar.images[modalActiveImageIndex] || modalActiveImageIndex} src={currentCar.images[modalActiveImageIndex]} alt={`${currentCar.vehicle_make} ${currentCar.vehicle_model} - view ${modalActiveImageIndex + 1}`} className="absolute inset-0 w-full h-full object-contain cursor-pointer" onClick={() => openImageGallery(currentCar, modalActiveImageIndex)} onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Error'; }} />
+                                            <img
+                                                key={currentCar.images[modalActiveImageIndex] || modalActiveImageIndex}
+                                                src={currentCar.images[modalActiveImageIndex]}
+                                                alt={`${currentCar.vehicle_make} ${currentCar.vehicle_model} - view ${modalActiveImageIndex + 1}`}
+                                                className="absolute inset-0 w-full h-full object-cover cursor-pointer"
+                                                onClick={() => openImageGallery(currentCar, modalActiveImageIndex)}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Error'; }}
+                                            />
                                             {(currentCar.images?.length ?? 0) > 1 && (
                                                 <>
                                                     <button onClick={prevModalImage} className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/40 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition hover:bg-black/60" aria-label="Previous"><ArrowLeftIcon className="h-5 w-5" /></button>
@@ -829,7 +870,115 @@ export default function DealerInventoryPage() {
                                 {/* Location */}
                                 <section> <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Location</h3> <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> <div><Label htmlFor="location_city">City</Label><Input id="location_city" name="location_city" value={formData.location_city || ''} onChange={handleFormChange} placeholder="City where vehicle is located" className={formErrors.location_city ? 'border-red-500' : ''} /><p className="text-red-500 text-xs mt-1 h-4">{formErrors.location_city}</p></div> <div><Label htmlFor="location_country">Country</Label><Input id="location_country" name="location_country" value={formData.location_country || ''} onChange={handleFormChange} placeholder="Country (e.g., USA)" className={formErrors.location_country ? 'border-red-500' : ''} /><p className="text-red-500 text-xs mt-1 h-4">{formErrors.location_country}</p></div> </div> </section>
                                 {/* Description & Features */}
-                                <section> <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Description & Features</h3> <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> <div> <Label htmlFor="description">Description</Label> <Textarea id="description" name="description" value={formData.description || ''} onChange={handleFormChange} placeholder="Detailed description of the vehicle..." rows={5} className={formErrors.description ? 'border-red-500' : ''} /><p className="text-red-500 text-xs mt-1 h-4">{formErrors.description}</p> </div> <div> <Label>Features</Label> <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-1 p-3 border rounded-md max-h-48 overflow-y-auto"> {AVAILABLE_FEATURES.map((feature) => (<div key={feature} className="flex items-center space-x-2"> <Checkbox id={`feature-${feature}`} checked={formData.features?.includes(feature)} onCheckedChange={(checked) => handleCheckboxGroupChange('features', feature, checked)} /> <Label htmlFor={`feature-${feature}`} className="text-sm font-normal cursor-pointer">{feature}</Label> </div>))} </div> </div> </div> </section>
+                                <section>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Description & Features</h3>
+
+                                    {/* Description - Full width */}
+                                    <div className="mb-6">
+                                        <Label htmlFor="description">Description</Label>
+                                        <Textarea
+                                            id="description"
+                                            name="description"
+                                            value={formData.description || ''}
+                                            onChange={handleFormChange}
+                                            placeholder="Detailed description of the vehicle..."
+                                            rows={5}
+                                            className={formErrors.description ? 'border-red-500' : ''}
+                                        />
+                                        <p className="text-red-500 text-xs mt-1 h-4">{formErrors.description}</p>
+                                    </div>
+
+                                    {/* Features - Below Description */}
+                                    <div>
+                                        <Label className="text-base font-medium">Features</Label>
+                                        <div className="mt-2 border rounded-md p-4">
+                                            {/* Search input for features */}
+                                            <div className="mb-4">
+                                                <Input
+                                                    type="text"
+                                                    placeholder="Search features..."
+                                                    onChange={(e) => {
+                                                        const searchElement = document.getElementById('features-container');
+                                                        if (searchElement) {
+                                                            const searchTerm = e.target.value.toLowerCase();
+                                                            const featureItems = searchElement.querySelectorAll('.feature-item');
+
+                                                            featureItems.forEach((item) => {
+                                                                const text = item.textContent?.toLowerCase() || '';
+                                                                if (text.includes(searchTerm)) {
+                                                                    (item as HTMLElement).style.display = 'flex';
+                                                                } else {
+                                                                    (item as HTMLElement).style.display = 'none';
+                                                                }
+                                                            });
+                                                        }
+                                                    }}
+                                                    className="mb-2"
+                                                />
+                                            </div>
+
+                                            {/* Feature categories */}
+                                            <div className="space-y-4 max-h-80 overflow-y-auto pr-2" id="features-container">
+                                                {/* Regular features */}
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2">
+                                                    {AVAILABLE_FEATURES.map((feature) => (
+                                                        <div key={feature} className="flex items-center space-x-2 feature-item">
+                                                            <Checkbox
+                                                                id={`feature-${feature}`}
+                                                                checked={formData.features?.includes(feature)}
+                                                                onCheckedChange={(checked) => handleCheckboxGroupChange('features', feature, checked)}
+                                                            />
+                                                            <Label
+                                                                htmlFor={`feature-${feature}`}
+                                                                className="text-sm font-normal cursor-pointer"
+                                                            >
+                                                                {feature}
+                                                            </Label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* Seat Cover section with sub-options */}
+                                                <div className="border-t pt-3 mt-3">
+                                                    <div className="mb-2">
+                                                        <div className="flex items-center space-x-2 feature-item">
+                                                            <Checkbox
+                                                                id="feature-Seat-Covers"
+                                                                checked={formData.features?.includes('Seat Covers')}
+                                                                onCheckedChange={(checked) => handleCheckboxGroupChange('features', 'Seat Covers', checked)}
+                                                            />
+                                                            <Label
+                                                                htmlFor="feature-Seat-Covers"
+                                                                className="text-sm font-medium cursor-pointer"
+                                                            >
+                                                                Seat Covers
+                                                            </Label>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Seat cover sub-options */}
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 pl-8">
+                                                        {SEAT_COVER_OPTIONS.map((option) => (
+                                                            <div key={option} className="flex items-center space-x-2 feature-item">
+                                                                <Checkbox
+                                                                    id={`feature-${option}`}
+                                                                    checked={formData.features?.includes(option)}
+                                                                    onCheckedChange={(checked) => handleCheckboxGroupChange('features', option, checked)}
+                                                                />
+                                                                <Label
+                                                                    htmlFor={`feature-${option}`}
+                                                                    className="text-sm font-normal cursor-pointer"
+                                                                >
+                                                                    {option}
+                                                                </Label>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
                                 {/* Images */}
                                 <section> <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Images*</h3> <Label htmlFor="vehicle-image-upload" className="block text-sm font-medium text-gray-700 mb-2">Upload New Images (Max 10MB each)</Label> <div className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition ${formErrors.images ? 'border-red-500' : 'border-gray-300'}`}> <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" id="vehicle-image-upload" disabled={isSubmitting} /> <label htmlFor="vehicle-image-upload" className={`cursor-pointer flex flex-col items-center ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}> <CloudArrowUpIcon className="h-10 w-10 text-gray-400 mb-2" /> <p className="text-sm text-gray-600">Drag & drop or click to select</p> {isSubmitting && <p className="text-xs text-blue-600 mt-1">Uploading...</p>} </label> </div> <p className="text-red-500 text-xs mt-1 h-4">{formErrors.images}</p> {(formData.images?.length ?? 0) > 0 && (<div className="mt-4"> <Label className="block text-sm font-medium text-gray-700 mb-2">Current Images ({formData.images?.length})</Label> <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"> {formData.images?.map((url, index) => (url && (<div key={url || index} className="relative border rounded overflow-hidden group aspect-video bg-gray-100"> <img src={url} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150x100?text=Error'; }} /> <button type="button" onClick={() => handleRemoveImage(index)} className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed" aria-label={`Remove image ${index + 1}`} disabled={isSubmitting} > <XMarkIcon className="h-3 w-3" /> </button> </div>)))} </div> </div>)} </section>
                                 {/* Form Actions */}
