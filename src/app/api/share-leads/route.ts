@@ -3,6 +3,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { Database } from '@/types/supabase';
 
+const N8N_WEBHOOK_URL = process.env.N8N_LEAD_SHARES_WEBHOOK_URL;
+
 // ============================================================================
 // Helper Function to Create Supabase Client
 // ============================================================================
@@ -13,23 +15,9 @@ function createSupabaseClient() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
             cookies: {
-                get(name: string) {
-                    return cookieStore.get(name)?.value;
-                },
-                set(name: string, value: string, options: CookieOptions) {
-                    try {
-                        cookieStore.set({ name, value, ...options });
-                    } catch (error) {
-                        /* Ignored */
-                    }
-                },
-                remove(name: string, options: CookieOptions) {
-                    try {
-                        cookieStore.set({ name, value: '', ...options });
-                    } catch (error) {
-                        /* Ignored */
-                    }
-                },
+                get(name: string) { return cookieStore.get(name)?.value; },
+                set(name: string, value: string, options: CookieOptions) { try { cookieStore.set({ name, value, ...options }); } catch (error) { /* Ignored */ } },
+                remove(name: string, options: CookieOptions) { try { cookieStore.set({ name, value: '', ...options }); } catch (error) { /* Ignored */ } },
             },
         }
     );
@@ -129,7 +117,40 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to share leads', details: error.message }, { status: 500 });
         }
 
+        // --- Trigger n8n Webhook ---
+        if (N8N_WEBHOOK_URL) {
+            try {
+                const webhookResponse = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lead_ids,
+                        dealer_id,
+                        channels,
+                        shared_with_trust_levels,
+                        shared_with_contacts,
+                        shared_with_partner_ids,
+                        message,
+                        shared_entries: data,
+                        webhookUrl: N8N_WEBHOOK_URL,
+                    }),
+                });
+
+                if (!webhookResponse.ok) {
+                    const errText = await webhookResponse.text();
+                    console.error('Failed to trigger n8n webhook:', errText);
+                } else {
+                    console.log('Successfully triggered n8n webhook');
+                }
+            } catch (webhookErr) {
+                console.error('Error triggering n8n webhook:', webhookErr);
+            }
+        } else {
+            console.warn('N8N_LEAD_SHARES_WEBHOOK_URL not configured.');
+        }
+
         return NextResponse.json({ success: true, shared: data }, { status: 200 });
+
     } catch (error) {
         console.error('Unexpected error in POST /api/share-leads:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

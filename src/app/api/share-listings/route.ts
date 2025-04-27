@@ -111,7 +111,39 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to share listings', details: error.message }, { status: 500 });
         }
 
+        // Trigger n8n Webhook after successful insert
+        const n8nWebhookUrl = process.env.N8N_SHARE_LISTINGS_WEBHOOK_URL; // e.g., 'https://n8n.yourdomain.com/webhook/share-listings'
+
+        if (n8nWebhookUrl) {
+            try {
+                const webhookPayload = {
+                    listing_ids,
+                    dealer_id,
+                    channels,
+                    shared_with_trust_levels,
+                    shared_with_contacts,
+                    message,
+                    shared_entries: data // Inserted records from listing_shares
+                };
+
+                const webhookResponse = await fetch(n8nWebhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(webhookPayload),
+                });
+
+                if (!webhookResponse.ok) {
+                    console.error('Failed to trigger n8n webhook:', await webhookResponse.text());
+                } else {
+                    console.log('Successfully triggered n8n workflow');
+                }
+            } catch (err) {
+                console.error('Error triggering n8n webhook:', err);
+            }
+        }
+
         return NextResponse.json({ success: true, shared: data }, { status: 200 });
+
     } catch (error) {
         console.error('Unexpected error in POST /api/share-listings:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

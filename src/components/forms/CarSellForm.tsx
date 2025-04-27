@@ -293,24 +293,41 @@ export function CarSellForm() {
               )} />
               <div className="space-y-2">
                 <Label htmlFor="file-upload">{t('labels.photos')}</Label>
-                <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-border px-6 pb-6 pt-5">
-                  <div className="space-y-1 text-center">
-                    <svg className="mx-auto h-12 w-12 text-muted-foreground" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    <div className="flex text-sm text-muted-foreground">
-                      <Label htmlFor="file-upload" className="relative cursor-pointer rounded-md bg-background font-medium text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/90">
-                        <span>{t('fileUpload.upload')}</span>
-                        <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple onChange={handleFileChange} accept="image/*,.heic,.heif" />
-                      </Label>
-                      <p className="pl-1">{t('fileUpload.dragDrop')}</p>
+                <div className="mt-1 relative">
+                  <input
+                    id="file-upload"
+                    name="file-upload"
+                    type="file"
+                    className="sr-only"
+                    multiple
+                    onChange={handleFileChange}
+                    accept="image/*,.heic,.heif"
+                  />
+                  <Label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-border px-6 pb-6 pt-5 cursor-pointer w-full"
+                  >
+                    <div className="space-y-1 text-center">
+                      <svg className="mx-auto h-12 w-12 text-muted-foreground" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <div className="flex flex-col text-sm text-muted-foreground">
+                        <span className="font-medium text-primary hover:text-primary/90">{t('fileUpload.upload')}</span>
+                        <p className="mt-1">{t('fileUpload.dragDrop')}</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{t('descriptions.fileTypes')}</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">{t('descriptions.fileTypes')}</p>
-                  </div>
+                  </Label>
                 </div>
                 {selectedFiles.length > 0 && (
                   <div className="mt-2">
                     <FormDescription>{t('descriptions.filesSelected', { count: selectedFiles.length })}</FormDescription>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {selectedFiles.map((file, index) => (<div key={index} className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground">{file.name}</div>))}
+                      {selectedFiles.map((file, index) => (
+                        <div key={index} className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground">
+                          {file.name}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
