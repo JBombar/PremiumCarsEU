@@ -1,7 +1,7 @@
 // src/app/inventory/components/FilterSection.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,63 @@ export function FilterSection({
     // Internal state for UI elements within the filter section
     const [modelSearchTerm, setModelSearchTerm] = useState('');
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+    const modelSearchInputRef = useRef<HTMLInputElement>(null);
+    const [cursorPosition, setCursorPosition] = useState<number | null>(null);
+    const [isTyping, setIsTyping] = useState(false);
+
+    // Enhanced focus restoration that's more resilient to component re-renders
+    useEffect(() => {
+        if (!isTyping) return;
+
+        // Use both immediate and delayed focus to catch different timing scenarios
+        const focusInput = () => {
+            if (modelSearchInputRef.current) {
+                modelSearchInputRef.current.focus();
+
+                if (cursorPosition !== null) {
+                    modelSearchInputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+                }
+            }
+        };
+
+        // Immediate focus attempt
+        focusInput();
+
+        // Backup focus with a small delay to ensure DOM is fully updated
+        const timeoutId = setTimeout(focusInput, 10);
+
+        return () => clearTimeout(timeoutId);
+    }, [modelSearchTerm, cursorPosition, isTyping]);
+
+    // Handle model search input changes with improved event and focus management
+    const handleModelSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        const newCursorPosition = e.target.selectionStart;
+
+        // Set typing mode to trigger the focus restoration effect
+        setIsTyping(true);
+        setCursorPosition(newCursorPosition);
+        setModelSearchTerm(newValue);
+    };
+
+    // Handle input blur - don't immediately cancel typing mode
+    // This gives our focus effect a chance to work
+    const handleInputBlur = () => {
+        // Short delay before clearing typing state to allow focus restoration to run
+        setTimeout(() => setIsTyping(false), 100);
+    };
+
+    // Handle input focus - set typing mode
+    const handleInputFocus = () => {
+        setIsTyping(true);
+    };
+
+    // When clicking on the input, ensure the event doesn't bubble
+    // and disrupt our focus management
+    const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
+        e.stopPropagation();
+        setIsTyping(true);
+    };
 
     // Helper function to map color names to CSS colors (moved from page.tsx)
     const getColorValue = (colorName: string): string => {
@@ -74,6 +131,7 @@ export function FilterSection({
     const handleMakeChange = (value: string) => {
         onFilterChange("make", value);
         setModelSearchTerm(''); // Clear search term when make changes
+        setIsTyping(false); // Reset typing state
     };
 
     return (
@@ -113,14 +171,17 @@ export function FilterSection({
                                 <SelectValue placeholder={modelsLoading ? t('filters.modelPlaceholderLoading') : t('filters.modelPlaceholder')} />
                             </SelectTrigger>
                             <SelectContent>
-                                {/* Model search input */}
+                                {/* Model search input with enhanced focus handling */}
                                 <div className="px-2 py-2 sticky top-0 bg-background z-10 border-b">
                                     <Input
                                         placeholder={t('filters.modelSearchPlaceholder')}
                                         className="h-8"
-                                        onChange={(e) => setModelSearchTerm(e.target.value)}
-                                        value={modelSearchTerm} // Use internal state
-                                        onClick={(e) => e.stopPropagation()}
+                                        onChange={handleModelSearchChange}
+                                        value={modelSearchTerm}
+                                        onClick={handleInputClick}
+                                        onFocus={handleInputFocus}
+                                        onBlur={handleInputBlur}
+                                        ref={modelSearchInputRef}
                                     />
                                 </div>
 
