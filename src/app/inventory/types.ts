@@ -89,6 +89,7 @@ export interface FilterState {
     cylindersMin?: number; // Example: 'cyl_min' query param
     cylindersMax?: number; // Example: 'cyl_max' query param
     // Add other advanced filter fields as needed...
+    listingType: 'sale' | 'rent' | 'both';
 }
 
 // --- API Request/Response Types ---

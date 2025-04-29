@@ -7,36 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react"; // Import X icon for close button
 import { useTranslations } from 'next-intl'; // Import useTranslations
+import type { FilterState } from '@/app/inventory/types';
+
 
 // Define the shape of the main filter state expected from the parent.
 // This needs to include the advanced fields.
 // It's best practice to define this in a shared types file,
 // but for now, we define it here based on inventory/page.tsx's state
 // and add the expected advanced fields.
-interface FilterState {
-  make: string;
-  model: string;
-  yearMin: number;
-  yearMax: number;
-  priceMin: number;
-  priceMax: number;
-  mileageMin: number;
-  mileageMax: number;
-  fuelType: string;
-  transmission: string;
-  condition: string;
-  bodyType: string;
-  exteriorColor: string;
-  interiorColor: string;
-  // Add advanced fields (ensure names match what you'll add to parent state)
-  horsepowerMin?: number;
-  horsepowerMax?: number;
-  displacementMin?: number;
-  displacementMax?: number;
-  cylindersMin?: number;
-  cylindersMax?: number;
-  // Add others as needed...
-}
+
 
 // --- Define the props interface this component accepts ---
 interface AdvancedCarFiltersProps {

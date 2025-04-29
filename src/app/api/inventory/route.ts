@@ -178,6 +178,18 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by transmission: "${validatedParams.transmission.trim()}" (Case-Insensitive Exact Match)`);
     }
 
+    // Listing Type Filter - NEW
+    if (validatedParams.listing_type) {
+      if (validatedParams.listing_type === 'sale') {
+        query = query.in('listing_type', ['sale', 'both']);
+        console.log(`API: Filtering by listing_type: "sale" or "both"`);
+      } else if (validatedParams.listing_type === 'rent') {
+        query = query.in('listing_type', ['rent', 'both']);
+        console.log(`API: Filtering by listing_type: "rent" or "both"`);
+      }
+      // If 'both' or 'Any', no filtering needed
+    }
+
     // Price Range Filters (Unchanged)
     if (validatedParams.price_min !== undefined && validatedParams.price_min >= 0) {
       query = query.gte('price', validatedParams.price_min);
