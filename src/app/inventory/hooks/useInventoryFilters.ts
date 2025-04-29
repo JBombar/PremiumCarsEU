@@ -10,28 +10,32 @@ const parseSortOption = (option: string): [string, string] => {
     return [field, direction];
 };
 
-// Define the return type of the hook including the new function
+// Define the return type of the hook including pagination and applySpecificFilters
 interface UseInventoryFiltersReturn {
     filters: FilterState; // Current UI state
     appliedFilters: FilterState; // State used for fetching
     sortOption: string; // Current sort state
+    currentPage: number; // <-- Added pagination state
     setFilters: React.Dispatch<React.SetStateAction<FilterState>>; // To allow external updates (e.g., AI)
     handleFilterChange: (name: keyof FilterState, value: string | number) => void;
     handleSliderChange: (nameMin: keyof FilterState, nameMax: keyof FilterState, value: number[]) => void;
     applyFilters: () => void; // Explicitly apply current UI filters
     resetFilters: () => void;
     handleSortChange: (value: string) => void;
-    applySpecificFilters: (filtersToApply: FilterState) => void; // <-- Added type
+    applySpecificFilters: (filtersToApply: FilterState) => void;
+    handlePageChange: (newPage: number) => void; // <-- Added pagination handler
 }
 
 export function useInventoryFilters(
-    defaultFilters: FilterState
+    defaultFilters: FilterState,
+    itemsPerPage: number = 24 // Default items per page if not provided
 ): UseInventoryFiltersReturn { // <-- Ensure return type matches interface
 
     const router = useRouter();
     const searchParams = useSearchParams();
 
     // --- State Initialization ---
+    // Restore initialization helpers
     const getIntParam = useCallback((name: string, defaultValue?: number): number | undefined => {
         const param = searchParams?.get(name);
         if (param === null || param === undefined) return defaultValue;
@@ -43,11 +47,10 @@ export function useInventoryFilters(
         return searchParams?.get(name) || defaultValue;
     }, [searchParams]);
 
-    // Initialize BOTH filter states from URL or defaults
+    // Restore full initializeState function
     const initializeState = useCallback((): FilterState => {
-        // This function runs only once on initial mount for useState
         console.log("useInventoryFilters: Initializing filter states from URL or defaults.");
-        const params = searchParams; // Capture params for stability if needed, though useCallback handles it
+        const params = searchParams;
         if (!params) return defaultFilters;
         return {
             make: getStringParam('make', defaultFilters.make),
@@ -71,7 +74,7 @@ export function useInventoryFilters(
             cylindersMin: getIntParam('cyl_min'),
             cylindersMax: getIntParam('cyl_max'),
         };
-    }, [searchParams, getStringParam, getIntParam, defaultFilters]); // Dependencies for initialization logic
+    }, [searchParams, getStringParam, getIntParam, defaultFilters]);
 
     // State for filters reflected in the UI inputs
     const [filters, setFilters] = useState<FilterState>(initializeState);
@@ -82,28 +85,32 @@ export function useInventoryFilters(
         if (!searchParams) return "price-asc";
         return searchParams.get('sort') || "price-asc";
     });
+    // State for pagination <-- ADDED
+    const [currentPage, setCurrentPage] = useState<number>(() => {
+        const pageParam = searchParams?.get('page');
+        const initialPage = pageParam ? parseInt(pageParam, 10) : 1;
+        return !isNaN(initialPage) && initialPage > 0 ? initialPage : 1;
+    });
 
-    // Ref to track if initial state setting is done (avoids premature URL updates)
+
+    // Ref to track if initial state setting is done
     const isInitialSetupDone = useRef(false);
     useEffect(() => {
-        // This effect runs once after mount
         isInitialSetupDone.current = true;
     }, []);
 
 
-    // --- URL Update Logic ---
-    const updateUrl = useCallback((filtersToApply: FilterState, sortToApply: string) => {
-        // Only update URL after initial state setup is complete
+    // --- URL Update Logic (Includes Page) ---
+    const updateUrl = useCallback((filtersToApply: FilterState, sortToApply: string, pageToApply: number) => { // <-- Added pageToApply
         if (!isInitialSetupDone.current) {
             console.log("useInventoryFilters: Initial setup not done, skipping URL update.");
             return;
         }
 
         const queryParams = new URLSearchParams();
-        // Build query params based on the filters/sort *being applied*
-        // Using simplified condition for model based on Cursor's suggestion (good cleanup)
+        // Build filter query params (unchanged logic, simplified model check)
         if (filtersToApply.make !== defaultFilters.make) queryParams.append('make', filtersToApply.make);
-        if (filtersToApply.model && filtersToApply.model !== "Any") queryParams.append('model', filtersToApply.model); // Simplified
+        if (filtersToApply.model && filtersToApply.model !== "Any") queryParams.append('model', filtersToApply.model);
         if (filtersToApply.yearMin !== defaultFilters.yearMin) queryParams.append('year_from', filtersToApply.yearMin.toString());
         if (filtersToApply.yearMax !== defaultFilters.yearMax) queryParams.append('year_to', filtersToApply.yearMax.toString());
         if (filtersToApply.priceMin !== defaultFilters.priceMin) queryParams.append('price_min', filtersToApply.priceMin.toString());
@@ -123,11 +130,15 @@ export function useInventoryFilters(
         if (filtersToApply.cylindersMin !== undefined) queryParams.append('cyl_min', filtersToApply.cylindersMin.toString());
         if (filtersToApply.cylindersMax !== undefined) queryParams.append('cyl_max', filtersToApply.cylindersMax.toString());
 
+        // Add sort param
         if (sortToApply !== "price-asc") queryParams.append('sort', sortToApply);
+        // Add page param if not page 1 <-- ADDED
+        if (pageToApply > 1) {
+            queryParams.append('page', pageToApply.toString());
+        }
 
         const searchString = queryParams.toString();
-        // Reading window.location directly can sometimes cause issues in SSR/Strict Mode, using searchParams is safer if possible
-        const currentSearchString = searchParams?.toString() ?? ""; // Use searchParams if available
+        const currentSearchString = searchParams?.toString() ?? "";
 
         if (searchString !== currentSearchString) {
             console.log("useInventoryFilters: Updating URL with params:", searchString);
@@ -135,7 +146,7 @@ export function useInventoryFilters(
         } else {
             console.log("useInventoryFilters: URL params unchanged, skipping update.");
         }
-    }, [defaultFilters, router, searchParams]); // Added searchParams dependency
+    }, [defaultFilters, router, searchParams]); // Added searchParams
 
 
     // --- Event Handlers ---
@@ -145,7 +156,7 @@ export function useInventoryFilters(
         setFilters(prev => {
             const newState = { ...prev, [name]: value };
             if (name === "make" && value !== prev.make) {
-                newState.model = "Any"; // Reset model when make changes
+                newState.model = "Any";
             }
             return newState;
         });
@@ -155,53 +166,64 @@ export function useInventoryFilters(
     const handleSliderChange = useCallback((nameMin: keyof FilterState, nameMax: keyof FilterState, value: number[]) => {
         const numValue0 = value[0]; const numValue1 = value[1];
         setFilters(prev => {
-            // Only update state if values actually changed
             if (prev[nameMin] !== numValue0 || prev[nameMax] !== numValue1) {
                 return { ...prev, [nameMin]: numValue0, [nameMax]: numValue1 };
-            }
-            return prev; // Return previous state if no change
+            } return prev;
         });
     }, []);
 
-    // Applies the current UI state (filters) to the appliedFilters state and updates URL
+    // Applies the current UI state (filters) to the appliedFilters state, RESETS page, and updates URL
     const applyFilters = useCallback(() => {
-        console.log("useInventoryFilters: Apply button clicked. Applying UI filters.");
-        // This reads the latest 'filters' state due to being in the dependency array
+        console.log("useInventoryFilters: Apply button clicked. Applying UI filters and resetting page.");
+        setCurrentPage(1); // <-- Reset to page 1
         setAppliedFilters(filters);
-        updateUrl(filters, sortOption);
-    }, [filters, sortOption, updateUrl]); // Depend on filters state
+        updateUrl(filters, sortOption, 1); // <-- Pass page 1
+    }, [filters, sortOption, updateUrl]);
 
-    // Function to apply a specific filter set (e.g., from AI) <-- Restored Definition
+    // Function to apply a specific filter set (e.g., from AI), RESETS page
     const applySpecificFilters = useCallback((filtersToApply: FilterState) => {
-        console.log("useInventoryFilters: Applying specific filters (e.g., from AI).");
+        console.log("useInventoryFilters: Applying specific filters and resetting page.");
+        setCurrentPage(1); // <-- Reset to page 1
         setFilters(filtersToApply); // Update UI state to match
         setAppliedFilters(filtersToApply); // Update applied state directly
-        updateUrl(filtersToApply, sortOption); // Update URL with these specific filters
-    }, [sortOption, updateUrl]); // Depends on sortOption and updateUrl
+        updateUrl(filtersToApply, sortOption, 1); // <-- Pass page 1
+    }, [sortOption, updateUrl]);
 
-    // Resets both UI and applied state, updates URL
+    // Resets both UI and applied state, RESETS page, updates URL
     const resetFilters = useCallback(() => {
         console.log("useInventoryFilters: Reset button clicked.");
         // Check against applied filters as well
-        if (JSON.stringify(appliedFilters) === JSON.stringify(defaultFilters) && sortOption === "price-asc") {
+        if (JSON.stringify(appliedFilters) === JSON.stringify(defaultFilters) && sortOption === "price-asc" && currentPage === 1) { // <-- Check page too
             console.log("useInventoryFilters: Filters already at default, reset skipped.");
             return;
         }
-        setFilters(defaultFilters); // Reset UI state
-        setAppliedFilters(defaultFilters); // Reset applied state
-        setSortOption("price-asc"); // Reset sort state
-        updateUrl(defaultFilters, "price-asc"); // Update URL to reflect reset
-    }, [appliedFilters, sortOption, defaultFilters, updateUrl]); // Depend on appliedFilters
+        setCurrentPage(1); // <-- Reset to page 1
+        setFilters(defaultFilters);
+        setAppliedFilters(defaultFilters);
+        setSortOption("price-asc");
+        updateUrl(defaultFilters, "price-asc", 1); // <-- Pass page 1
+    }, [appliedFilters, sortOption, currentPage, defaultFilters, updateUrl]); // Added currentPage
 
-    // Updates sort state and URL (data fetch will use new sort and *existing* appliedFilters)
+    // Updates sort state, RESETS page, and updates URL
     const handleSortChange = useCallback((value: string) => {
         if (value === sortOption) return;
         console.log("useInventoryFilters: Sort changed to:", value);
+        setCurrentPage(1); // <-- Reset to page 1
         setSortOption(value);
-        // IMPORTANT: When sort changes, we apply the *currently applied filters*, not necessarily the UI ones
-        updateUrl(appliedFilters, value);
-        // The change in sortOption state will trigger useInventoryData
-    }, [sortOption, appliedFilters, updateUrl]); // Depends on appliedFilters now
+        // IMPORTANT: Update URL with NEW sort and CURRENT applied filters, but page 1
+        updateUrl(appliedFilters, value, 1); // <-- Pass page 1
+    }, [sortOption, appliedFilters, updateUrl]);
+
+    // Handle page change <-- ADDED
+    const handlePageChange = useCallback((newPage: number) => {
+        if (newPage === currentPage) return;
+        console.log("useInventoryFilters: Page changed to:", newPage);
+        setCurrentPage(newPage);
+        // Update URL with the new page number and *currently applied* filters/sort
+        updateUrl(appliedFilters, sortOption, newPage);
+        // Optional: Scroll to top
+        // window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [currentPage, appliedFilters, sortOption, updateUrl]);
 
 
     // Return all necessary states and handlers
@@ -209,12 +231,14 @@ export function useInventoryFilters(
         filters,
         appliedFilters,
         sortOption,
+        currentPage, // <-- Return currentPage
         setFilters,
         handleFilterChange,
         handleSliderChange,
         applyFilters,
         resetFilters,
         handleSortChange,
-        applySpecificFilters // <-- Added back to return object
+        applySpecificFilters,
+        handlePageChange // <-- Return handlePageChange
     };
 }

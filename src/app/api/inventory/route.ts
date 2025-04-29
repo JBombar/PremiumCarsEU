@@ -95,6 +95,7 @@ export async function GET(request: NextRequest) {
     const result = inventoryQuerySchema.safeParse(params);
     if (!result.success) {
       console.warn("Invalid query parameters:", result.error.format());
+      // Keep original error response structure
       return NextResponse.json(
         {
           data: [],
@@ -118,21 +119,24 @@ export async function GET(request: NextRequest) {
 
     // --- Apply Filters Dynamically ---
 
-    // Make Filter (Corrected: Case-insensitive EXACT match)
+    // Make Filter (Exact Match - Unchanged)
     if (validatedParams.make && validatedParams.make !== 'Any') {
       query = query.ilike('make', validatedParams.make.trim()); // No wildcards '%'
       console.log(`API: Filtering by make: "${validatedParams.make.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // Model Filter (Corrected: Case-insensitive EXACT match)
+    // Model Filter (Using STARTS WITH pattern matching) <-- ONLY CHANGE IS HERE
     if (validatedParams.model &&
       validatedParams.model !== 'Any' &&
       validatedParams.model.toLowerCase() !== 'any') {
-      query = query.ilike('model', validatedParams.model.trim()); // No wildcards '%'
-      console.log(`API: Filtering by model: "${validatedParams.model.trim()}" (Case-Insensitive Exact Match)`);
+      // Use ILIKE with a wildcard '%' AFTER the model name
+      const modelPattern = `${validatedParams.model.trim()}%`; // e.g., "X7%"
+      query = query.ilike('model', modelPattern); // Apply the pattern match
+      console.log(`API: Filtering by model pattern: "${modelPattern}" (Case-Insensitive Starts With)`); // Update log message
     }
+    // --- END OF CHANGE ---
 
-    // Year Range Filters
+    // Year Range Filters (Unchanged)
     if (validatedParams.year_from) {
       query = query.gte('year', validatedParams.year_from);
       console.log(`API: Filtering by year_from: >= ${validatedParams.year_from}`);
@@ -142,7 +146,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by year_to: <= ${validatedParams.year_to}`);
     }
 
-    // Body Type Filter (Using case-insensitive exact match)
+    // Body Type Filter (Unchanged)
     if (validatedParams.body_type &&
       validatedParams.body_type !== 'Any' &&
       validatedParams.body_type.toLowerCase() !== 'any') {
@@ -150,7 +154,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by body_type: "${validatedParams.body_type.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // Fuel Type Filter (Using case-insensitive exact match)
+    // Fuel Type Filter (Unchanged)
     if (validatedParams.fuel_type &&
       validatedParams.fuel_type !== 'Any' &&
       validatedParams.fuel_type.toLowerCase() !== 'any') {
@@ -158,7 +162,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by fuel_type: "${validatedParams.fuel_type.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // Condition Filter (Using exact match)
+    // Condition Filter (Unchanged)
     if (validatedParams.condition &&
       validatedParams.condition !== 'Any' &&
       VALID_CONDITIONS.includes(validatedParams.condition)) {
@@ -166,7 +170,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by condition: "${validatedParams.condition}"`);
     }
 
-    // Transmission Filter (Using case-insensitive exact match)
+    // Transmission Filter (Unchanged)
     if (validatedParams.transmission &&
       validatedParams.transmission !== 'Any' &&
       validatedParams.transmission.toLowerCase() !== 'any') {
@@ -174,7 +178,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by transmission: "${validatedParams.transmission.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // Price Range Filters
+    // Price Range Filters (Unchanged)
     if (validatedParams.price_min !== undefined && validatedParams.price_min >= 0) {
       query = query.gte('price', validatedParams.price_min);
       console.log(`API: Filtering by price_min: >= ${validatedParams.price_min}`);
@@ -184,7 +188,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by price_max: <= ${validatedParams.price_max}`);
     }
 
-    // Mileage Range Filters
+    // Mileage Range Filters (Unchanged)
     if (validatedParams.mileage_min !== undefined && validatedParams.mileage_min >= 0) {
       query = query.gte('mileage', validatedParams.mileage_min);
       console.log(`API: Filtering by mileage_min: >= ${validatedParams.mileage_min}`);
@@ -194,7 +198,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by mileage_max: <= ${validatedParams.mileage_max}`);
     }
 
-    // Exterior Color Filter (Using case-insensitive exact match)
+    // Exterior Color Filter (Unchanged)
     if (validatedParams.exterior_color &&
       validatedParams.exterior_color !== 'Any' &&
       validatedParams.exterior_color.toLowerCase() !== 'any') {
@@ -202,7 +206,7 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by exterior_color: "${validatedParams.exterior_color.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // Interior Color Filter (Using case-insensitive exact match)
+    // Interior Color Filter (Unchanged)
     if (validatedParams.interior_color &&
       validatedParams.interior_color !== 'Any' &&
       validatedParams.interior_color.toLowerCase() !== 'any') {
@@ -210,40 +214,38 @@ export async function GET(request: NextRequest) {
       console.log(`API: Filtering by interior_color: "${validatedParams.interior_color.trim()}" (Case-Insensitive Exact Match)`);
     }
 
-    // is_public Filter (Using exact match)
-    // Always filter by is_public based on the validated default or provided value
+    // is_public Filter (Unchanged)
     if (validatedParams.is_public !== undefined) {
       query = query.eq('is_public', validatedParams.is_public);
       console.log(`API: Filtering by is_public: ${validatedParams.is_public}`);
     }
 
-    // --- Apply Sorting ---
-    // Ensure sortBy column exists in your database table
+    // --- Apply Sorting --- (Unchanged)
     const validSortBy = ['price', 'year', 'mileage', 'created_at', 'make', 'model', 'condition', 'status'].includes(validatedParams.sortBy)
       ? validatedParams.sortBy
-      : 'created_at'; // Fallback to default if invalid sortBy provided
-
+      : 'created_at';
     query = query.order(validSortBy, { ascending: validatedParams.sortOrder === 'asc' });
 
-    // --- Apply Pagination ---
+    // --- Apply Pagination --- (Unchanged)
     const startIndex = (validatedParams.page - 1) * validatedParams.limit;
     const endIndex = startIndex + validatedParams.limit - 1;
     query = query.range(startIndex, endIndex);
 
-    // --- Execute Query ---
-    console.log("Executing Supabase Query..."); // Log before execution
+    // --- Execute Query --- (Unchanged)
+    console.log("Executing Supabase Query...");
     const { data: cars, error, count } = await query;
 
-    // --- Handle Results ---
+    // --- Handle Results --- (Unchanged)
     if (error) {
       console.error('Supabase query error:', error);
+      // Keep original error response structure
       return NextResponse.json(
         {
           data: [],
           count: 0,
           page: validatedParams.page,
           limit: validatedParams.limit,
-          error: `Failed to fetch inventory: ${error.message}` // Include Supabase error message
+          error: `Failed to fetch inventory: ${error.message}`
         },
         { status: 500 }
       );
@@ -251,25 +253,25 @@ export async function GET(request: NextRequest) {
 
     console.log(`Query successful. Found ${cars?.length || 0} cars. Total count matching filters: ${count}`);
 
-    // Return structured response matching frontend expectations
+    // Return structured response (Unchanged)
     return NextResponse.json({
-      data: cars || [], // Ensure data is always an array
-      count: count || 0, // Ensure count is always a number
+      data: cars || [],
+      count: count || 0,
       page: validatedParams.page,
       limit: validatedParams.limit
     });
 
   } catch (error: any) {
-    // Catch unexpected errors during setup or validation
+    // Keep original top-level error handling
     console.error('Unexpected error in GET /api/inventory:', error);
     return NextResponse.json(
       {
         data: [],
         count: 0,
-        page: 1, // Sensible defaults on unexpected error
+        page: 1,
         limit: 24,
         error: "Internal server error",
-        details: error.message // Include error message if available
+        details: error.message
       },
       { status: 500 }
     );

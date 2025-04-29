@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 // Input is now only used in AiSearchForm
 // import { Input } from "@/components/ui/input";
-// Keep only icons used directly in this component
-import { ChevronLeft, ChevronRight, Filter, AlertCircle } from "lucide-react"; // Removed Search, Sparkles
+// Keep only icons used directly in this component (PaginationControls will need ChevronLeft/Right)
+import { Filter, AlertCircle } from "lucide-react"; // Removed ChevronLeft/Right as they will be in PaginationControls
 
 // Utilities & Libs
 // uuid is now only used in useTracking
@@ -24,7 +24,8 @@ import { useTranslations } from 'next-intl'; // Essential for translations
 import { InventoryGrid } from './components/InventoryGrid';
 import { FilterSection } from './components/FilterSection';
 import { AiSearchForm } from './components/AiSearchForm';
-import { ResultsHeader } from './components/ResultsHeader'; // <-- Import ResultsHeader
+import { ResultsHeader } from './components/ResultsHeader';
+import { PaginationControls } from './components/PaginationControls'; // <-- Import Pagination
 
 // Import Types
 import type { CarListing, CarMake, CarModel, FilterState } from './types';
@@ -48,6 +49,9 @@ const defaultFilters: FilterState = {
   cylindersMin: undefined, cylindersMax: undefined,
 };
 
+// Define items per page constant
+const ITEMS_PER_PAGE = 24;
+
 // Suspense Wrapper (unchanged)
 export default function InventoryPageWrapper() {
   return (<Suspense fallback={<InventoryLoadingSkeleton />}><InventoryPage /></Suspense>);
@@ -66,7 +70,7 @@ function InventoryLoadingSkeleton() {
   );
 }
 
-// Main Inventory Page Component - Refactored with ResultsHeader
+// Main Inventory Page Component - Refactored with Pagination Logic
 function InventoryPage() {
   const t = useTranslations('InventoryPage');
 
@@ -77,17 +81,24 @@ function InventoryPage() {
 
   // --- Custom Hooks ---
 
-  // Filter/Sort/URL Hook
+  // Filter/Sort/URL Hook - Pass ITEMS_PER_PAGE
   const {
-    filters, appliedFilters, sortOption, setFilters,
-    handleFilterChange, handleSliderChange,
+    filters, appliedFilters, sortOption, currentPage, // <-- Get currentPage
+    setFilters, handleFilterChange, handleSliderChange,
     applyFilters: applyFiltersFromHook, // Renamed original apply
-    resetFilters, handleSortChange, applySpecificFilters
-  } = useInventoryFilters(defaultFilters);
+    resetFilters, handleSortChange, applySpecificFilters,
+    handlePageChange // <-- Get handlePageChange
+  } = useInventoryFilters(defaultFilters, ITEMS_PER_PAGE); // <-- Pass ITEMS_PER_PAGE
 
-  // Data Fetching Hook
-  // TODO: Update useInventoryData to return totalCount from API response
-  const { cars, loading, error /*, totalCount */ } = useInventoryData(appliedFilters, sortOption);
+  // Data Fetching Hook - Pass currentPage and ITEMS_PER_PAGE
+  const {
+    cars, loading, error, totalCount // <-- Get totalCount
+  } = useInventoryData(
+    appliedFilters,
+    sortOption,
+    currentPage,    // <-- Pass currentPage
+    ITEMS_PER_PAGE  // <-- Pass ITEMS_PER_PAGE
+  );
 
   // Makes and Models Hook
   const { makes, availableModels, makesLoading, modelsLoading } = useMakesAndModels(filters.make);
@@ -121,6 +132,10 @@ function InventoryPage() {
   // TODO: Move to useScrollVisibility hook
   useEffect(() => { const handleScroll = () => { const fs = document.getElementById('filter-section'); if (fs) setIsScrolledPastFilters(fs.getBoundingClientRect().bottom < 0); }; window.addEventListener('scroll', handleScroll); return () => window.removeEventListener('scroll', handleScroll); }, []);
   const scrollToFilters = () => { const fs = document.getElementById('filter-section'); if (fs) fs.scrollIntoView({ behavior: 'smooth' }); };
+
+
+  // --- Calculate Total Pages --- NEW
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
 
   // --- Render Logic ---
@@ -171,13 +186,13 @@ function InventoryPage() {
         {/* TODO: Extract to BackToFiltersButton component */}
         {isScrolledPastFilters && (<div className="fixed bottom-6 right-6 z-30"> <Button onClick={scrollToFilters} className="shadow-md"> <Filter className="h-4 w-4 mr-2" /> {t('filters.backButton')} </Button> </div>)}
 
-        {/* Results Count and Sort - Use ResultsHeader Component <-- UPDATED */}
+        {/* Results Count and Sort */}
         <ResultsHeader
-          resultsCount={cars.length} // Pass current car count (TODO: use total count later)
-          sortOption={sortOption} // From useInventoryFilters
-          sortOptions={sortOptions} // Pass the prepared sort options
-          onSortChange={handleSortChange} // From useInventoryFilters
-          t={t} // Pass translation function
+          resultsCount={totalCount} // <-- Use totalCount from hook
+          sortOption={sortOption}
+          sortOptions={sortOptions}
+          onSortChange={handleSortChange}
+          t={t}
         />
 
         {/* Car Grid Area */}
@@ -191,9 +206,17 @@ function InventoryPage() {
           t={t}
         />
 
-        {/* Pagination Placeholder */}
-        {/* TODO: Extract to PaginationControls component */}
-        {cars.length > 0 && (<div className="flex justify-center mb-12"> <div className="flex space-x-1"> <Button variant="outline" size="icon" className="h-8 w-8" disabled> <ChevronLeft className="h-4 w-4" /> <span className="sr-only">{t('pagination.previous')}</span> </Button> <Button variant="default" size="sm" className="px-4 h-8">1</Button> <Button variant="outline" size="icon" className="h-8 w-8" disabled> <ChevronRight className="h-4 w-4" /> <span className="sr-only">{t('pagination.next')}</span> </Button> </div> </div>)}
+        {/* --- Pagination Controls --- */}
+        {/* Render only if there's more than one page and not initial loading */}
+        {totalPages > 1 && !loading && ( // Added !loading check
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange} // Pass handler from useInventoryFilters
+          // t={t} // Pass t if needed inside PaginationControls
+          />
+        )}
+        {/* REMOVED old placeholder div */}
 
       </section>
     </div>
