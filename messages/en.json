@@ -742,6 +742,25 @@
         "conditionValues": {
             "new": "New",
             "used": "Used"
+        },
+        "rental": {
+            "rentalAvailable": "For Rent",
+            "viewSaleDetails": "View Sale Details",
+            "viewFullDetails": "View Full Details",
+            "termsTitle": "Rental Terms",
+            "dailyRateLabel": "Daily Rate",
+            "depositLabel": "Security Deposit",
+            "securityDepositLabel": "Security Deposit",
+            "noDeposit": "No Deposit Required",
+            "minDaysLabel": "Minimum Days",
+            "maxDaysLabel": "Maximum Days",
+            "rentalDurationLabel": "Rental Duration",
+            "perDayLabel": "Per Day",
+            "depositQuickLabel": "Deposit",
+            "days": "days",
+            "minDays": "At least {days} days",
+            "maxDays": "Up to {days} days",
+            "flexible": "Flexible"
         }
     },
     "ContactFormModal": {
@@ -841,6 +860,55 @@
             "successDescription": "We will contact you to confirm your appointment.",
             "errorTitle": "Failed to schedule test drive",
             "errorDescription": "Please try again later or contact support."
+        }
+    },
+    "ContactRenterModal": {
+        "title": "Contact the Renter",
+        "description": "Fill out the form to contact the renter about the {carName}.",
+        "labels": {
+            "name": "Your Name",
+            "phone": "Phone Number",
+            "email": "Email (optional)",
+            "message": "Message",
+            "whatsappConsent": "I consent to being contacted via WhatsApp"
+        },
+        "placeholders": {
+            "name": "Enter your name",
+            "phone": "Enter your phone number",
+            "email": "Your Email",
+            "message": "Enter your message"
+        },
+        "defaultMessage": "Hi, I am interested in renting the {carName}. Please send me more details.",
+        "buttons": {
+            "submit": "Send Message",
+            "submitting": "Sending...",
+            "cancel": "Cancel"
+        },
+        "toast": {
+            "successTitle": "Message Sent",
+            "successDescription": "Your message has been sent to the renter.",
+            "errorTitle": "Something went wrong",
+            "errorDescription": "Please try again or contact support."
+        },
+        "triggerButton": "Contact Renter"
+    },
+    "RentalReservationModal": {
+        "triggerButton": "Reserve This Vehicle",
+        "title": "Reserve This Rental",
+        "description": "Choose your preferred dates for reserving the {carName}.",
+        "labels": {
+            "startDate": "Start Date",
+            "endDate": "End Date"
+        },
+        "buttons": {
+            "cancel": "Cancel",
+            "submit": "Submit"
+        },
+        "toast": {
+            "successTitle": "Reservation Submitted",
+            "successDescription": "We'll confirm your booking shortly.",
+            "errorTitle": "Submission Failed",
+            "error": "Could not submit your reservation."
         }
     },
     "Common": {

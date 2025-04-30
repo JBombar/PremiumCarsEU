@@ -1,6 +1,6 @@
 // app/inventory/[carId]/page.tsx
 
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -122,6 +122,12 @@ export default async function CarListingPage({ params }: CarListingParams) {
     seller_since: car.seller_since || null
   };
 
+  // TASK 1: Add redirect for rent-only listings
+  if (carData.listing_type === 'rent') {
+    console.log("Car is rent-only, redirecting to rental page");
+    redirect(`/inventory/${carData.id}/rent`);
+  }
+
   // Check if the car has valid images (unchanged)
   const hasValidImages = carData.images && Array.isArray(carData.images) && carData.images.length > 0;
 
@@ -180,6 +186,15 @@ export default async function CarListingPage({ params }: CarListingParams) {
             // listingTypeBadgeSaleText={t('imageGallery.listingTypeBadgeSale')}
             // listingTypeBadgeRentText={t('imageGallery.listingTypeBadgeRent')}
             />
+
+            {/* TASK 2: Add "View Rental Info" button for dual-type listings */}
+            {carData.listing_type === 'both' && (
+              <Link href={`/inventory/${carData.id}/rent`}>
+                <Button variant="outline" className="mt-4 w-full">
+                  {t('buttons.viewRentalInfo')}
+                </Button>
+              </Link>
+            )}
 
             {/* Tabs under the image */}
             <div className="mt-6">

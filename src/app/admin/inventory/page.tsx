@@ -59,7 +59,7 @@ type CarListing = {
   purchasing_price?: number | null;
   status: "available" | "sold" | string; // Refine with actual enum values if possible
   mileage: number;
-  listing_type: "sale" | "rental" | "both" | string; // Refine with actual enum values
+  listing_type: "sale" | "rent" | "both" | string; // Changed "rental" to "rent"
   rental_status?: "available" | "rented" | "maintenance" | string | null; // Refine
   created_at: string;
   body_type?: string | null;
@@ -367,7 +367,7 @@ export default function InventoryPage() {
     if (formData.purchasing_price && isNaN(Number(formData.purchasing_price))) errors.purchasing_price = 'Purchasing Price must be a valid number';
 
     // Rental specific validation
-    if (formData.listing_type === 'rental' || formData.listing_type === 'both') { // Added 'both'
+    if (formData.listing_type === 'rent' || formData.listing_type === 'both') { // Added 'both'
       if (!formData.rental_daily_price?.trim()) errors.rental_daily_price = 'Daily price required for rentals';
       if (formData.rental_daily_price && isNaN(Number(formData.rental_daily_price))) errors.rental_daily_price = 'Daily price must be a number';
       if (formData.rental_deposit_required && isNaN(Number(formData.rental_deposit_required))) errors.rental_deposit_required = 'Deposit must be a number';
@@ -979,9 +979,8 @@ export default function InventoryPage() {
           <Select name="listing_type" value={filters.listing_type} onValueChange={(value) => handleFilterSelectChange('listing_type', value || '')}>
             <SelectTrigger><SelectValue placeholder="Any Type" /></SelectTrigger>
             <SelectContent>
-              {/* <SelectItem value="">Any Type</SelectItem> <-- REMOVED */}
               <SelectItem value="sale">For Sale</SelectItem>
-              <SelectItem value="rental">For Rent</SelectItem>
+              <SelectItem value="rent">For Rent</SelectItem>
               <SelectItem value="both">Sale or Rent</SelectItem>
             </SelectContent>
           </Select>
@@ -1564,7 +1563,7 @@ export default function InventoryPage() {
                 </div>
 
                 {/* Rental Info Section */}
-                {(currentCar.listing_type === 'rental' || currentCar.listing_type === 'both') && (
+                {(currentCar.listing_type === 'rent' || currentCar.listing_type === 'both') && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                     <h3 className="text-md font-semibold text-blue-800 mb-3">Rental Information</h3>
                     <dl className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4">
@@ -1664,7 +1663,7 @@ export default function InventoryPage() {
                         <SelectTrigger className={formErrors.listing_type ? 'border-red-500' : ''}><SelectValue placeholder="Select type" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="sale">For Sale</SelectItem>
-                          <SelectItem value="rental">For Rent</SelectItem>
+                          <SelectItem value="rent">For Rent</SelectItem>
                           <SelectItem value="both">Sale or Rent</SelectItem>
                         </SelectContent>
                       </Select>
@@ -1730,7 +1729,7 @@ export default function InventoryPage() {
                 </section>
 
                 {/* Rental Information Section (Conditional) */}
-                {(formData.listing_type === 'rental' || formData.listing_type === 'both') && (
+                {(formData.listing_type === 'rent' || formData.listing_type === 'both') && (
                   <section className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                     <h3 className="text-lg font-semibold text-blue-800 mb-4 border-b border-blue-200 pb-2">Rental Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
