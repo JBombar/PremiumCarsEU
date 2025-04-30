@@ -516,6 +516,11 @@
             "title": "Prehliadať náš inventár",
             "subtitle": "Preskúmajte našu rozsiahlu kolekciu prémiových vozidiel. Použite filtre na nájdenie dokonalej zhody."
         },
+        "listingTypeToggle": {
+            "buy": "Kúpiť",
+            "rent": "Prenajať",
+            "both": "Všetky"
+        },
         "aiSearch": {
             "title": "Čo hľadáte?",
             "placeholder": "napr. Víkendové kupé pod 50 tisíc",
@@ -565,7 +570,27 @@
             "showAdvancedButton": "Zobraziť rozšírené",
             "hideAdvancedButton": "Skryť rozšírené",
             "backButton": "Späť na filtre",
-            "optionAny": "Akýkoľvek"
+            "optionAny": "Akýkoľvek",
+            "colors": {
+                "anthracite": "Antracitová",
+                "beige": "Béžová",
+                "blue": "Modrá",
+                "bordeaux": "Bordová",
+                "brown": "Hnedá",
+                "yellow": "Žltá",
+                "gold": "Zlatá",
+                "gray": "Sivá",
+                "green": "Zelená",
+                "multicolor": "Viacfarebná",
+                "orange": "Oranžová",
+                "pink": "Ružová",
+                "red": "Červená",
+                "black": "Čierna",
+                "silver": "Strieborná",
+                "turquoise": "Tyrkysová",
+                "violet": "Fialová",
+                "white": "Biela"
+            }
         },
         "advancedFilters": {
             "title": "Rozšírené filtre",

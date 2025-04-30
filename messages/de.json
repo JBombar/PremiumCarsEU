@@ -516,6 +516,11 @@
             "title": "Durchsuchen Sie unseren Bestand",
             "subtitle": "Entdecken Sie unsere umfangreiche Sammlung von Premium-Fahrzeugen. Verwenden Sie die Filter, um Ihr perfektes Fahrzeug zu finden."
         },
+        "listingTypeToggle": {
+            "buy": "Kaufen",
+            "rent": "Mieten",
+            "both": "Beide"
+        },
         "aiSearch": {
             "title": "Wonach suchen Sie?",
             "placeholder": "z.B. Ein Wochenend-Coupé unter 50k",
@@ -565,7 +570,27 @@
             "showAdvancedButton": "Erweitert anzeigen",
             "hideAdvancedButton": "Erweitert ausblenden",
             "backButton": "Zurück zu Filtern",
-            "optionAny": "Beliebig"
+            "optionAny": "Beliebig",
+            "colors": {
+                "anthracite": "Anthrazit",
+                "beige": "Beige",
+                "blue": "Blau",
+                "bordeaux": "Bordeaux",
+                "brown": "Braun",
+                "yellow": "Gelb",
+                "gold": "Gold",
+                "gray": "Grau",
+                "green": "Grün",
+                "multicolor": "Mehrfarbig",
+                "orange": "Orange",
+                "pink": "Rosa",
+                "red": "Rot",
+                "black": "Schwarz",
+                "silver": "Silber",
+                "turquoise": "Türkis",
+                "violet": "Violett",
+                "white": "Weiß"
+            }
         },
         "advancedFilters": {
             "title": "Erweiterte Filter",

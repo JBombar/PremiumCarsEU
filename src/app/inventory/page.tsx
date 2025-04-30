@@ -211,6 +211,7 @@ function InventoryPage() {
           <ListingTypeToggle
             value={filters.listingType} // Use value from hook's filters state
             onChange={handleListingTypeChange} // Use handler from hook
+            t={t} // <-- THE FIX: Pass the t function as a prop
           />
         </div>
 

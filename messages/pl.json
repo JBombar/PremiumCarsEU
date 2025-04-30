@@ -516,6 +516,11 @@
             "title": "Przeglądaj Naszą Ofertę",
             "subtitle": "Odkryj naszą bogatą kolekcję pojazdów premium. Użyj filtrów, aby znaleźć idealne dopasowanie."
         },
+        "listingTypeToggle": {
+            "buy": "Kup",
+            "rent": "Wynajmij",
+            "both": "Oba"
+        },
         "aiSearch": {
             "title": "Czego szukasz?",
             "placeholder": "np. Weekendowe coupe poniżej 200 tys.",
@@ -565,7 +570,27 @@
             "showAdvancedButton": "Pokaż Zaawansowane",
             "hideAdvancedButton": "Ukryj Zaawansowane",
             "backButton": "Wróć do Filtrów",
-            "optionAny": "Dowolny"
+            "optionAny": "Dowolny",
+            "colors": {
+                "anthracite": "Antracytowy",
+                "beige": "Beżowy",
+                "blue": "Niebieski",
+                "bordeaux": "Bordowy",
+                "brown": "Brązowy",
+                "yellow": "Żółty",
+                "gold": "Złoty",
+                "gray": "Szary",
+                "green": "Zielony",
+                "multicolor": "Wielokolorowy",
+                "orange": "Pomarańczowy",
+                "pink": "Różowy",
+                "red": "Czerwony",
+                "black": "Czarny",
+                "silver": "Srebrny",
+                "turquoise": "Turkusowy",
+                "violet": "Fioletowy",
+                "white": "Biały"
+            }
         },
         "advancedFilters": {
             "title": "Filtry Zaawansowane",

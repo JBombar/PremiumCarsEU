@@ -446,7 +446,8 @@ export function FilterSection({
                                                     boxShadow: color === 'white' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
                                                 }}
                                             />
-                                            {color.charAt(0).toUpperCase() + color.slice(1)}
+                                            {/* --- MODIFIED LINE --- */}
+                                            {t(`filters.colors.${color}`)}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -476,7 +477,8 @@ export function FilterSection({
                                                     boxShadow: color === 'white' ? 'inset 0 0 0 1px rgba(0,0,0,0.1)' : 'none'
                                                 }}
                                             />
-                                            {color.charAt(0).toUpperCase() + color.slice(1)}
+                                            {/* --- MODIFIED LINE --- */}
+                                            {t(`filters.colors.${color}`)}
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -510,6 +512,7 @@ export function FilterSection({
                         setFilters={setFilters} // Pass down the MAIN setFilters from page.tsx
                         onClose={toggleAdvancedFilters} // Use internal toggle function
                     // t={t} // Pass t if AdvancedCarFilters needs it directly
+                    // You might need to pass `t` here if AdvancedCarFilters also needs translations
                     />
                 </div>
             </div>

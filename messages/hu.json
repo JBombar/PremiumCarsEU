@@ -516,6 +516,11 @@
             "title": "Böngésszen készletünkben",
             "subtitle": "Fedezze fel prémium járműveink széles választékát. Használja a szűrőket a tökéletes találat megtalálásához."
         },
+        "listingTypeToggle": {
+            "buy": "Vásárlás",
+            "rent": "Bérlés",
+            "both": "Mindkettő"
+        },
         "aiSearch": {
             "title": "Mit keres?",
             "placeholder": "pl. Hétvégi kupé 15 millió alatt",
@@ -565,7 +570,27 @@
             "showAdvancedButton": "Speciális szűrők",
             "hideAdvancedButton": "Speciális szűrők elrejtése",
             "backButton": "Vissza a szűrőkhöz",
-            "optionAny": "Bármelyik"
+            "optionAny": "Bármelyik",
+            "colors": {
+                "anthracite": "Antracit",
+                "beige": "Bézs",
+                "blue": "Kék",
+                "bordeaux": "Bordó",
+                "brown": "Barna",
+                "yellow": "Sárga",
+                "gold": "Arany",
+                "gray": "Szürke",
+                "green": "Zöld",
+                "multicolor": "Többszínű",
+                "orange": "Narancs",
+                "pink": "Rózsaszín",
+                "red": "Piros",
+                "black": "Fekete",
+                "silver": "Ezüst",
+                "turquoise": "Türkiz",
+                "violet": "Lila",
+                "white": "Fehér"
+            }
         },
         "advancedFilters": {
             "title": "Speciális szűrők",

@@ -516,6 +516,11 @@
             "title": "Sfoglia il Nostro Inventario",
             "subtitle": "Esplora la nostra vasta collezione di veicoli premium. Usa i filtri per trovare la tua corrispondenza perfetta."
         },
+        "listingTypeToggle": {
+            "buy": "Acquista",
+            "rent": "Affitta",
+            "both": "Entrambi"
+        },
         "aiSearch": {
             "title": "Cosa stai cercando?",
             "placeholder": "es. Una coupé per il weekend sotto i 50k",
@@ -565,7 +570,27 @@
             "showAdvancedButton": "Mostra Avanzati",
             "hideAdvancedButton": "Nascondi Avanzati",
             "backButton": "Torna ai Filtri",
-            "optionAny": "Qualsiasi"
+            "optionAny": "Qualsiasi",
+            "colors": {
+                "anthracite": "Antracite",
+                "beige": "Beige",
+                "blue": "Blu",
+                "bordeaux": "Bordeaux",
+                "brown": "Marrone",
+                "yellow": "Giallo",
+                "gold": "Oro",
+                "gray": "Grigio",
+                "green": "Verde",
+                "multicolor": "Multicolore",
+                "orange": "Arancione",
+                "pink": "Rosa",
+                "red": "Rosso",
+                "black": "Nero",
+                "silver": "Argento",
+                "turquoise": "Turchese",
+                "violet": "Viola",
+                "white": "Bianco"
+            }
         },
         "advancedFilters": {
             "title": "Filtri Avanzati",
