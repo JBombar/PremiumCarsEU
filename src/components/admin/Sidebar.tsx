@@ -54,6 +54,10 @@ export default function Sidebar() {
     { name: "Rental Reservations", href: "/admin/rentals", icon: Calendar },
     { name: "Rental Inventory", href: "/admin/rental-inventory", icon: Car },
     { name: "Rental Transactions", href: "/admin/rental-transactions", icon: CreditCard },
+    { name: "Rental Clients", href: "/admin/rental-clients", icon: Users },
+    { name: "Rental Investors", href: "/admin/rental-investors", icon: Users },
+
+
 
 
 
