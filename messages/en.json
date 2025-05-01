@@ -813,7 +813,8 @@
         "placeholders": {
             "name": "Enter your full name",
             "email": "Enter your email address",
-            "phone": "Enter your phone number"
+            "phone": "Enter your phone number",
+            "selectDuration": "Select Duration"
         },
         "validation": {
             "nameMin": "Name must be at least 2 characters.",
@@ -928,7 +929,8 @@
             "calculatedEndTime": "Calculated End Time"
         },
         "placeholders": {
-            "notes": "Any additional information or requests?"
+            "notes": "Any additional information or requests?",
+            "selectDuration": "Select duration..."
         },
         "buttons": {
             "cancel": "Cancel",

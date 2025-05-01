@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
+import { format, differenceInHours, differenceInDays } from "date-fns";
 import { createClient } from '@/utils/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Textarea } from "@/components/ui/textarea";
 
 // Icons
 import {
@@ -53,33 +54,28 @@ type ReservationRow = {
     renter_phone: string;
     start_date: string;
     end_date: string;
-    duration: number; // Duration in hours
-    total_price: number;
+    start_time: string | null;
+    end_time: string | null;
+    duration: number | null;
+    total_price: number | null;
     status: "pending" | "confirmed" | "rejected" | "completed" | "canceled" | string;
-    notes?: string | null;
-    approved_by?: string | null;
-    approved_at?: string | null;
-    canceled_by?: string | null;
-    canceled_at?: string | null;
+    notes: string | null;
+    approved_by: string | null;
+    approved_at: string | null;
+    canceled_by: string | null;
+    canceled_at: string | null;
     created_at: string;
     updated_at: string;
-
-    // Optional fields from the schema
-    id_document_url?: string | null;
-    license_document_url?: string | null;
-    preferred_contact_method?: string | null;
-    currency?: string;
-    source?: string | null;
-    admin_comments?: string | null;
-    is_verified?: boolean;
-    verification_method?: string | null;
-    utm_source?: string | null;
-    utm_campaign?: string | null;
-    referrer?: string | null;
-    start_time?: string | null;
-    end_time?: string | null;
-
-    // Car relationship - keep this as it's coming from the join
+    currency: string | null;
+    source: string | null;
+    admin_comments: string | null;
+    is_verified: boolean | null;
+    verification_method: string | null;
+    id_document_url: string | null;
+    license_document_url: string | null;
+    preferred_contact_method: string | null;
+    
+    // Car relationship - extend with required properties
     car?: {
         id?: string;
         make: string;
@@ -87,6 +83,14 @@ type ReservationRow = {
         year?: number;
         images?: string[] | null;
         rental_status?: string;
+        // Add these properties to fix TypeScript errors
+        rental_price_3h?: number | null;
+        rental_price_6h?: number | null;
+        rental_price_12h?: number | null;
+        rental_price_24h?: number | null;
+        rental_price_48h?: number | null;
+        rental_daily_price?: number | null;
+        currency?: string | null;
     };
 };
 
@@ -120,6 +124,7 @@ export default function RentalsPage() {
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
     const [activeReservation, setActiveReservation] = useState<ReservationRow | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
+    const [adminComments, setAdminComments] = useState('');
 
     // Debounce filter changes
     useEffect(() => {
@@ -359,7 +364,8 @@ export default function RentalsPage() {
                 .update({
                     status: 'rejected',
                     canceled_by: (await supabase.auth.getUser()).data.user?.id,
-                    canceled_at: new Date().toISOString()
+                    canceled_at: new Date().toISOString(),
+                    admin_comments: adminComments
                 })
                 .eq('id', activeReservation.id);
 
@@ -388,11 +394,11 @@ export default function RentalsPage() {
     };
 
     // Format currency
-    const formatCurrency = (amount: number | null | undefined) => {
+    const formatCurrency = (amount: number | null | undefined, currency: string = 'CHF'): string => {
         if (amount == null) return 'N/A';
         return new Intl.NumberFormat('de-CH', {
             style: 'currency',
-            currency: 'CHF',
+            currency: currency,
             minimumFractionDigits: 2
         }).format(amount);
     };
@@ -695,10 +701,10 @@ export default function RentalsPage() {
                                                 {reservation.end_date ? format(new Date(reservation.end_date), 'PP') : 'N/A'}
                                             </td>
                                             <td className="px-4 py-4">
-                                                {reservation.duration} {reservation.duration > 1 ? 'hours' : 'hour'}
+                                                {calculateDuration(reservation)}
                                             </td>
                                             <td className="px-4 py-4 font-medium">
-                                                {formatCurrency(reservation.total_price)}
+                                                {calculatePrice(reservation)}
                                             </td>
                                             <td className="px-4 py-4">
                                                 {reservation.status && (
@@ -798,7 +804,7 @@ export default function RentalsPage() {
                             <div className="flex items-center justify-between mb-4">
                                 <div className="font-medium">{activeReservation.car?.make} {activeReservation.car?.model}</div>
                                 <Badge>
-                                    {formatCurrency(activeReservation.total_price)}
+                                    {calculatePrice(activeReservation)}
                                 </Badge>
                             </div>
 
@@ -807,13 +813,37 @@ export default function RentalsPage() {
                                 <div>{activeReservation.renter_name}</div>
 
                                 <div className="text-gray-500">Duration:</div>
-                                <div>{activeReservation.duration} {activeReservation.duration > 1 ? 'hours' : 'hour'}</div>
+                                <div>{calculateDuration(activeReservation)}</div>
 
                                 <div className="text-gray-500">Start:</div>
-                                <div>{format(new Date(activeReservation.start_date), 'PPP')}</div>
+                                <div>
+                                    {activeReservation.start_date && format(new Date(activeReservation.start_date), 'PPP')}
+                                    {activeReservation.start_time && (
+                                        <span className="ml-1 text-xs">
+                                            {format(new Date(activeReservation.start_time), 'p')}
+                                        </span>
+                                    )}
+                                </div>
 
                                 <div className="text-gray-500">End:</div>
-                                <div>{format(new Date(activeReservation.end_date), 'PPP')}</div>
+                                <div>
+                                    {activeReservation.end_date && format(new Date(activeReservation.end_date), 'PPP')}
+                                    {activeReservation.end_time && (
+                                        <span className="ml-1 text-xs">
+                                            {format(new Date(activeReservation.end_time), 'p')}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="text-gray-500">Phone:</div>
+                                <div>{activeReservation.renter_phone || 'N/A'}</div>
+
+                                {activeReservation.notes && (
+                                    <>
+                                        <div className="text-gray-500">Notes:</div>
+                                        <div className="text-sm">{activeReservation.notes}</div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     )}
@@ -844,7 +874,7 @@ export default function RentalsPage() {
                     <DialogHeader>
                         <DialogTitle>Reject Reservation</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to reject this reservation?
+                            Are you sure you want to reject this reservation? This cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -853,7 +883,7 @@ export default function RentalsPage() {
                             <div className="flex items-center justify-between mb-4">
                                 <div className="font-medium">{activeReservation.car?.make} {activeReservation.car?.model}</div>
                                 <Badge variant="outline">
-                                    {formatCurrency(activeReservation.total_price)}
+                                    {calculatePrice(activeReservation)}
                                 </Badge>
                             </div>
 
@@ -865,9 +895,28 @@ export default function RentalsPage() {
                                 <div>{activeReservation.renter_email}</div>
 
                                 <div className="text-gray-500">Period:</div>
-                                <div>
-                                    {format(new Date(activeReservation.start_date), 'P')} - {format(new Date(activeReservation.end_date), 'P')}
+        <div>
+                                    {activeReservation.start_date && format(new Date(activeReservation.start_date), 'PP')} -
+                                    {activeReservation.end_date && format(new Date(activeReservation.end_date), 'PP')}
                                 </div>
+
+                                {activeReservation.notes && (
+                                    <>
+                                        <div className="text-gray-500">Notes:</div>
+                                        <div className="text-sm">{activeReservation.notes}</div>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="mt-4">
+                                <Label htmlFor="reject-reason">Rejection Reason (Optional)</Label>
+                                <Textarea
+                                    id="reject-reason"
+                                    placeholder="Enter reason for rejection"
+                                    value={adminComments}
+                                    onChange={(e) => setAdminComments(e.target.value)}
+                                    rows={3}
+                                />
                             </div>
                         </div>
                     )}
@@ -894,4 +943,113 @@ export default function RentalsPage() {
             </Dialog>
         </div>
     );
+}
+
+// Function to calculate and format duration
+function calculateDuration(reservation: ReservationRow): string {
+    // If duration is explicitly provided
+    if (reservation.duration) {
+        // Determine if it's hours or days
+        if (reservation.duration < 24) {
+            return `${reservation.duration} hour${reservation.duration !== 1 ? 's' : ''}`;
+        } else {
+            const days = Math.ceil(reservation.duration / 24);
+            return `${days} day${days !== 1 ? 's' : ''}`;
+        }
+    }
+
+    // Calculate from dates if no explicit duration
+    try {
+        // Try to calculate from start_time and end_time first
+        if (reservation.start_time && reservation.end_time) {
+            const startTime = new Date(reservation.start_time);
+            const endTime = new Date(reservation.end_time);
+            const hours = differenceInHours(endTime, startTime);
+
+            if (hours < 24) {
+                return `${hours} hour${hours !== 1 ? 's' : ''}`;
+            } else {
+                const days = Math.ceil(hours / 24);
+                return `${days} day${days !== 1 ? 's' : ''}`;
+            }
+        }
+
+        // Fall back to start_date and end_date
+        if (reservation.start_date && reservation.end_date) {
+            const startDate = new Date(reservation.start_date);
+            const endDate = new Date(reservation.end_date);
+            const days = differenceInDays(endDate, startDate) + 1; // Add 1 to include the start day
+
+            return `${days} day${days !== 1 ? 's' : ''}`;
+        }
+    } catch (error) {
+        console.error("Error calculating duration:", error);
+    }
+
+    // Return 'N/A' if calculation is not possible
+    return 'N/A';
+}
+
+// Function to calculate and format price
+function calculatePrice(reservation: ReservationRow): string {
+    const currency = reservation.currency || reservation.car?.currency || 'CHF';
+
+    // If price is explicitly provided
+    if (reservation.total_price) {
+        return formatCurrency(reservation.total_price, currency);
+    }
+
+    // Calculate based on duration and rates
+    if (reservation.car && reservation.duration) {
+        const hourlyDurations = [3, 6, 12, 24, 48];
+
+        // For hourly durations, use corresponding hourly rate
+        if (hourlyDurations.includes(reservation.duration)) {
+            const hourlyPriceField = `rental_price_${reservation.duration}h` as keyof typeof reservation.car;
+            const hourlyPrice = reservation.car[hourlyPriceField] as number | null | undefined;
+
+            if (hourlyPrice) {
+                return formatCurrency(hourlyPrice, currency);
+            }
+        }
+
+        // For longer durations, use daily rate
+        if (reservation.car.rental_daily_price && reservation.duration >= 24) {
+            const days = Math.ceil(reservation.duration / 24);
+            const totalPrice = reservation.car.rental_daily_price * days;
+            return formatCurrency(totalPrice, currency);
+        }
+    }
+
+    // Return 'N/A' if calculation is not possible
+    return 'N/A';
+}
+
+// Format currency
+function formatCurrency(amount: number | null | undefined, currency: string = 'CHF'): string {
+    if (amount == null) return 'N/A';
+
+    return new Intl.NumberFormat('de-CH', {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 2
+    }).format(amount);
+}
+
+// Get status badge variant
+function getStatusBadge(status: string): { variant: string; label: string } {
+    switch (status) {
+        case 'pending':
+            return { variant: 'warning', label: 'Pending' };
+        case 'confirmed':
+            return { variant: 'success', label: 'Confirmed' };
+        case 'rejected':
+            return { variant: 'destructive', label: 'Rejected' };
+        case 'completed':
+            return { variant: 'default', label: 'Completed' };
+        case 'canceled':
+            return { variant: 'outline', label: 'Canceled' };
+        default:
+            return { variant: 'secondary', label: status };
+    }
 } 

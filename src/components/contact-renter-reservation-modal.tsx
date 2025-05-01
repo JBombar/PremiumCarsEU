@@ -23,61 +23,61 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-// Removed: import { createClient } from '@supabase/supabase-js'; // No longer needed here
+} from '@/components/ui/select'; // Assuming path is correct
 
 interface RentReservationModalProps {
     carId: string; // This should be the listing_id
     carName: string;
-    carPrice?: number;
+    carPrice?: number; // Daily price (optional display)
     carSpecs?: string;
-    // New props for hourly rentals
-    hourlyOptions?: number[];
+    // Props specifically for hourly rentals
+    hourlyOptions?: number[]; // Array of available hour durations (e.g., [3, 6, 12])
     hourlyPrices?: {
-        [key: number]: number | null; // Map of duration to price (e.g., {3: 50, 6: 90})
+        [key: number]: number | null; // Map duration to price (e.g., { 3: 50, 6: 90 })
     };
-    rentalDeposit?: number | null;
+    rentalDeposit?: number | null; // Security deposit amount
 }
 
 export function RentReservationModal({
     carId,
     carName,
-    carPrice,
+    carPrice, // Keep for display even if hourly is chosen
     carSpecs,
-    hourlyOptions = [],
-    hourlyPrices = {},
+    hourlyOptions = [], // Default to empty array if not provided
+    hourlyPrices = {},   // Default to empty object
     rentalDeposit
 }: RentReservationModalProps) {
-    const t = useTranslations('RentalReservationModal'); // Make sure this namespace exists in your translations
+    const t = useTranslations('RentalReservationModal'); // Ensure namespace exists
     const [open, setOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // New state for rental type toggle
+    // State to track if the user selected hourly or daily rental mode
     const [isHourlyRental, setIsHourlyRental] = useState(false);
 
-    // State for text form fields
+    // Form data state, including fields for both rental types
     const [formData, setFormData] = useState({
         renter_name: '',
         renter_email: '',
         renter_phone: '',
-        start_date: '',
-        end_date: '',
+        start_date: '', // Used for daily rental
+        end_date: '',   // Used for daily rental
         notes: '',
-        // New fields for hourly rentals
-        rental_duration: 0,
-        start_time: '',
-        // Add other related text fields if needed
+        rental_duration: hourlyOptions.length > 0 ? hourlyOptions[0] : 0, // Default to first option if available
+        start_time: '', // Used for hourly rental (datetime-local input)
     });
 
     // State for file inputs
     const [idFile, setIdFile] = useState<File | null>(null);
     const [licenseFile, setLicenseFile] = useState<File | null>(null);
 
-    // Refs for clearing file inputs
+    // Refs for clearing file inputs after submission
     const idInputRef = useRef<HTMLInputElement>(null);
     const licenseInputRef = useRef<HTMLInputElement>(null);
 
-    // Handler for text input changes
+    // Add a form ref to programmatically submit the form
+    const formRef = useRef<HTMLFormElement>(null);
+
+    // Handler for text input changes (name, email, phone, notes, dates, time)
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -85,26 +85,32 @@ export function RentReservationModal({
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Handler for rental duration select change
+    // Handler specifically for the hourly duration Select component
     const handleDurationChange = (value: string) => {
-        setFormData(prev => ({ ...prev, rental_duration: parseInt(value, 10) }));
+        // Ensure value is parsed as integer
+        const duration = parseInt(value, 10);
+        if (!isNaN(duration)) {
+            setFormData(prev => ({ ...prev, rental_duration: duration }));
+        }
     };
 
-    // Toggle between hourly and daily rental
-    const toggleRentalType = (value: boolean) => {
-        setIsHourlyRental(value);
-        // Reset related fields when switching modes
-        if (value) {
-            // Switching to hourly: reset daily fields
+    // Toggle between hourly and daily rental modes
+    const toggleRentalType = (switchToHourly: boolean) => {
+        setIsHourlyRental(switchToHourly);
+        // Reset fields specific to the *other* mode when switching
+        if (switchToHourly) {
+            // Switching TO hourly: reset daily date fields
             setFormData(prev => ({
                 ...prev,
                 start_date: '',
                 end_date: '',
+                // Optionally reset duration/time or keep previous selection?
+                // Resetting duration to first option seems reasonable:
                 rental_duration: hourlyOptions.length > 0 ? hourlyOptions[0] : 0,
                 start_time: ''
             }));
         } else {
-            // Switching to daily: reset hourly fields
+            // Switching TO daily: reset hourly fields
             setFormData(prev => ({
                 ...prev,
                 rental_duration: 0,
@@ -113,10 +119,9 @@ export function RentReservationModal({
         }
     };
 
-    // Handler for file input changes
+    // Handler for file input changes (ID, License)
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
-        // Use the input's 'name' attribute to update the correct file state
         if (e.target.name === 'id_document') {
             setIdFile(file);
         } else if (e.target.name === 'license_document') {
@@ -124,161 +129,183 @@ export function RentReservationModal({
         }
     };
 
-    // Calculate end time based on start time and duration
+    // Calculate end time based on start time and selected duration (for hourly)
     const calculateEndTime = (): string => {
-        if (!formData.start_time || !formData.rental_duration) return '';
+        // Requires both start time and a valid duration > 0
+        if (!formData.start_time || !formData.rental_duration || formData.rental_duration <= 0) return '';
 
         try {
+            // Parse the start time string (YYYY-MM-DDTHH:MM)
             const startTime = new Date(formData.start_time);
+            // Add duration (in hours) converted to milliseconds
             const endTime = new Date(startTime.getTime() + (formData.rental_duration * 60 * 60 * 1000));
-            return endTime.toISOString().slice(0, 16); // Format as YYYY-MM-DDTHH:MM
+            // Return in the same format required by datetime-local input
+            return endTime.toISOString().slice(0, 16);
         } catch (error) {
             console.error("Error calculating end time:", error);
-            return '';
+            return ''; // Return empty string on error
         }
     };
 
-    // Helper to get price for selected duration
+    // Helper to get the price for the currently selected hourly duration
     const getSelectedDurationPrice = (): number | null => {
-        if (!formData.rental_duration) return null;
-        return hourlyPrices[formData.rental_duration] || null;
+        if (!isHourlyRental || !formData.rental_duration) return null;
+        return hourlyPrices[formData.rental_duration] ?? null; // Use nullish coalescing
     };
 
     // Handler for form submission
     const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
         setIsSubmitting(true);
 
-        // --- Create FormData ---
         const submissionData = new FormData();
 
-        // Append text fields from state
-        submissionData.append('listing_id', carId); // Pass the carId as listing_id
+        // --- Append Common Fields ---
+        submissionData.append('listing_id', carId);
         submissionData.append('renter_name', formData.renter_name);
         submissionData.append('renter_email', formData.renter_email);
         submissionData.append('renter_phone', formData.renter_phone);
-
-        // Append rental type info
-        submissionData.append('is_hourly_rental', isHourlyRental.toString());
-
-        if (isHourlyRental) {
-            // For hourly rentals
-            if (!formData.start_time || !formData.rental_duration) {
-                toast({
-                    title: "Missing information",
-                    description: "Please select a start time and duration.",
-                    variant: "destructive"
-                });
-                setIsSubmitting(false);
-                return;
-            }
-
-            submissionData.append('rental_duration', formData.rental_duration.toString());
-            submissionData.append('start_time', formData.start_time);
-
-            // Calculate and append end time
-            const endTime = calculateEndTime();
-            if (endTime) {
-                submissionData.append('end_time', endTime);
-            }
-        } else {
-            // For daily rentals
-            if (!formData.start_date || !formData.end_date) {
-                toast({
-                    title: "Missing dates",
-                    description: "Please select both start and end dates.",
-                    variant: "destructive"
-                });
-                setIsSubmitting(false);
-                return;
-            }
-
-            submissionData.append('start_date', formData.start_date);
-            submissionData.append('end_date', formData.end_date);
-        }
-
-        if (formData.notes) { // Only append optional fields if they have value
+        if (formData.notes) {
             submissionData.append('notes', formData.notes);
         }
-        // Append any other text fields you might have added to the state/form
+        // Append other common optional fields if added (e.g., preferred_contact_method, source)
 
-        // --- Append files ---
-        // Check if files are selected (especially if they are required)
+
+        // --- Append Rental Type Specific Fields ---
+        if (isHourlyRental) {
+            // --- HOURLY RENTAL ---
+            if (!formData.start_time || !formData.rental_duration || formData.rental_duration <= 0) {
+                toast({ title: "Missing Information", description: "Please select a valid start time and duration for hourly rental.", variant: "destructive" });
+                setIsSubmitting(false);
+                return;
+            }
+
+            const endTime = calculateEndTime();
+            if (!endTime) {
+                toast({ title: "Calculation Error", description: "Could not calculate end time. Please check start time.", variant: "destructive" });
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Append hourly specific data
+            submissionData.append('duration', formData.rental_duration.toString());
+            submissionData.append('start_time', formData.start_time); // YYYY-MM-DDTHH:MM
+            submissionData.append('end_time', endTime); // YYYY-MM-DDTHH:MM
+
+            // ** FIX: Derive and append start_date and end_date for backend compatibility **
+            try {
+                const startDateOnly = formData.start_time.split('T')[0]; // Extract YYYY-MM-DD
+                const endDateOnly = endTime.split('T')[0]; // Extract YYYY-MM-DD
+                submissionData.append('start_date', startDateOnly);
+                submissionData.append('end_date', endDateOnly);
+            } catch (splitError) {
+                console.error("Error splitting date/time strings:", splitError);
+                toast({ title: "Date Error", description: "Could not process date/time values.", variant: "destructive" });
+                setIsSubmitting(false);
+                return;
+            }
+
+        } else {
+            // --- DAILY RENTAL ---
+            if (!formData.start_date || !formData.end_date) {
+                toast({ title: "Missing Dates", description: "Please select both start and end dates for daily rental.", variant: "destructive" });
+                setIsSubmitting(false);
+                return;
+            }
+            // Basic date validation (end date should not be before start date)
+            if (new Date(formData.end_date) < new Date(formData.start_date)) {
+                toast({ title: "Invalid Dates", description: "End date cannot be before the start date.", variant: "destructive" });
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Append daily specific data
+            submissionData.append('start_date', formData.start_date); // YYYY-MM-DD
+            submissionData.append('end_date', formData.end_date);   // YYYY-MM-DD
+            // Optionally append duration=null or start_time=null if needed by backend, but current backend schema doesn't require them
+        }
+
+        // --- Append Files ---
         if (!idFile) {
             toast({ title: "Missing Document", description: "Please upload the ID document.", variant: "destructive" });
             setIsSubmitting(false);
-            return; // Stop submission if required file is missing
+            return;
         }
-        submissionData.append('id_document', idFile); // Key must match API route expectation
+        submissionData.append('id_document', idFile);
 
         if (!licenseFile) {
             toast({ title: "Missing Document", description: "Please upload the license document.", variant: "destructive" });
             setIsSubmitting(false);
-            return; // Stop submission if required file is missing
+            return;
         }
-        submissionData.append('license_document', licenseFile); // Key must match API route expectation
+        submissionData.append('license_document', licenseFile);
 
         // --- Send FormData to API ---
         try {
+            console.log("Submitting FormData:", Object.fromEntries(submissionData.entries())); // Log FormData content before sending
+
             const response = await fetch('/api/rental_reservations', {
                 method: 'POST',
-                body: submissionData, // Send the FormData object
-                credentials: 'include', // Important: Send cookies with the request
-                // ** Do NOT manually set the 'Content-Type' header for FormData **
-                // The browser will automatically set it to 'multipart/form-data' with the correct boundary
+                body: submissionData,
+                credentials: 'include',
             });
 
             // --- Handle API Response ---
             if (!response.ok) {
-                let errorData;
+                let errorData = { error: `Request failed: ${response.status}`, details: response.statusText }; // Default error
                 try {
-                    // Attempt to parse the error response from the API
                     errorData = await response.json();
                 } catch (parseError) {
-                    // If parsing fails, use the status text as a fallback
-                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                    // Ignore parsing error, use default
                 }
-                // Throw a detailed error message from the API response
                 console.error("API Error Response:", errorData);
-                throw new Error(errorData?.error ?? errorData?.details?.message ?? `Request failed: ${response.status}`);
+                // Use more specific error message if available
+                throw new Error(errorData?.error ?? errorData?.details ?? `Request failed: ${response.status}`);
             }
 
             // --- Handle Success ---
             toast({
-                title: t('toast.successTitle'), // Ensure translation key exists
-                description: t('toast.successDescription'), // Ensure translation key exists
+                title: t('toast.successTitle'),
+                description: t('toast.successDescription'),
                 duration: 5000,
             });
 
-            // --- Reset Form ---
-            setFormData({ // Reset text fields
+            // --- Reset Form State ---
+            setFormData({
                 renter_name: '', renter_email: '', renter_phone: '',
                 start_date: '', end_date: '', notes: '',
-                rental_duration: 0, start_time: ''
+                rental_duration: hourlyOptions.length > 0 ? hourlyOptions[0] : 0, // Reset duration
+                start_time: ''
             });
-            setIdFile(null); // Reset file state
-            setLicenseFile(null); // Reset file state
-            // Clear file input elements using refs
+            setIdFile(null);
+            setLicenseFile(null);
             if (idInputRef.current) idInputRef.current.value = '';
             if (licenseInputRef.current) licenseInputRef.current.value = '';
-            setOpen(false); // Close the dialog
+            setIsHourlyRental(false); // Optionally reset to default mode (daily)
+            setOpen(false);
 
         } catch (error) {
             // --- Handle Fetch/API Errors ---
             console.error("Form Submission Error:", error);
             toast({
-                title: t('toast.errorTitle'), // Ensure translation key exists
-                description: error instanceof Error ? error.message : t('toast.error'), // Ensure translation key exists
+                title: t('toast.errorTitle'),
+                description: error instanceof Error ? error.message : t('toast.error'),
                 variant: 'destructive',
             });
         } finally {
-            // --- Final Steps ---
-            setIsSubmitting(false); // Re-enable the submit button
+            setIsSubmitting(false);
         }
     };
 
-    // Should we show the hourly rental option?
-    const showHourlyOption = hourlyOptions && hourlyOptions.length > 0;
+    // New function to handle button click in the footer
+    const handleSubmitButtonClick = () => {
+        if (formRef.current) {
+            formRef.current.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+    };
+
+    // Determine if the hourly rental options should be presented to the user
+    const showHourlyOptionToggle = hourlyOptions && hourlyOptions.length > 0;
 
     // --- Render JSX ---
     return (
@@ -291,242 +318,144 @@ export function RentReservationModal({
 
             {/* Dialog */}
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-xl md:max-w-2xl overflow-y-auto max-h-[90vh]">
-                    {/* Dialog Header - Remove sticky positioning */}
-                    <DialogHeader className="bg-background pb-4">
+                {/* Increased max width, allows vertical scroll, max height */}
+                <DialogContent className="sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[95vh] flex flex-col">
+                    {/* Dialog Header */}
+                    <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-4 border-b">
                         <DialogTitle>{t('title')}</DialogTitle>
                         <DialogDescription>
                             {carName}
-                            {/* Display Car Price if available */}
-                            {carPrice != null && (
+                            {carPrice != null && ( // Display daily price for context if available
                                 <div className="mt-1 text-sm text-muted-foreground">
-                                    {t('priceLabel')}: {new Intl.NumberFormat('en-US', {
-                                        style: 'currency',
-                                        currency: 'CHF',
-                                    }).format(carPrice)}
+                                    {t('priceLabel')} (Daily): {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(carPrice)}
                                 </div>
                             )}
-                            {/* Display Car Specs if available */}
                             {carSpecs && (
-                                <div className="mt-1 text-sm text-muted-foreground">
-                                    {carSpecs}
-                                </div>
+                                <div className="mt-1 text-sm text-muted-foreground">{carSpecs}</div>
                             )}
                         </DialogDescription>
                     </DialogHeader>
 
-                    {/* Form Element - Will scroll in the middle */}
-                    <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+                    {/* Scrollable Form Content Area */}
+                    <div className="flex-grow overflow-y-auto px-6 pb-4">
+                        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 mt-4">
 
-                        {/* Renter Information Section */}
-                        <div className="space-y-4">
-                            <h4 className="text-lg font-semibold">{t('section.renterInfo')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* Renter Name */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="renter_name">{t('labels.name')}</Label>
-                                    <Input id="renter_name" name="renter_name" type="text" value={formData.renter_name} onChange={handleChange} required />
-                                </div>
-                                {/* Renter Email */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="renter_email">{t('labels.email')}</Label>
-                                    <Input id="renter_email" name="renter_email" type="email" value={formData.renter_email} onChange={handleChange} required />
-                                </div>
-                                {/* Renter Phone */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="renter_phone">{t('labels.phone')}</Label>
-                                    <Input id="renter_phone" name="renter_phone" type="tel" value={formData.renter_phone} onChange={handleChange} required />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Rental Type Selection - Only show if hourly options are available */}
-                        {showHourlyOption && (
-                            <div className="space-y-3">
-                                <h4 className="text-lg font-semibold">{t('section.rentalType')}</h4>
-                                <div className="flex space-x-4">
-                                    <Button
-                                        type="button"
-                                        variant={isHourlyRental ? "outline" : "default"}
-                                        className="flex-1"
-                                        onClick={() => toggleRentalType(false)}
-                                    >
-                                        {t('buttons.dailyRental')}
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant={isHourlyRental ? "default" : "outline"}
-                                        className="flex-1"
-                                        onClick={() => toggleRentalType(true)}
-                                    >
-                                        {t('buttons.hourlyRental')}
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Conditional Rendering based on rental type */}
-                        {isHourlyRental && showHourlyOption ? (
-                            // Hourly Rental Section
-                            <div className="space-y-4">
-                                <h4 className="text-lg font-semibold">{t('section.hourlyRental')}</h4>
-
-                                {/* Duration Selection - Now using dropdown */}
-                                <div className="space-y-3">
-                                    <Label htmlFor="rental-duration">{t('labels.duration')}</Label>
-                                    <Select
-                                        value={formData.rental_duration.toString()}
-                                        onValueChange={handleDurationChange}
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder={t('placeholders.selectDuration')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {hourlyOptions.map((hours) => (
-                                                <SelectItem key={hours} value={hours.toString()}>
-                                                    <span className="flex justify-between w-full">
-                                                        <span>{hours} {t('labels.hours')}</span>
-                                                        {hourlyPrices[hours] && (
-                                                            <span className="ml-4 text-primary font-medium">
-                                                                {new Intl.NumberFormat('en-US', {
-                                                                    style: 'currency',
-                                                                    currency: 'CHF'
-                                                                }).format(hourlyPrices[hours] || 0)}
-                                                            </span>
-                                                        )}
-                                                    </span>
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                {/* Start Time */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="start_time">{t('labels.startTime')}</Label>
-                                    <Input
-                                        id="start_time"
-                                        name="start_time"
-                                        type="datetime-local"
-                                        value={formData.start_time}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-
-                                {/* Display calculated end time if start time and duration are set */}
-                                {formData.start_time && formData.rental_duration > 0 && (
-                                    <div className="p-3 bg-muted/20 rounded-md">
-                                        <p className="text-sm text-muted-foreground">{t('labels.calculatedEndTime')}</p>
-                                        <p className="font-medium">
-                                            {new Date(calculateEndTime()).toLocaleString()}
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* Show selected price */}
-                                {formData.rental_duration > 0 && getSelectedDurationPrice() !== null && (
-                                    <div className="p-3 bg-primary/10 rounded-md flex justify-between items-center">
-                                        <span>{t('labels.selectedPrice')}</span>
-                                        <span className="font-bold text-primary">
-                                            {new Intl.NumberFormat('en-US', {
-                                                style: 'currency',
-                                                currency: 'CHF'
-                                            }).format(getSelectedDurationPrice() || 0)}
-                                        </span>
-                                    </div>
-                                )}
-
-                                {/* Show deposit if available */}
-                                {rentalDeposit && (
-                                    <div className="p-3 bg-muted/20 rounded-md flex justify-between items-center">
-                                        <span>{t('labels.securityDeposit')}</span>
-                                        <span className="font-medium">
-                                            {new Intl.NumberFormat('en-US', {
-                                                style: 'currency',
-                                                currency: 'CHF'
-                                            }).format(rentalDeposit)}
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            // Daily Rental Section (original functionality)
-                            <div className="space-y-2">
-                                <h4 className="text-lg font-semibold">{t('section.dates')}</h4>
+                            {/* Renter Information Section */}
+                            <section className="space-y-4">
+                                <h4 className="text-lg font-semibold">{t('section.renterInfo')}</h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* Start Date */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="start_date">{t('labels.start_date')}</Label>
-                                        <Input id="start_date" name="start_date" type="date" value={formData.start_date} onChange={handleChange} required />
+                                    <div className="space-y-2"><Label htmlFor="renter_name">{t('labels.name')}</Label><Input id="renter_name" name="renter_name" type="text" value={formData.renter_name} onChange={handleChange} required /></div>
+                                    <div className="space-y-2"><Label htmlFor="renter_email">{t('labels.email')}</Label><Input id="renter_email" name="renter_email" type="email" value={formData.renter_email} onChange={handleChange} required /></div>
+                                    <div className="space-y-2"><Label htmlFor="renter_phone">{t('labels.phone')}</Label><Input id="renter_phone" name="renter_phone" type="tel" value={formData.renter_phone} onChange={handleChange} required /></div>
+                                </div>
+                            </section>
+
+                            {/* Rental Type Selection Toggle (only if hourly options exist) */}
+                            {showHourlyOptionToggle && (
+                                <section className="space-y-3 pt-4 border-t">
+                                    <h4 className="text-lg font-semibold">{t('section.rentalType')}</h4>
+                                    <div className="flex space-x-4">
+                                        <Button type="button" variant={!isHourlyRental ? "default" : "outline"} className="flex-1" onClick={() => toggleRentalType(false)}>{t('buttons.dailyRental')}</Button>
+                                        <Button type="button" variant={isHourlyRental ? "default" : "outline"} className="flex-1" onClick={() => toggleRentalType(true)}>{t('buttons.hourlyRental')}</Button>
                                     </div>
-                                    {/* End Date */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="end_date">{t('labels.end_date')}</Label>
-                                        <Input id="end_date" name="end_date" type="date" value={formData.end_date} onChange={handleChange} required />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                                </section>
+                            )}
 
-                        {/* Documents Upload Section */}
-                        <div className="space-y-4">
-                            <h4 className="text-lg font-semibold">{t('section.documents')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* ID Document Input */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="id_document">{t('labels.idDocument')}</Label>
-                                    <Input
-                                        id="id_document"
-                                        name="id_document" // ** Crucial: Must match API FormData key **
-                                        type="file"
-                                        accept="image/*,.pdf" // Specify accepted file types
-                                        onChange={handleFileChange}
-                                        ref={idInputRef}
-                                        required // Make required if necessary
-                                    />
-                                </div>
-                                {/* License Document Input */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="license_document">{t('labels.licenseDocument')}</Label>
-                                    <Input
-                                        id="license_document"
-                                        name="license_document" // ** Crucial: Must match API FormData key **
-                                        type="file"
-                                        accept="image/*,.pdf" // Specify accepted file types
-                                        onChange={handleFileChange}
-                                        ref={licenseInputRef}
-                                        required // Make required if necessary
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                            {/* Conditional Rental Period Section */}
+                            <section className="space-y-4 pt-4 border-t">
+                                {isHourlyRental && showHourlyOptionToggle ? (
+                                    // --- Hourly Rental Inputs ---
+                                    <>
+                                        <h4 className="text-lg font-semibold">{t('section.hourlyRental')}</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {/* Duration Selection */}
+                                            <div className="space-y-2">
+                                                <Label htmlFor="rental-duration">{t('labels.duration')}</Label>
+                                                <Select value={formData.rental_duration.toString()} onValueChange={handleDurationChange} required>
+                                                    <SelectTrigger><SelectValue placeholder={t('placeholders.selectDuration')} /></SelectTrigger>
+                                                    <SelectContent>
+                                                        {hourlyOptions.map((hours) => (
+                                                            <SelectItem key={hours} value={hours.toString()}>
+                                                                <span className="flex justify-between w-full">
+                                                                    <span>{hours} {hours === 1 ? t('labels.hour') : t('labels.hours')}</span>
+                                                                    {hourlyPrices[hours] != null && (
+                                                                        <span className="ml-4 text-primary font-medium">
+                                                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(hourlyPrices[hours]!)}
+                                                                        </span>
+                                                                    )}
+                                                                </span>
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            {/* Start Time Input */}
+                                            <div className="space-y-2">
+                                                <Label htmlFor="start_time">{t('labels.startTime')}</Label>
+                                                <Input id="start_time" name="start_time" type="datetime-local" value={formData.start_time} onChange={handleChange} required />
+                                            </div>
+                                        </div>
+                                        {/* Display calculated end time */}
+                                        {formData.start_time && formData.rental_duration > 0 && calculateEndTime() && (
+                                            <div className="p-3 bg-muted/20 rounded-md text-sm">
+                                                <span className="text-muted-foreground">{t('labels.calculatedEndTime')}: </span>
+                                                <span className="font-medium">{new Date(calculateEndTime()).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>
+                                            </div>
+                                        )}
+                                        {/* Display selected price */}
+                                        {getSelectedDurationPrice() !== null && (
+                                            <div className="p-3 bg-primary/10 rounded-md flex justify-between items-center text-sm">
+                                                <span className="text-primary">{t('labels.selectedPrice')}:</span>
+                                                <span className="font-bold text-primary">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(getSelectedDurationPrice()!)}</span>
+                                            </div>
+                                        )}
+                                        {/* Display deposit */}
+                                        {rentalDeposit != null && (
+                                            <div className="p-3 bg-muted/20 rounded-md flex justify-between items-center text-sm">
+                                                <span className="text-muted-foreground">{t('labels.securityDeposit')}:</span>
+                                                <span className="font-medium">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CHF' }).format(rentalDeposit)}</span>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    // --- Daily Rental Inputs ---
+                                    <>
+                                        <h4 className="text-lg font-semibold">{t('section.dates')}</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2"><Label htmlFor="start_date">{t('labels.start_date')}</Label><Input id="start_date" name="start_date" type="date" value={formData.start_date} onChange={handleChange} required /></div>
+                                            <div className="space-y-2"><Label htmlFor="end_date">{t('labels.end_date')}</Label><Input id="end_date" name="end_date" type="date" value={formData.end_date} onChange={handleChange} required /></div>
+                                        </div>
+                                    </>
+                                )}
+                            </section>
 
-                        {/* Additional Notes Section */}
-                        <div className="space-y-2">
-                            <Label htmlFor="notes">{t('labels.notes')}</Label>
-                            <Textarea
-                                id="notes"
-                                name="notes" // Matches state key
-                                placeholder={t('placeholders.notes')} // Ensure translation key exists
-                                value={formData.notes}
-                                onChange={handleChange}
-                                rows={3}
-                            />
-                        </div>
+                            {/* Documents Upload Section */}
+                            <section className="space-y-4 pt-4 border-t">
+                                <h4 className="text-lg font-semibold">{t('section.documents')}</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2"><Label htmlFor="id_document">{t('labels.idDocument')}</Label><Input id="id_document" name="id_document" type="file" accept="image/*,.pdf" onChange={handleFileChange} ref={idInputRef} required /></div>
+                                    <div className="space-y-2"><Label htmlFor="license_document">{t('labels.licenseDocument')}</Label><Input id="license_document" name="license_document" type="file" accept="image/*,.pdf" onChange={handleFileChange} ref={licenseInputRef} required /></div>
+                                </div>
+                            </section>
 
-                        {/* Dialog Footer - Keep fixed at the bottom */}
-                        <DialogFooter className="sticky bottom-0 pt-6 bg-background z-10 mt-8">
-                            {/* Cancel Button */}
-                            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
-                                {t('buttons.cancel')}
-                            </Button>
-                            {/* Submit Button */}
-                            <Button type="submit" disabled={isSubmitting}>
-                                {isSubmitting ? t('buttons.submitting') : t('buttons.submit')}
-                            </Button>
-                        </DialogFooter>
-                    </form>
+                            {/* Additional Notes Section */}
+                            <section className="space-y-2 pt-4 border-t">
+                                <Label htmlFor="notes">{t('labels.notes')}</Label>
+                                <Textarea id="notes" name="notes" placeholder={t('placeholders.notes')} value={formData.notes} onChange={handleChange} rows={3} />
+                            </section>
+
+                            {/* Leave the form tag open here */}
+                        </form>
+                    </div> {/* End Scrollable Form Content Area */}
+
+                    {/* Dialog Footer - Now outside the scrolling area */}
+                    <DialogFooter className="flex-shrink-0 px-6 pb-6 pt-4 border-t bg-background">
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>{t('buttons.cancel')}</Button>
+                        {/* Change to use the new handler rather than type="submit" */}
+                        <Button type="button" onClick={handleSubmitButtonClick} disabled={isSubmitting}>
+                            {isSubmitting ? t('buttons.submitting') : t('buttons.submit')}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </>
