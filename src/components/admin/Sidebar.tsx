@@ -19,6 +19,7 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
+  TruckIcon,
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,9 @@ export default function Sidebar() {
     { name: "Transactions", href: "/admin/transactions", icon: CreditCard },
     { name: "Analytics", href: "/admin/analytics", icon: BarChart },
     { name: "Settings", href: "/admin/settings", icon: Settings },
-    { name: "Rentals", href: "/TruckIconals", icon: Car },
+    { name: "Rental Reservations", href: "/admin/rentals", icon: Calendar },
+    { name: "Rental Inventory", href: "/admin/rental-inventory", icon: Calendar },
+
 
   ];
 

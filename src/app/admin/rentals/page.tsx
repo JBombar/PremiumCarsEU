@@ -74,7 +74,7 @@ type ReservationRow = {
     id_document_url: string | null;
     license_document_url: string | null;
     preferred_contact_method: string | null;
-    
+
     // Car relationship - extend with required properties
     car?: {
         id?: string;
@@ -122,6 +122,7 @@ export default function RentalsPage() {
     // Confirmation dialog
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [activeReservation, setActiveReservation] = useState<ReservationRow | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
     const [adminComments, setAdminComments] = useState('');
@@ -159,6 +160,8 @@ export default function RentalsPage() {
                     renter_phone,
                     start_date,
                     end_date,
+                    start_time,
+                    end_time,
                     duration,
                     total_price,
                     status,
@@ -177,8 +180,6 @@ export default function RentalsPage() {
                     id_document_url,
                     license_document_url,
                     preferred_contact_method,
-                    start_time,
-                    end_time,
                     car:car_listings(id, make, model, year, images, rental_status)
                 `);
 
@@ -298,6 +299,49 @@ export default function RentalsPage() {
     const openRejectDialog = (reservation: ReservationRow) => {
         setActiveReservation(reservation);
         setIsRejectDialogOpen(true);
+    };
+
+    // Open delete dialog
+    const openDeleteDialog = (reservation: ReservationRow) => {
+        setActiveReservation(reservation);
+        setIsDeleteDialogOpen(true);
+    };
+
+    // Handle delete reservation
+    const handleDelete = async () => {
+        if (!activeReservation) return;
+
+        setActionLoading(true);
+
+        try {
+            // Delete the reservation
+            const { error } = await supabase
+                .from('rental_reservations')
+                .delete()
+                .eq('id', activeReservation.id);
+
+            if (error) throw error;
+
+            toast({
+                title: 'Reservation Deleted',
+                description: `Reservation for ${activeReservation.car?.make} ${activeReservation.car?.model} has been permanently deleted.`,
+            });
+
+            // Refresh the data
+            fetchReservations();
+
+        } catch (err: any) {
+            console.error('Error deleting reservation:', err);
+            toast({
+                title: 'Error',
+                description: err.message || 'Failed to delete reservation',
+                variant: 'destructive'
+            });
+        } finally {
+            setActionLoading(false);
+            setIsDeleteDialogOpen(false);
+            setActiveReservation(null);
+        }
     };
 
     // Confirm reservation
@@ -742,6 +786,15 @@ export default function RentalsPage() {
                                                             Details
                                                         </Button>
                                                     </Link>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => openDeleteDialog(reservation)}
+                                                        className="flex items-center text-red-500 hover:text-red-700"
+                                                    >
+                                                        <XMarkIcon className="h-4 w-4 mr-1" />
+                                                        Delete
+                                                    </Button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -895,7 +948,7 @@ export default function RentalsPage() {
                                 <div>{activeReservation.renter_email}</div>
 
                                 <div className="text-gray-500">Period:</div>
-        <div>
+                                <div>
                                     {activeReservation.start_date && format(new Date(activeReservation.start_date), 'PP')} -
                                     {activeReservation.end_date && format(new Date(activeReservation.end_date), 'PP')}
                                 </div>
@@ -937,6 +990,66 @@ export default function RentalsPage() {
                         >
                             {actionLoading && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
                             Reject Reservation
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete Reservation Dialog */}
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete Reservation</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete this reservation? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {activeReservation && (
+                        <div className="py-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="font-medium">{activeReservation.car?.make} {activeReservation.car?.model}</div>
+                                <Badge variant="outline" className="text-red-500 border-red-200 bg-red-50">
+                                    {calculatePrice(activeReservation)}
+                                </Badge>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div className="text-gray-500">Renter:</div>
+                                <div>{activeReservation.renter_name}</div>
+
+                                <div className="text-gray-500">Email:</div>
+                                <div>{activeReservation.renter_email}</div>
+
+                                <div className="text-gray-500">Status:</div>
+                                <div>
+                                    <Badge variant={getStatusBadge(activeReservation.status).variant || undefined}>
+                                        {getStatusBadge(activeReservation.status).label}
+                                    </Badge>
+                                </div>
+
+                                <div className="text-gray-500">Created:</div>
+                                <div>{format(new Date(activeReservation.created_at), 'PPP')}</div>
+                            </div>
+                        </div>
+                    )}
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsDeleteDialogOpen(false)}
+                            disabled={actionLoading}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDelete}
+                            disabled={actionLoading}
+                            className="flex items-center"
+                        >
+                            {actionLoading && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
+                            Delete Permanently
                         </Button>
                     </DialogFooter>
                 </DialogContent>

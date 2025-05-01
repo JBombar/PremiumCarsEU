@@ -459,6 +459,8 @@ export default async function CarRentPage({ params }: CarListingParams) {
                                         <RentReservationModal
                                             carId={carData.id}
                                             carName={`${carData.year} ${carData.make} ${carData.model}`}
+                                            // ADD THIS LINE:
+                                            carPrice={carData.rental_daily_price} // Pass the daily price
                                             hourlyOptions={carData.rental_available_durations || []}
                                             hourlyPrices={{
                                                 3: carData.rental_price_3h,

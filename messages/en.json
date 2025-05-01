@@ -926,7 +926,10 @@
             "hours": "hours",
             "startTime": "Start Time",
             "selectedPrice": "Selected Price",
-            "calculatedEndTime": "Calculated End Time"
+            "calculatedEndTime": "Calculated End Time",
+            "totalPrice": "Total Price",
+            "day": "day",
+            "days": "days"
         },
         "placeholders": {
             "notes": "Any additional information or requests?",
