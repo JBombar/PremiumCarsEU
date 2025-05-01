@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { ArrowRight, ChevronLeft, ChevronRight, Fuel, Gauge, Tag, Calendar, AlertCircle } from "lucide-react";
 import type { CarListing } from '../types'; // Assuming you'll create a types file or adjust path
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 // Define the props the CarCard component expects
 interface CarCardProps {
@@ -31,15 +32,19 @@ export function CarCard({
     onTrackInteraction,
     priority,
 }: CarCardProps) {
+    // Get currency context
+    const { selectedCurrency, formatPrice } = useCurrency();
 
-    // Helper function for price formatting (using passed t)
-    const formatPrice = (price: number | null | undefined): string => {
-        if (price == null) return t('card.priceNA');
-        return new Intl.NumberFormat('de-CH', {
-            style: 'currency',
-            currency: 'CHF',
-            maximumFractionDigits: 0
-        }).format(price);
+    // Helper function for accessing the dynamic price field
+    const getCarPrice = () => {
+        const dynamicPriceKey = `price_${selectedCurrency.toLowerCase()}` as keyof CarListing;
+
+        // Try to get price in selected currency, fallback to base price if not available
+        const price = car[dynamicPriceKey] !== undefined && car[dynamicPriceKey] !== null
+            ? car[dynamicPriceKey] as number
+            : car.price;
+
+        return price;
     };
 
     // Helper function for mileage formatting (using passed t)
@@ -127,16 +132,10 @@ export function CarCard({
             {/* Content below image */}
             <div className="flex flex-col flex-grow"> {/* Added flex-grow */}
                 <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
+                    <div className="flex items-start">
                         <h3 className="font-bold text-lg">
                             {car.year ? `${car.year} ` : ''}{car.make} {car.model}
                         </h3>
-                        <div className="flex-shrink-0 relative">
-                            <div className="absolute inset-0 bg-primary/10 rounded-full blur-sm"></div>
-                            <div className="relative font-bold text-lg text-primary px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
-                                {formatPrice(car.price)}
-                            </div>
-                        </div>
                     </div>
                 </CardHeader>
 
@@ -175,6 +174,13 @@ export function CarCard({
                             </div>
                         </div>
                     )}
+
+                    {/* Price display - relocated to bottom of content area with subtle gradient */}
+                    <div className="mt-4">
+                        <div className="inline-block font-semibold text-lg bg-gradient-to-r from-gray-50/80 to-gray-100/60 text-primary px-4 py-1.5 rounded-md border border-gray-200/50">
+                            {formatPrice(getCarPrice())}
+                        </div>
+                    </div>
                 </CardContent>
 
                 <CardFooter className="flex justify-between border-t pt-4 mt-auto"> {/* Added mt-auto */}

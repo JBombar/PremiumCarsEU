@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/hooks/useAuth';
 import { LayoutWrapper } from '@/components/layout/LayoutWrapper';
 import { Toaster } from '@/components/ui/toaster';
+import { CurrencyProvider } from '@/contexts/CurrencyContext';
 
 // GA4 + Next Script
 import Script from 'next/script';
@@ -51,13 +52,15 @@ export default async function RootLayout({
         />
       </head>
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <NextIntlClientProvider>
-          <AuthProvider>
-            <LayoutWrapper>
-              {children}
-            </LayoutWrapper>
-          </AuthProvider>
-        </NextIntlClientProvider>
+        <CurrencyProvider>
+          <NextIntlClientProvider>
+            <AuthProvider>
+              <LayoutWrapper>
+                {children}
+              </LayoutWrapper>
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </CurrencyProvider>
         <Toaster />
         <Analytics />
       </body>

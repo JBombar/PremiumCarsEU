@@ -16,26 +16,44 @@ export interface CarListing {
     mileage: number | null;
     fuel_type: string | null;
     transmission: string | null;
-    condition: 'new' | 'used' | null; // Matches enum in DB/schema if applicable
+    condition: "new" | "used";
     location_city: string | null;
     location_country: string | null;
     images: string[] | null; // Assuming this is stored as JSONB or text[]
     description: string | null;
+    dealer_id: string;
+    status: string | null;
+    is_public: boolean;
+    is_shared_with_network: boolean;
+    listing_type: string | null;
+    rental_daily_price: number | null;
+    rental_deposit_required: number | null;
+    rental_status: string | null;
+    min_rental_days: number | null;
+    max_rental_days: number | null;
+    created_at: string;
+    updated_at: string | null;
     body_type: string | null;
     exterior_color: string | null;
     interior_color: string | null;
     engine: string | null; // Added from inventory schema
     vin: string | null; // Added from inventory schema
-    status: 'available' | 'reserved' | 'sold' | null; // Added from inventory schema
-    listing_type: 'sale' | 'rent' | 'both' | null; // Added from inventory schema
-    rental_status: 'available' | 'rented' | 'maintenance' | null; // Added from inventory schema
-    horsepower: number | null; // Keep if present in DB
-    displacement: number | null; // Keep if present in DB
-    cylinders: number | null; // Keep if present in DB
-    is_public: boolean | null; // Added from inventory schema
-    created_at: string; // Timestamptz, likely string format
-    // Add any other columns from your 'car_listings' table that you might need
-    // user_id?: string; // Example if you need owner info
+    features: string[] | null;
+    seller_name: string | null;
+    seller_since: string | null;
+    // Additional required properties
+    horsepower: number | null;
+    displacement: number | null;
+    cylinders: number | null;
+    // Currency-specific price fields
+    price_eur?: number | null;
+    price_czk?: number | null;
+    price_huf?: number | null;
+    price_pln?: number | null;
+    rental_daily_price_eur?: number | null;
+    rental_daily_price_czk?: number | null;
+    rental_daily_price_huf?: number | null;
+    rental_daily_price_pln?: number | null;
 }
 
 /**

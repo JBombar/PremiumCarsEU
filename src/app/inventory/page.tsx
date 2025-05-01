@@ -6,6 +6,13 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Filter, AlertCircle } from "lucide-react";
 import { useTranslations } from 'next-intl';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 // Components
 import { InventoryGrid } from './components/InventoryGrid';
@@ -24,6 +31,7 @@ import { useInventoryData } from './hooks/useInventoryData';
 import { useMakesAndModels } from './hooks/useMakesAndModels';
 import { useAiSearch } from './hooks/useAiSearch';
 import { useTracking } from './hooks/useTracking';
+import { useCurrency, Currency, currencySymbolMap } from '@/contexts/CurrencyContext';
 
 export const dynamic = 'force-dynamic';
 
@@ -105,6 +113,8 @@ function InventoryPage() {
     getCurrentSortOption: () => sortOption, // Pass current sort for context
     t // Pass translation function
   });
+
+  const { selectedCurrency, setSelectedCurrency } = useCurrency();
 
   // Handlers for car card image navigation
   const nextImage = (carId: string) => {
@@ -247,13 +257,50 @@ function InventoryPage() {
         )}
 
         {/* Results Header (Count and Sorting) */}
-        <ResultsHeader
-          resultsCount={totalCount}
-          sortOption={sortOption}
-          sortOptions={sortOptions} // Pass translated sort options
-          onSortChange={handleSortChange} // Pass handler for sort changes
-          t={t} // Pass translation function
-        />
+        <div className="flex items-center justify-between mb-6">
+          <div>Showing {totalCount} vehicles</div>
+          <div className="flex items-center gap-4">
+            {/* Currency Dropdown - Now placed before Sort By */}
+            <div className="flex items-center gap-2">
+              <span>Currency:</span>
+              <Select
+                value={selectedCurrency}
+                onValueChange={(value) => setSelectedCurrency(value as Currency)}
+              >
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(currencySymbolMap).map(([currency, symbol]) => (
+                    <SelectItem key={currency} value={currency}>
+                      {currency} ({symbol})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Sort By Dropdown */}
+            <div className="flex items-center gap-2">
+              <span>Sort by:</span>
+              <Select
+                value={sortOption}
+                onValueChange={(value) => handleSortChange(value)}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort order" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(sortOptions).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
 
         {/* Inventory Grid (Displaying Cars) */}
         <InventoryGrid
