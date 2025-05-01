@@ -389,16 +389,20 @@ export default async function CarRentPage({ params }: CarListingParams) {
                                         carId={carData.id}
                                         carName={`${carData.year} ${carData.make} ${carData.model}`}
                                     />
-                                    <RentReservationModal
-                                        carId={carData.id}
-                                        carName={`${carData.year} ${carData.make} ${carData.model}`}
-                                    />
-                                    <Link href={`/inventory/${carId}`}>
-                                        <Button variant="outline" className="w-full">
-                                            <Car className="mr-2 h-4 w-4" />
-                                            {t('rental.viewFullDetails')}
-                                        </Button>
-                                    </Link>
+                                    <div className="mt-3">
+                                        <RentReservationModal
+                                            carId={carData.id}
+                                            carName={`${carData.year} ${carData.make} ${carData.model}`}
+                                        />
+                                    </div>
+                                    <div className="mt-3">
+                                        <Link href={`/inventory/${carId}`}>
+                                            <Button variant="outline" className="w-full">
+                                                <Car className="mr-2 h-4 w-4" />
+                                                {t('rental.viewFullDetails')}
+                                            </Button>
+                                        </Link>
+                                    </div>
                                 </div>
 
                                 {/* Seller Info - Hidden by default on small screens, shown at bottom on larger screens */}

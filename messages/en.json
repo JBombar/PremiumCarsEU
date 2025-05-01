@@ -731,6 +731,9 @@
             "fallbackInitial": "S",
             "fallbackYear": "2022"
         },
+        "buttons": {
+            "viewRentalInfo": "View Rental Information"
+        },
         "imageGallery": {
             "imageAlt": "{year} {make} {model} - Image {index}",
             "imageAltFallback": "Car image {index}",
@@ -894,15 +897,31 @@
     },
     "RentalReservationModal": {
         "triggerButton": "Reserve This Vehicle",
-        "title": "Reserve This Rental",
+        "title": "Reserve This Car",
         "description": "Choose your preferred dates for reserving the {carName}.",
+        "priceLabel": "Price",
+        "section": {
+            "renterInfo": "Renter Information",
+            "dates": "Rental Dates",
+            "documents": "Upload Documents"
+        },
         "labels": {
-            "startDate": "Start Date",
-            "endDate": "End Date"
+            "name": "Full Name",
+            "email": "Email Address",
+            "phone": "Phone Number",
+            "start_date": "Start Date",
+            "end_date": "End Date",
+            "idDocument": "ID Document",
+            "licenseDocument": "Driver’s License",
+            "notes": "Additional Notes"
+        },
+        "placeholders": {
+            "notes": "Any additional information or requests?"
         },
         "buttons": {
             "cancel": "Cancel",
-            "submit": "Submit"
+            "submit": "Submit Reservation",
+            "submitting": "Submitting..."
         },
         "toast": {
             "successTitle": "Reservation Submitted",
