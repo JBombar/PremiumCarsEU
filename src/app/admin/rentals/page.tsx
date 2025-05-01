@@ -504,7 +504,7 @@ export default function RentalsPage() {
                                 value={filters.status}
                                 onValueChange={(value) => handleFilterChange('status', value)}
                             >
-                                <SelectTrigger id="status-filter" className="w-full">
+                                <SelectTrigger id="status-filter" className="w-full bg-white">
                                     <SelectValue placeholder="All Statuses" />
                                 </SelectTrigger>
                                 <SelectContent>

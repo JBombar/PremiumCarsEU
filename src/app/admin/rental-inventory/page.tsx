@@ -43,12 +43,28 @@ type RentalReservation = {
     status: string
 }
 
+// Dashboard metrics type
+type DashboardMetrics = {
+    total: number;
+    available: number;
+    rented: number;
+    reserved: number;
+}
+
 export default function RentalInventoryPage() {
     // State for the car listings data
     const [carListings, setCarListings] = useState<CarListing[]>([])
     const [filteredListings, setFilteredListings] = useState<CarListing[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    // New state for dashboard metrics
+    const [metrics, setMetrics] = useState<DashboardMetrics>({
+        total: 0,
+        available: 0,
+        rented: 0,
+        reserved: 0
+    })
 
     // Filter and sort state
     const [sortBy, setSortBy] = useState('default')
@@ -102,6 +118,15 @@ export default function RentalInventoryPage() {
                     (car.listing_type === 'rent' || car.listing_type === 'both' || car.is_rentable === true)
                 )
 
+                // Calculate dashboard metrics
+                const newMetrics: DashboardMetrics = {
+                    total: rentalListings.length,
+                    available: rentalListings.filter(car => car.rental_status === 'available').length,
+                    rented: rentalListings.filter(car => car.rental_status === 'rented').length,
+                    reserved: rentalListings.filter(car => car.has_pending_reservation).length
+                }
+
+                setMetrics(newMetrics)
                 setCarListings(rentalListings)
                 setFilteredListings(rentalListings)
             } catch (err) {
@@ -173,8 +198,41 @@ export default function RentalInventoryPage() {
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-6">Rental Inventory</h1>
 
+            {/* Dashboard Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <Card className="bg-white shadow-sm">
+                    <CardContent className="p-4">
+                        <div className="text-sm font-medium text-gray-500">Total Listings</div>
+                        <div className="text-3xl font-bold text-gray-800 mt-1">{metrics.total}</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white shadow-sm">
+                    <CardContent className="p-4">
+                        <div className="text-sm font-medium text-gray-500">Available</div>
+                        <div className="text-3xl font-bold text-gray-800 mt-1">{metrics.available}</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white shadow-sm">
+                    <CardContent className="p-4">
+                        <div className="text-sm font-medium text-gray-500">Rented</div>
+                        <div className="text-3xl font-bold text-gray-800 mt-1">{metrics.rented}</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white shadow-sm">
+                    <CardContent className="p-4">
+                        <div className="text-sm font-medium text-gray-500">Reserved</div>
+                        <div className="text-3xl font-bold text-gray-800 mt-1">{metrics.reserved}</div>
+                    </CardContent>
+                </Card>
+            </div>
+            <h1 className="text-md font-normal mb-4">Filters</h1>
+
             {/* Filter controls */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+
                 <div>
                     <Input
                         placeholder="Search by make or model"
@@ -186,7 +244,7 @@ export default function RentalInventoryPage() {
 
                 <div>
                     <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white">
                             <SelectValue placeholder="Sort by..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -199,9 +257,10 @@ export default function RentalInventoryPage() {
                     </Select>
                 </div>
 
+
                 <div>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white">
                             <SelectValue placeholder="Filter by status" />
                         </SelectTrigger>
                         <SelectContent>

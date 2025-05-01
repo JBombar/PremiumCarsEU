@@ -52,7 +52,9 @@ export default function Sidebar() {
     { name: "Analytics", href: "/admin/analytics", icon: BarChart },
     { name: "Settings", href: "/admin/settings", icon: Settings },
     { name: "Rental Reservations", href: "/admin/rentals", icon: Calendar },
-    { name: "Rental Inventory", href: "/admin/rental-inventory", icon: Calendar },
+    { name: "Rental Inventory", href: "/admin/rental-inventory", icon: Car },
+    { name: "Rental Transactions", href: "/admin/rental-transactions", icon: CreditCard },
+
 
 
   ];
