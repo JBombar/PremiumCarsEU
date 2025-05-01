@@ -40,34 +40,34 @@ import { DateRange } from "react-day-picker";
 
 // Types for API response
 interface KPI {
-    totalReservations: number;
-    totalConfirmed: number;
-    totalCompleted: number;
-    totalCancelled: number;
-    grossRevenueCHF: number;
-    avgPriceCHF: number;
-    avgLengthHours: number;
+    total_reservations: number;
+    total_confirmed: number;
+    total_completed: number;
+    total_cancelled: number;
+    gross_revenue_chf: number;
+    avg_price_chf: number;
+    avg_length_hours: number;
 }
 
 interface Transaction {
     id: string;
-    listingId: string;
-    renterId: string;
-    startDate: string;
-    endDate: string;
-    startTime: string | null;
-    endTime: string | null;
+    listing_id: string;
+    renter_id: string;
+    start_date: string;
+    end_date: string;
+    start_time: string | null;
+    end_time: string | null;
     duration: number;
-    totalPrice: number;
+    total_price: number;
     currency: string;
     status: 'confirmed' | 'completed' | 'pending' | 'cancelled';
-    createdAt: string;
-    approvedAt: string | null;
-    canceledAt: string | null;
-    carMake: string;
-    carModel: string;
-    carYear: number;
-    renterName: string;
+    created_at: string;
+    approved_at: string | null;
+    canceled_at: string | null;
+    car_make: string;
+    car_model: string;
+    car_year: number;
+    renter_name: string;
 }
 
 interface ApiResponse {
@@ -76,8 +76,8 @@ interface ApiResponse {
     paging: {
         total: number;
         page: number;
-        pageSize: number;
-        totalPages: number;
+        page_size: number;
+        total_pages: number;
     };
 }
 
@@ -87,147 +87,158 @@ export default function RentalTransactionsPage() {
 
     // Parse query parameters
     const page = parseInt(searchParams.get("page") || "1");
-    const pageSize = parseInt(searchParams.get("pageSize") || "10");
-    const sortField = searchParams.get("sortField") || "createdAt";
-    const sortDirection = searchParams.get("sortDirection") || "desc";
+    const page_size = parseInt(searchParams.get("page_size") || "10");
+    const sort_field = searchParams.get("sort_field") || "created_at";
+    const sort_direction = searchParams.get("sort_direction") || "desc";
     const status = searchParams.get("status") || "all";
     const search = searchParams.get("search") || "";
 
     // Default to last 30 days if no date range is specified
-    const defaultStartDate = new Date();
-    defaultStartDate.setDate(defaultStartDate.getDate() - 30);
+    const default_start_date = new Date();
+    default_start_date.setDate(default_start_date.getDate() - 30);
 
-    const [startDate, setStartDate] = useState<Date | null>(
-        searchParams.get("from") ? new Date(searchParams.get("from") as string) : defaultStartDate
+    const [start_date, set_start_date] = useState<Date | null>(
+        searchParams.get("from") ? new Date(searchParams.get("from") as string) : default_start_date
     );
-    const [endDate, setEndDate] = useState<Date | null>(
+    const [end_date, set_end_date] = useState<Date | null>(
         searchParams.get("to") ? new Date(searchParams.get("to") as string) : new Date()
     );
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [data, setData] = useState<ApiResponse | null>({
+    const [is_loading, set_is_loading] = useState(true);
+    const [data, set_data] = useState<ApiResponse | null>({
         kpis: {
-            totalReservations: 0,
-            totalConfirmed: 0,
-            totalCompleted: 0,
-            totalCancelled: 0,
-            grossRevenueCHF: 0,
-            avgPriceCHF: 0,
-            avgLengthHours: 0
+            total_reservations: 0,
+            total_confirmed: 0,
+            total_completed: 0,
+            total_cancelled: 0,
+            gross_revenue_chf: 0,
+            avg_price_chf: 0,
+            avg_length_hours: 0
         },
         rows: [],
         paging: {
             total: 0,
             page: 1,
-            pageSize: pageSize,
-            totalPages: 0
+            page_size: page_size,
+            total_pages: 0
         }
     });
-    const [statusFilter, setStatusFilter] = useState(status);
-    const [searchTerm, setSearchTerm] = useState(search);
+    const [status_filter, set_status_filter] = useState(status);
+    const [search_term, set_search_term] = useState(search);
 
-    const [dateRange, setDateRange] = useState<DateRange | undefined>(
-        startDate && endDate
-            ? { from: startDate, to: endDate }
+    const [date_range, set_date_range] = useState<DateRange | undefined>(
+        start_date && end_date
+            ? { from: start_date, to: end_date }
             : undefined
     );
 
     // Fetch data from API
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
+        const fetch_data = async () => {
+            set_is_loading(true);
 
             // Format dates for API
-            const fromDateStr = startDate ? startDate.toISOString().split('T')[0] : '';
-            const toDateStr = endDate ? endDate.toISOString().split('T')[0] : '';
+            const from_date_str = start_date ? new Date(start_date.setHours(0, 0, 0, 0)).toISOString()
+                : "";
+            const to_date_str = end_date ? new Date(end_date.setHours(23, 59, 59, 999)).toISOString()
+                : "";
 
             try {
                 // Build the query parameters
-                const queryParams = new URLSearchParams();
-                queryParams.set("page", page.toString());
-                queryParams.set("pageSize", pageSize.toString());
-                queryParams.set("sort", `${sortField},${sortDirection}`);
+                const query_params = new URLSearchParams();
+                query_params.set("page", page.toString());
+                query_params.set("page_size", page_size.toString());
+                query_params.set("sort", `${sort_field},${sort_direction}`);
 
                 // Only add status if it's not "all"
-                if (statusFilter !== "all") {
-                    queryParams.set("status", statusFilter);
+                if (status_filter !== "all") {
+                    query_params.set("status", status_filter);
                 }
 
-                if (searchTerm) queryParams.set("search", searchTerm);
-                if (fromDateStr) queryParams.set("from", fromDateStr);
-                if (toDateStr) queryParams.set("to", toDateStr);
+                if (search_term) query_params.set("search", search_term);
+                if (from_date_str) query_params.set("from", from_date_str);
+                if (to_date_str) query_params.set("to", to_date_str);
 
-                const response = await fetch(`/api/rental-transactions?${queryParams.toString()}`);
+                const response = await fetch(`/api/rental-transactions?${query_params.toString()}`);
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
 
                 const result = await response.json();
-                setData(result);
+                set_data(result);
             } catch (error) {
                 console.error('Error fetching rental transactions:', error);
             } finally {
-                setIsLoading(false);
+                set_is_loading(false);
             }
         };
 
-        fetchData();
-    }, [page, pageSize, sortField, sortDirection, statusFilter, searchTerm, startDate, endDate]);
+        fetch_data();
+    }, [page, page_size, sort_field, sort_direction, status_filter, search_term, start_date, end_date]);
 
     // Update URL when filters change
-    const updateFilters = () => {
+    const update_filters = () => {
         const params = new URLSearchParams();
         params.set("page", "1");
-        params.set("pageSize", pageSize.toString());
-        params.set("sortField", sortField);
-        params.set("sortDirection", sortDirection);
+        params.set("page_size", page_size.toString());
+        params.set("sort_field", sort_field);
+        params.set("sort_direction", sort_direction);
 
-        if (statusFilter && statusFilter !== "all") params.set("status", statusFilter);
-        if (searchTerm) params.set("search", searchTerm);
-        if (startDate) params.set("from", startDate.toISOString().split('T')[0]);
-        if (endDate) params.set("to", endDate.toISOString().split('T')[0]);
+        if (status_filter && status_filter !== "all") params.set("status", status_filter);
+        if (search_term) params.set("search", search_term);
+        if (start_date) params.set("from", start_date.toISOString().split('T')[0]);
+        if (end_date) params.set("to", end_date.toISOString().split('T')[0]);
 
         router.push(`/admin/rental-transactions?${params.toString()}`);
     };
 
     // Handle date range change
-    const handleDateRangeChange = (range: { from: Date; to: Date }) => {
-        setStartDate(range.from);
-        setEndDate(range.to);
+    const handle_date_range_change = (range: { from: Date; to: Date }) => {
+        set_start_date(range.from);
+        set_end_date(range.to);
     };
 
     // Handle sorting
-    const handleSort = (field: string) => {
-        const direction = sortField === field && sortDirection === "asc" ? "desc" : "asc";
+    const handle_sort = (field: string) => {
+        const direction = sort_field === field && sort_direction === "asc" ? "desc" : "asc";
         const params = new URLSearchParams(searchParams);
-        params.set("sortField", field);
-        params.set("sortDirection", direction);
+        params.set("sort_field", field);
+        params.set("sort_direction", direction);
         router.push(`/admin/rental-transactions?${params.toString()}`);
     };
 
     // Format currency
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('de-CH', {
-            style: 'currency',
-            currency: 'CHF',
+    const format_currency = (amount: number) => {
+        if (isNaN(amount)) return "CHF 0.00";
+
+        return new Intl.NumberFormat("de-CH", {
+            style: "currency",
+            currency: "CHF",
         }).format(amount);
     };
 
     // Format date
-    const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString();
+    const format_date = (date_str: string) => {
+        if (!date_str) return "N/A";
+
+        try {
+            return new Date(date_str).toLocaleDateString();
+        } catch (error) {
+            console.error(`Error formatting date: ${date_str}`, error);
+            return "Invalid Date";
+        }
     };
 
-    // Update startDate and endDate when dateRange changes
+    // Update start_date and end_date when date_range changes
     useEffect(() => {
-        if (dateRange?.from) {
-            setStartDate(dateRange.from);
+        if (date_range?.from) {
+            set_start_date(date_range.from);
         }
-        if (dateRange?.to) {
-            setEndDate(dateRange.to);
+        if (date_range?.to) {
+            set_end_date(date_range.to);
         }
-    }, [dateRange]);
+    }, [date_range]);
 
     return (
         <div className="container mx-auto py-8">
@@ -235,7 +246,7 @@ export default function RentalTransactionsPage() {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                {isLoading ? (
+                {is_loading ? (
                     <>
                         {[...Array(4)].map((_, i) => (
                             <Card key={i}>
@@ -256,7 +267,7 @@ export default function RentalTransactionsPage() {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-2xl font-bold">
-                                    {formatCurrency(data?.kpis?.grossRevenueCHF || 0)}
+                                    {format_currency(Number(data?.kpis?.gross_revenue_chf || 0))}
                                 </p>
                             </CardContent>
                         </Card>
@@ -266,7 +277,7 @@ export default function RentalTransactionsPage() {
                                 <CardTitle className="text-sm text-muted-foreground">Completed Rentals</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-2xl font-bold">{data?.kpis?.totalCompleted || 0}</p>
+                                <p className="text-2xl font-bold">{data?.kpis?.total_completed || 0}</p>
                             </CardContent>
                         </Card>
 
@@ -275,7 +286,7 @@ export default function RentalTransactionsPage() {
                                 <CardTitle className="text-sm text-muted-foreground">Confirmed Rentals</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-2xl font-bold">{data?.kpis?.totalConfirmed || 0}</p>
+                                <p className="text-2xl font-bold">{data?.kpis?.total_confirmed || 0}</p>
                             </CardContent>
                         </Card>
 
@@ -284,7 +295,7 @@ export default function RentalTransactionsPage() {
                                 <CardTitle className="text-sm text-muted-foreground">Avg Duration (Hours)</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-2xl font-bold">{data?.kpis?.avgLengthHours?.toFixed(1) || 0}</p>
+                                <p className="text-2xl font-bold">{(Number(data?.kpis?.avg_length_hours || 0)).toFixed(1)}</p>
                             </CardContent>
                         </Card>
                     </>
@@ -295,18 +306,18 @@ export default function RentalTransactionsPage() {
             <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="w-full md:w-auto">
                     <DateRangePicker
-                        value={dateRange}
+                        value={date_range}
                         onChange={(range) => {
-                            setDateRange(range);
+                            set_date_range(range);
                             if (range?.from && range?.to) {
-                                handleDateRangeChange({ from: range.from, to: range.to });
+                                handle_date_range_change({ from: range.from, to: range.to });
                             }
                         }}
                     />
                 </div>
 
                 <div className="w-full md:w-auto">
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <Select value={status_filter} onValueChange={set_status_filter}>
                         <SelectTrigger className="w-full md:w-[180px]">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
@@ -323,19 +334,19 @@ export default function RentalTransactionsPage() {
                 <div className="w-full md:flex-1">
                     <Input
                         placeholder="Search make, model, or renter..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        value={search_term}
+                        onChange={(e) => set_search_term(e.target.value)}
                     />
                 </div>
 
-                <Button onClick={updateFilters}>Apply Filters</Button>
+                <Button onClick={update_filters}>Apply Filters</Button>
             </div>
 
             {/* Transactions Table */}
             <Card>
                 <CardHeader>
                     <CardTitle>Transactions</CardTitle>
-                    {isLoading ? (
+                    {is_loading ? (
                         <div className="text-sm text-muted-foreground">
                             <Skeleton className="h-4 w-[250px]" />
                         </div>
@@ -350,29 +361,29 @@ export default function RentalTransactionsPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="cursor-pointer" onClick={() => handleSort("id")}>
-                                        ID {sortField === "id" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <TableHead className="cursor-pointer" onClick={() => handle_sort("id")}>
+                                        ID {sort_field === "id" && (sort_direction === "asc" ? "↑" : "↓")}
                                     </TableHead>
-                                    <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
-                                        Date {sortField === "createdAt" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <TableHead className="cursor-pointer" onClick={() => handle_sort("created_at")}>
+                                        Date {sort_field === "created_at" && (sort_direction === "asc" ? "↑" : "↓")}
                                     </TableHead>
                                     <TableHead>Vehicle</TableHead>
                                     <TableHead>Renter</TableHead>
-                                    <TableHead className="cursor-pointer" onClick={() => handleSort("startDate")}>
-                                        Rental Period {sortField === "startDate" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <TableHead className="cursor-pointer" onClick={() => handle_sort("start_date")}>
+                                        Rental Period {sort_field === "start_date" && (sort_direction === "asc" ? "↑" : "↓")}
                                     </TableHead>
-                                    <TableHead className="cursor-pointer" onClick={() => handleSort("totalPrice")}>
-                                        Price {sortField === "totalPrice" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <TableHead className="cursor-pointer" onClick={() => handle_sort("total_price")}>
+                                        Price {sort_field === "total_price" && (sort_direction === "asc" ? "↑" : "↓")}
                                     </TableHead>
-                                    <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
-                                        Status {sortField === "status" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <TableHead className="cursor-pointer" onClick={() => handle_sort("status")}>
+                                        Status {sort_field === "status" && (sort_direction === "asc" ? "↑" : "↓")}
                                     </TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {isLoading ? (
-                                    [...Array(pageSize)].map((_, i) => (
+                                {is_loading ? (
+                                    [...Array(page_size)].map((_, i) => (
                                         <TableRow key={i}>
                                             {[...Array(8)].map((_, j) => (
                                                 <TableCell key={j}>
@@ -391,15 +402,15 @@ export default function RentalTransactionsPage() {
                                     data.rows.map((transaction) => (
                                         <TableRow key={transaction.id}>
                                             <TableCell className="font-medium">{transaction.id.slice(0, 8)}</TableCell>
-                                            <TableCell>{formatDate(transaction.createdAt)}</TableCell>
+                                            <TableCell>{format_date(transaction.created_at)}</TableCell>
                                             <TableCell>
-                                                {transaction.carYear} {transaction.carMake} {transaction.carModel}
+                                                {transaction.car_year} {transaction.car_make} {transaction.car_model}
                                             </TableCell>
-                                            <TableCell>{transaction.renterName}</TableCell>
+                                            <TableCell>{transaction.renter_name}</TableCell>
                                             <TableCell>
-                                                {formatDate(transaction.startDate)} - {formatDate(transaction.endDate)}
+                                                {format_date(transaction.start_date)} - {format_date(transaction.end_date)}
                                             </TableCell>
-                                            <TableCell>{formatCurrency(transaction.totalPrice)}</TableCell>
+                                            <TableCell>{format_currency(Number(transaction.total_price))}</TableCell>
                                             <TableCell>
                                                 <Badge
                                                     variant={
@@ -431,10 +442,10 @@ export default function RentalTransactionsPage() {
                 </CardContent>
 
                 {/* Pagination */}
-                {!isLoading && data?.paging?.totalPages && data.paging.totalPages > 1 && (
+                {!is_loading && data?.paging?.total_pages && data.paging.total_pages > 1 && (
                     <CardFooter className="flex items-center justify-between px-6 pt-2">
                         <p className="text-sm text-muted-foreground">
-                            Page {data?.paging?.page || 1} of {data?.paging?.totalPages || 1}
+                            Page {data?.paging?.page || 1} of {data?.paging?.total_pages || 1}
                         </p>
                         <div className="flex items-center space-x-2">
                             <Button
@@ -455,11 +466,11 @@ export default function RentalTransactionsPage() {
                                 size="sm"
                                 onClick={() => {
                                     const params = new URLSearchParams(searchParams);
-                                    const totalPages = data?.paging?.totalPages || 1;
-                                    params.set("page", Math.min(totalPages, page + 1).toString());
+                                    const total_pages = data?.paging?.total_pages || 1;
+                                    params.set("page", Math.min(total_pages, page + 1).toString());
                                     router.push(`/admin/rental-transactions?${params.toString()}`);
                                 }}
-                                disabled={page >= (data?.paging?.totalPages || 1)}
+                                disabled={page >= (data?.paging?.total_pages || 1)}
                             >
                                 <ChevronRightIcon className="h-4 w-4" />
                                 <span className="sr-only">Next Page</span>
