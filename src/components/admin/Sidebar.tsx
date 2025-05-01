@@ -50,6 +50,8 @@ export default function Sidebar() {
     { name: "Transactions", href: "/admin/transactions", icon: CreditCard },
     { name: "Analytics", href: "/admin/analytics", icon: BarChart },
     { name: "Settings", href: "/admin/settings", icon: Settings },
+    { name: "Rentals", href: "/admin/rentals", icon: Car },
+
   ];
 
   // Handle logout function

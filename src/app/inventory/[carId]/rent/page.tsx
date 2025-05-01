@@ -65,6 +65,14 @@ interface CarListing {
     features: string[] | null;
     seller_name: string | null;
     seller_since: string | null;
+    rental_available_durations: number[] | null;
+    rental_price_3h: number | null;
+    rental_price_6h: number | null;
+    rental_price_12h: number | null;
+    rental_price_24h: number | null;
+    rental_price_48h: number | null;
+    rental_deposit: number | null;
+    rental_policy: string | null;
 }
 
 interface CarListingParams {
@@ -233,9 +241,11 @@ export default async function CarRentPage({ params }: CarListingParams) {
                                         </div>
                                     </div>
 
-                                    {/* Rental Terms Section (New) */}
+                                    {/* Rental Terms Section */}
                                     <div>
                                         <h3 className="text-lg font-semibold mb-3">{t('rental.termsTitle')}</h3>
+
+                                        {/* Daily Rental Terms */}
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
                                             <div className="flex justify-between py-2 border-b">
                                                 <span className="text-muted-foreground">{t('rental.dailyRateLabel')}</span>
@@ -260,6 +270,62 @@ export default async function CarRentPage({ params }: CarListingParams) {
                                                 </span>
                                             </div>
                                         </div>
+
+                                        {/* Hourly Rental Options - Only show if available */}
+                                        {carData.rental_available_durations && carData.rental_available_durations.length > 0 && (
+                                            <div className="mt-5">
+                                                <h4 className="text-base font-medium mb-3 text-primary">{t('rental.hourlyOptions') || 'Hourly Rental Options'}</h4>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 bg-primary/5 p-3 rounded-md border border-primary/10">
+                                                    {carData.rental_available_durations.includes(3) && carData.rental_price_3h && (
+                                                        <div className="flex justify-between py-2 border-b border-primary/10">
+                                                            <span className="text-muted-foreground">3 {t('rental.hours') || 'Hours'}</span>
+                                                            <span className="font-medium">{formatPrice(carData.rental_price_3h)}</span>
+                                                        </div>
+                                                    )}
+                                                    {carData.rental_available_durations.includes(6) && carData.rental_price_6h && (
+                                                        <div className="flex justify-between py-2 border-b border-primary/10">
+                                                            <span className="text-muted-foreground">6 {t('rental.hours') || 'Hours'}</span>
+                                                            <span className="font-medium">{formatPrice(carData.rental_price_6h)}</span>
+                                                        </div>
+                                                    )}
+                                                    {carData.rental_available_durations.includes(12) && carData.rental_price_12h && (
+                                                        <div className="flex justify-between py-2 border-b border-primary/10">
+                                                            <span className="text-muted-foreground">12 {t('rental.hours') || 'Hours'}</span>
+                                                            <span className="font-medium">{formatPrice(carData.rental_price_12h)}</span>
+                                                        </div>
+                                                    )}
+                                                    {carData.rental_available_durations.includes(24) && carData.rental_price_24h && (
+                                                        <div className="flex justify-between py-2 border-b border-primary/10">
+                                                            <span className="text-muted-foreground">24 {t('rental.hours') || 'Hours'}</span>
+                                                            <span className="font-medium">{formatPrice(carData.rental_price_24h)}</span>
+                                                        </div>
+                                                    )}
+                                                    {carData.rental_available_durations.includes(48) && carData.rental_price_48h && (
+                                                        <div className="flex justify-between py-2 border-b border-primary/10">
+                                                            <span className="text-muted-foreground">48 {t('rental.hours') || 'Hours'}</span>
+                                                            <span className="font-medium">{formatPrice(carData.rental_price_48h)}</span>
+                                                        </div>
+                                                    )}
+                                                    {/* Security Deposit */}
+                                                    <div className="flex justify-between py-2 border-b border-primary/10">
+                                                        <span className="text-muted-foreground">{t('rental.securityDeposit') || 'Security Deposit'}</span>
+                                                        <span className="font-medium">
+                                                            {carData.rental_deposit ? formatPrice(carData.rental_deposit) : t('rental.noDeposit') || 'No Deposit Required'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Rental Policy - Only show if available */}
+                                        {carData.rental_policy && (
+                                            <div className="mt-4">
+                                                <h4 className="text-base font-medium mb-2">{t('rental.policyTitle') || 'Rental Policy'}</h4>
+                                                <div className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-md whitespace-pre-wrap">
+                                                    {carData.rental_policy}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </TabsContent>
 
@@ -393,6 +459,15 @@ export default async function CarRentPage({ params }: CarListingParams) {
                                         <RentReservationModal
                                             carId={carData.id}
                                             carName={`${carData.year} ${carData.make} ${carData.model}`}
+                                            hourlyOptions={carData.rental_available_durations || []}
+                                            hourlyPrices={{
+                                                3: carData.rental_price_3h,
+                                                6: carData.rental_price_6h,
+                                                12: carData.rental_price_12h,
+                                                24: carData.rental_price_24h,
+                                                48: carData.rental_price_48h
+                                            }}
+                                            rentalDeposit={carData.rental_deposit}
                                         />
                                     </div>
                                     <div className="mt-3">

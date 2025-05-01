@@ -90,6 +90,16 @@ type CarListing = {
   time_in_stock_days?: number | null;
   listing_views?: { count: number }[]; // Add this to fix the TypeScript error
   listing_url?: string; // Add this new field
+
+  // New rental duration fields
+  rental_available_durations?: number[] | null;
+  rental_price_3h?: number | null;
+  rental_price_6h?: number | null;
+  rental_price_12h?: number | null;
+  rental_price_24h?: number | null;
+  rental_price_48h?: number | null;
+  rental_deposit?: number | null;
+  rental_policy?: string | null;
 };
 
 // Define the initial state for the form data
@@ -127,6 +137,16 @@ const initialFormData = {
   shared_with_trust_levels: [] as string[],
   is_special_offer: false,
   special_offer_label: '',
+
+  // Add new rental duration fields to initial state
+  rental_available_durations: [] as number[],
+  rental_price_3h: '',
+  rental_price_6h: '',
+  rental_price_12h: '',
+  rental_price_24h: '',
+  rental_price_48h: '',
+  rental_deposit: '',
+  rental_policy: '',
 };
 
 // Helper component for displaying details in View Mode
@@ -347,7 +367,7 @@ export default function InventoryPage() {
     const errors: Record<string, string> = {};
     let isValid = true;
 
-    // Basic required fields
+    // Basic required fields validation (existing code)
     if (!formData.make.trim()) errors.make = 'Make is required';
     if (!formData.model.trim()) errors.model = 'Model is required';
     if (!formData.year.trim()) errors.year = 'Year is required';
@@ -359,21 +379,48 @@ export default function InventoryPage() {
     if (!formData.transmission) errors.transmission = 'Transmission is required';
     if (!formData.status) errors.status = 'Status is required';
 
-
-    // Numeric validation
+    // Numeric validation (existing code)
     if (formData.year && isNaN(Number(formData.year))) errors.year = 'Year must be a valid number';
     if (formData.price && isNaN(Number(formData.price))) errors.price = 'Price must be a valid number';
     if (formData.mileage && isNaN(Number(formData.mileage))) errors.mileage = 'Mileage must be a valid number';
     if (formData.purchasing_price && isNaN(Number(formData.purchasing_price))) errors.purchasing_price = 'Purchasing Price must be a valid number';
 
-    // Rental specific validation
-    if (formData.listing_type === 'rent' || formData.listing_type === 'both') { // Added 'both'
+    // Rental specific validation (existing and new)
+    if (formData.listing_type === 'rent' || formData.listing_type === 'both') {
       if (!formData.rental_daily_price?.trim()) errors.rental_daily_price = 'Daily price required for rentals';
       if (formData.rental_daily_price && isNaN(Number(formData.rental_daily_price))) errors.rental_daily_price = 'Daily price must be a number';
       if (formData.rental_deposit_required && isNaN(Number(formData.rental_deposit_required))) errors.rental_deposit_required = 'Deposit must be a number';
       if (formData.min_rental_days && isNaN(Number(formData.min_rental_days))) errors.min_rental_days = 'Min days must be a number';
       if (formData.max_rental_days && isNaN(Number(formData.max_rental_days))) errors.max_rental_days = 'Max days must be a number';
       if (!formData.rental_status) errors.rental_status = 'Rental Status is required for rentals';
+
+      // New hourly rental validation
+      if (formData.rental_deposit && isNaN(Number(formData.rental_deposit)))
+        errors.rental_deposit = 'Security deposit must be a number';
+
+      // Validate each selected hourly option has a price
+      if (formData.rental_available_durations?.includes(3) && !formData.rental_price_3h)
+        errors.rental_price_3h = 'Price required for 3 hour option';
+      if (formData.rental_available_durations?.includes(6) && !formData.rental_price_6h)
+        errors.rental_price_6h = 'Price required for 6 hour option';
+      if (formData.rental_available_durations?.includes(12) && !formData.rental_price_12h)
+        errors.rental_price_12h = 'Price required for 12 hour option';
+      if (formData.rental_available_durations?.includes(24) && !formData.rental_price_24h)
+        errors.rental_price_24h = 'Price required for 24 hour option';
+      if (formData.rental_available_durations?.includes(48) && !formData.rental_price_48h)
+        errors.rental_price_48h = 'Price required for 48 hour option';
+
+      // Validate numeric values for prices
+      if (formData.rental_price_3h && isNaN(Number(formData.rental_price_3h)))
+        errors.rental_price_3h = 'Price must be a number';
+      if (formData.rental_price_6h && isNaN(Number(formData.rental_price_6h)))
+        errors.rental_price_6h = 'Price must be a number';
+      if (formData.rental_price_12h && isNaN(Number(formData.rental_price_12h)))
+        errors.rental_price_12h = 'Price must be a number';
+      if (formData.rental_price_24h && isNaN(Number(formData.rental_price_24h)))
+        errors.rental_price_24h = 'Price must be a number';
+      if (formData.rental_price_48h && isNaN(Number(formData.rental_price_48h)))
+        errors.rental_price_48h = 'Price must be a number';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -445,6 +492,14 @@ export default function InventoryPage() {
       features: featuresArray, // Use the properly processed features array
       dealer_id: currentDealerId,
       seller_since: sellerSince || null,
+
+      // New rental duration fields
+      rental_price_3h: formData.rental_price_3h ? parseFloat(formData.rental_price_3h) : null,
+      rental_price_6h: formData.rental_price_6h ? parseFloat(formData.rental_price_6h) : null,
+      rental_price_12h: formData.rental_price_12h ? parseFloat(formData.rental_price_12h) : null,
+      rental_price_24h: formData.rental_price_24h ? parseFloat(formData.rental_price_24h) : null,
+      rental_price_48h: formData.rental_price_48h ? parseFloat(formData.rental_price_48h) : null,
+      rental_deposit: formData.rental_deposit ? parseFloat(formData.rental_deposit) : null,
     };
 
     try {
@@ -594,6 +649,16 @@ export default function InventoryPage() {
         shared_with_trust_levels: car.shared_with_trust_levels || [],
         is_special_offer: car.is_special_offer ?? false,
         special_offer_label: car.special_offer_label || '',
+
+        // New rental duration fields
+        rental_available_durations: car.rental_available_durations || [],
+        rental_price_3h: car.rental_price_3h?.toString() || '',
+        rental_price_6h: car.rental_price_6h?.toString() || '',
+        rental_price_12h: car.rental_price_12h?.toString() || '',
+        rental_price_24h: car.rental_price_24h?.toString() || '',
+        rental_price_48h: car.rental_price_48h?.toString() || '',
+        rental_deposit: car.rental_deposit?.toString() || '',
+        rental_policy: car.rental_policy || '',
       });
       // Fetch dealer ID if necessary (e.g., page reload)
       if (!dealerId) await fetchDealerId();
@@ -1562,7 +1627,7 @@ export default function InventoryPage() {
                   </dl>
                 </div>
 
-                {/* Rental Info Section */}
+                {/* Rental Info Section in View Mode */}
                 {(currentCar.listing_type === 'rent' || currentCar.listing_type === 'both') && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                     <h3 className="text-md font-semibold text-blue-800 mb-3">Rental Information</h3>
@@ -1572,7 +1637,57 @@ export default function InventoryPage() {
                       <DetailItem label="Rental Status" value={currentCar.rental_status} />
                       <DetailItem label="Min Rental Days" value={currentCar.min_rental_days} />
                       <DetailItem label="Max Rental Days" value={currentCar.max_rental_days} />
+                      <DetailItem label="Security Deposit" value={currentCar.rental_deposit ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 0 }).format(currentCar.rental_deposit) : 'N/A'} />
                     </dl>
+
+                    {/* Hourly Rental Options */}
+                    {currentCar.rental_available_durations && currentCar.rental_available_durations.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="text-md font-semibold text-blue-800 mb-2">Hourly Rental Options</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                          {currentCar.rental_available_durations.includes(3) && (
+                            <div className="bg-white p-2 rounded border border-blue-100">
+                              <span className="font-medium">3 Hours:</span>{' '}
+                              {currentCar.rental_price_3h ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 2 }).format(currentCar.rental_price_3h) : 'N/A'}
+                            </div>
+                          )}
+                          {currentCar.rental_available_durations.includes(6) && (
+                            <div className="bg-white p-2 rounded border border-blue-100">
+                              <span className="font-medium">6 Hours:</span>{' '}
+                              {currentCar.rental_price_6h ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 2 }).format(currentCar.rental_price_6h) : 'N/A'}
+                            </div>
+                          )}
+                          {currentCar.rental_available_durations.includes(12) && (
+                            <div className="bg-white p-2 rounded border border-blue-100">
+                              <span className="font-medium">12 Hours:</span>{' '}
+                              {currentCar.rental_price_12h ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 2 }).format(currentCar.rental_price_12h) : 'N/A'}
+                            </div>
+                          )}
+                          {currentCar.rental_available_durations.includes(24) && (
+                            <div className="bg-white p-2 rounded border border-blue-100">
+                              <span className="font-medium">24 Hours:</span>{' '}
+                              {currentCar.rental_price_24h ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 2 }).format(currentCar.rental_price_24h) : 'N/A'}
+                            </div>
+                          )}
+                          {currentCar.rental_available_durations.includes(48) && (
+                            <div className="bg-white p-2 rounded border border-blue-100">
+                              <span className="font-medium">48 Hours:</span>{' '}
+                              {currentCar.rental_price_48h ? new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumFractionDigits: 2 }).format(currentCar.rental_price_48h) : 'N/A'}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Rental Policy */}
+                    {currentCar.rental_policy && (
+                      <div className="mt-4">
+                        <h4 className="text-md font-semibold text-blue-800 mb-1">Rental Policy</h4>
+                        <div className="bg-white p-3 rounded border border-blue-100 whitespace-pre-wrap text-sm">
+                          {currentCar.rental_policy}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1748,6 +1863,262 @@ export default function InventoryPage() {
                       </div>
                       <div><Label htmlFor="min_rental_days">Min Rental Days</Label><Input id="min_rental_days" name="min_rental_days" type="number" value={formData.min_rental_days} onChange={handleFormChange} placeholder="e.g., 3" className={formErrors.min_rental_days ? 'border-red-500' : ''} /><p className="text-red-500 text-xs mt-1 h-4">{formErrors.min_rental_days}</p></div>
                       <div><Label htmlFor="max_rental_days">Max Rental Days</Label><Input id="max_rental_days" name="max_rental_days" type="number" value={formData.max_rental_days} onChange={handleFormChange} placeholder="e.g., 30" className={formErrors.max_rental_days ? 'border-red-500' : ''} /><p className="text-red-500 text-xs mt-1 h-4">{formErrors.max_rental_days}</p></div>
+
+                      {/* New rental deposit field */}
+                      <div><Label htmlFor="rental_deposit">Security Deposit</Label><Input id="rental_deposit" name="rental_deposit" type="number" step="0.01" value={formData.rental_deposit} onChange={handleFormChange} placeholder="e.g., 1000" className={formErrors.rental_deposit ? 'border-red-500' : ''} /><p className="text-red-500 text-xs mt-1 h-4">{formErrors.rental_deposit}</p></div>
+                    </div>
+
+                    {/* Hourly Rental Options Section */}
+                    <div className="mt-6">
+                      <h4 className="text-md font-semibold text-blue-800 mb-2">Hourly Rental Options</h4>
+                      <p className="text-sm text-blue-600 mb-3">Select available hourly rental durations and set prices:</p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* 3 Hour Option */}
+                        <div className="flex items-start space-x-2">
+                          <div className="pt-2">
+                            <Checkbox
+                              id="duration-3h"
+                              checked={formData.rental_available_durations?.includes(3)}
+                              onCheckedChange={(checked) => {
+                                const newDurations = checked
+                                  ? [...(formData.rental_available_durations || []), 3].sort((a, b) => a - b)
+                                  : (formData.rental_available_durations || []).filter(d => d !== 3);
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  rental_available_durations: newDurations
+                                }));
+                              }}
+                            />
+                          </div>
+                          <div className="w-full">
+                            <Label
+                              htmlFor="duration-3h"
+                              className="text-sm font-medium cursor-pointer block mb-1"
+                            >
+                              3 Hour Rental
+                            </Label>
+                            {formData.rental_available_durations?.includes(3) && (
+                              <div className="mt-1">
+                                <Label htmlFor="rental_price_3h" className="text-xs text-gray-500 mb-1 block">
+                                  Price for 3 hours
+                                </Label>
+                                <Input
+                                  id="rental_price_3h"
+                                  name="rental_price_3h"
+                                  type="number"
+                                  step="0.01"
+                                  value={formData.rental_price_3h}
+                                  onChange={handleFormChange}
+                                  placeholder="e.g., 25.00"
+                                  className={formErrors.rental_price_3h ? 'border-red-500' : ''}
+                                />
+                                <p className="text-red-500 text-xs mt-1 h-4">{formErrors.rental_price_3h}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 6 Hour Option */}
+                        <div className="flex items-start space-x-2">
+                          <div className="pt-2">
+                            <Checkbox
+                              id="duration-6h"
+                              checked={formData.rental_available_durations?.includes(6)}
+                              onCheckedChange={(checked) => {
+                                const newDurations = checked
+                                  ? [...(formData.rental_available_durations || []), 6].sort((a, b) => a - b)
+                                  : (formData.rental_available_durations || []).filter(d => d !== 6);
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  rental_available_durations: newDurations
+                                }));
+                              }}
+                            />
+                          </div>
+                          <div className="w-full">
+                            <Label
+                              htmlFor="duration-6h"
+                              className="text-sm font-medium cursor-pointer block mb-1"
+                            >
+                              6 Hour Rental
+                            </Label>
+                            {formData.rental_available_durations?.includes(6) && (
+                              <div className="mt-1">
+                                <Label htmlFor="rental_price_6h" className="text-xs text-gray-500 mb-1 block">
+                                  Price for 6 hours
+                                </Label>
+                                <Input
+                                  id="rental_price_6h"
+                                  name="rental_price_6h"
+                                  type="number"
+                                  step="0.01"
+                                  value={formData.rental_price_6h}
+                                  onChange={handleFormChange}
+                                  placeholder="e.g., 45.00"
+                                  className={formErrors.rental_price_6h ? 'border-red-500' : ''}
+                                />
+                                <p className="text-red-500 text-xs mt-1 h-4">{formErrors.rental_price_6h}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 12 Hour Option */}
+                        <div className="flex items-start space-x-2">
+                          <div className="pt-2">
+                            <Checkbox
+                              id="duration-12h"
+                              checked={formData.rental_available_durations?.includes(12)}
+                              onCheckedChange={(checked) => {
+                                const newDurations = checked
+                                  ? [...(formData.rental_available_durations || []), 12].sort((a, b) => a - b)
+                                  : (formData.rental_available_durations || []).filter(d => d !== 12);
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  rental_available_durations: newDurations
+                                }));
+                              }}
+                            />
+                          </div>
+                          <div className="w-full">
+                            <Label
+                              htmlFor="duration-12h"
+                              className="text-sm font-medium cursor-pointer block mb-1"
+                            >
+                              12 Hour Rental
+                            </Label>
+                            {formData.rental_available_durations?.includes(12) && (
+                              <div className="mt-1">
+                                <Label htmlFor="rental_price_12h" className="text-xs text-gray-500 mb-1 block">
+                                  Price for 12 hours
+                                </Label>
+                                <Input
+                                  id="rental_price_12h"
+                                  name="rental_price_12h"
+                                  type="number"
+                                  step="0.01"
+                                  value={formData.rental_price_12h}
+                                  onChange={handleFormChange}
+                                  placeholder="e.g., 80.00"
+                                  className={formErrors.rental_price_12h ? 'border-red-500' : ''}
+                                />
+                                <p className="text-red-500 text-xs mt-1 h-4">{formErrors.rental_price_12h}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 24 Hour Option */}
+                        <div className="flex items-start space-x-2">
+                          <div className="pt-2">
+                            <Checkbox
+                              id="duration-24h"
+                              checked={formData.rental_available_durations?.includes(24)}
+                              onCheckedChange={(checked) => {
+                                const newDurations = checked
+                                  ? [...(formData.rental_available_durations || []), 24].sort((a, b) => a - b)
+                                  : (formData.rental_available_durations || []).filter(d => d !== 24);
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  rental_available_durations: newDurations
+                                }));
+                              }}
+                            />
+                          </div>
+                          <div className="w-full">
+                            <Label
+                              htmlFor="duration-24h"
+                              className="text-sm font-medium cursor-pointer block mb-1"
+                            >
+                              24 Hour Rental
+                            </Label>
+                            {formData.rental_available_durations?.includes(24) && (
+                              <div className="mt-1">
+                                <Label htmlFor="rental_price_24h" className="text-xs text-gray-500 mb-1 block">
+                                  Price for 24 hours
+                                </Label>
+                                <Input
+                                  id="rental_price_24h"
+                                  name="rental_price_24h"
+                                  type="number"
+                                  step="0.01"
+                                  value={formData.rental_price_24h}
+                                  onChange={handleFormChange}
+                                  placeholder="e.g., 150.00"
+                                  className={formErrors.rental_price_24h ? 'border-red-500' : ''}
+                                />
+                                <p className="text-red-500 text-xs mt-1 h-4">{formErrors.rental_price_24h}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 48 Hour Option */}
+                        <div className="flex items-start space-x-2">
+                          <div className="pt-2">
+                            <Checkbox
+                              id="duration-48h"
+                              checked={formData.rental_available_durations?.includes(48)}
+                              onCheckedChange={(checked) => {
+                                const newDurations = checked
+                                  ? [...(formData.rental_available_durations || []), 48].sort((a, b) => a - b)
+                                  : (formData.rental_available_durations || []).filter(d => d !== 48);
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  rental_available_durations: newDurations
+                                }));
+                              }}
+                            />
+                          </div>
+                          <div className="w-full">
+                            <Label
+                              htmlFor="duration-48h"
+                              className="text-sm font-medium cursor-pointer block mb-1"
+                            >
+                              48 Hour Rental
+                            </Label>
+                            {formData.rental_available_durations?.includes(48) && (
+                              <div className="mt-1">
+                                <Label htmlFor="rental_price_48h" className="text-xs text-gray-500 mb-1 block">
+                                  Price for 48 hours
+                                </Label>
+                                <Input
+                                  id="rental_price_48h"
+                                  name="rental_price_48h"
+                                  type="number"
+                                  step="0.01"
+                                  value={formData.rental_price_48h}
+                                  onChange={handleFormChange}
+                                  placeholder="e.g., 280.00"
+                                  className={formErrors.rental_price_48h ? 'border-red-500' : ''}
+                                />
+                                <p className="text-red-500 text-xs mt-1 h-4">{formErrors.rental_price_48h}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Rental Policy Field */}
+                    <div className="mt-6">
+                      <Label htmlFor="rental_policy">Rental Policy</Label>
+                      <Textarea
+                        id="rental_policy"
+                        name="rental_policy"
+                        value={formData.rental_policy}
+                        onChange={handleFormChange}
+                        placeholder="Describe rental terms, cancellation policy, etc..."
+                        rows={3}
+                        className={formErrors.rental_policy ? 'border-red-500' : ''}
+                      />
+                      <p className="text-red-500 text-xs mt-1 h-4">{formErrors.rental_policy}</p>
                     </div>
                   </section>
                 )}

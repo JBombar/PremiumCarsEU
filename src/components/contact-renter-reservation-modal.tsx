@@ -17,6 +17,13 @@ import { Textarea } from '@/components/ui/textarea'; // Assuming path is correct
 import { toast } from '@/components/ui/use-toast'; // Assuming path is correct
 import { CalendarCheck } from 'lucide-react'; // Keep used icons
 import { useTranslations } from 'next-intl';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 // Removed: import { createClient } from '@supabase/supabase-js'; // No longer needed here
 
 interface RentReservationModalProps {
@@ -24,17 +31,29 @@ interface RentReservationModalProps {
     carName: string;
     carPrice?: number;
     carSpecs?: string;
+    // New props for hourly rentals
+    hourlyOptions?: number[];
+    hourlyPrices?: {
+        [key: number]: number | null; // Map of duration to price (e.g., {3: 50, 6: 90})
+    };
+    rentalDeposit?: number | null;
 }
 
 export function RentReservationModal({
     carId,
     carName,
     carPrice,
-    carSpecs
+    carSpecs,
+    hourlyOptions = [],
+    hourlyPrices = {},
+    rentalDeposit
 }: RentReservationModalProps) {
     const t = useTranslations('RentalReservationModal'); // Make sure this namespace exists in your translations
     const [open, setOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // New state for rental type toggle
+    const [isHourlyRental, setIsHourlyRental] = useState(false);
 
     // State for text form fields
     const [formData, setFormData] = useState({
@@ -43,7 +62,10 @@ export function RentReservationModal({
         renter_phone: '',
         start_date: '',
         end_date: '',
-        notes: ''
+        notes: '',
+        // New fields for hourly rentals
+        rental_duration: 0,
+        start_time: '',
         // Add other related text fields if needed
     });
 
@@ -63,6 +85,34 @@ export function RentReservationModal({
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Handler for rental duration select change
+    const handleDurationChange = (value: string) => {
+        setFormData(prev => ({ ...prev, rental_duration: parseInt(value, 10) }));
+    };
+
+    // Toggle between hourly and daily rental
+    const toggleRentalType = (value: boolean) => {
+        setIsHourlyRental(value);
+        // Reset related fields when switching modes
+        if (value) {
+            // Switching to hourly: reset daily fields
+            setFormData(prev => ({
+                ...prev,
+                start_date: '',
+                end_date: '',
+                rental_duration: hourlyOptions.length > 0 ? hourlyOptions[0] : 0,
+                start_time: ''
+            }));
+        } else {
+            // Switching to daily: reset hourly fields
+            setFormData(prev => ({
+                ...prev,
+                rental_duration: 0,
+                start_time: ''
+            }));
+        }
+    };
+
     // Handler for file input changes
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
@@ -72,6 +122,26 @@ export function RentReservationModal({
         } else if (e.target.name === 'license_document') {
             setLicenseFile(file);
         }
+    };
+
+    // Calculate end time based on start time and duration
+    const calculateEndTime = (): string => {
+        if (!formData.start_time || !formData.rental_duration) return '';
+
+        try {
+            const startTime = new Date(formData.start_time);
+            const endTime = new Date(startTime.getTime() + (formData.rental_duration * 60 * 60 * 1000));
+            return endTime.toISOString().slice(0, 16); // Format as YYYY-MM-DDTHH:MM
+        } catch (error) {
+            console.error("Error calculating end time:", error);
+            return '';
+        }
+    };
+
+    // Helper to get price for selected duration
+    const getSelectedDurationPrice = (): number | null => {
+        if (!formData.rental_duration) return null;
+        return hourlyPrices[formData.rental_duration] || null;
     };
 
     // Handler for form submission
@@ -87,8 +157,46 @@ export function RentReservationModal({
         submissionData.append('renter_name', formData.renter_name);
         submissionData.append('renter_email', formData.renter_email);
         submissionData.append('renter_phone', formData.renter_phone);
-        submissionData.append('start_date', formData.start_date);
-        submissionData.append('end_date', formData.end_date);
+
+        // Append rental type info
+        submissionData.append('is_hourly_rental', isHourlyRental.toString());
+
+        if (isHourlyRental) {
+            // For hourly rentals
+            if (!formData.start_time || !formData.rental_duration) {
+                toast({
+                    title: "Missing information",
+                    description: "Please select a start time and duration.",
+                    variant: "destructive"
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            submissionData.append('rental_duration', formData.rental_duration.toString());
+            submissionData.append('start_time', formData.start_time);
+
+            // Calculate and append end time
+            const endTime = calculateEndTime();
+            if (endTime) {
+                submissionData.append('end_time', endTime);
+            }
+        } else {
+            // For daily rentals
+            if (!formData.start_date || !formData.end_date) {
+                toast({
+                    title: "Missing dates",
+                    description: "Please select both start and end dates.",
+                    variant: "destructive"
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            submissionData.append('start_date', formData.start_date);
+            submissionData.append('end_date', formData.end_date);
+        }
+
         if (formData.notes) { // Only append optional fields if they have value
             submissionData.append('notes', formData.notes);
         }
@@ -145,7 +253,8 @@ export function RentReservationModal({
             // --- Reset Form ---
             setFormData({ // Reset text fields
                 renter_name: '', renter_email: '', renter_phone: '',
-                start_date: '', end_date: '', notes: ''
+                start_date: '', end_date: '', notes: '',
+                rental_duration: 0, start_time: ''
             });
             setIdFile(null); // Reset file state
             setLicenseFile(null); // Reset file state
@@ -168,6 +277,9 @@ export function RentReservationModal({
         }
     };
 
+    // Should we show the hourly rental option?
+    const showHourlyOption = hourlyOptions && hourlyOptions.length > 0;
+
     // --- Render JSX ---
     return (
         <>
@@ -179,16 +291,16 @@ export function RentReservationModal({
 
             {/* Dialog */}
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-lg">
-                    {/* Dialog Header */}
-                    <DialogHeader>
+                <DialogContent className="sm:max-w-xl md:max-w-2xl overflow-y-auto max-h-[90vh]">
+                    {/* Dialog Header - Remove sticky positioning */}
+                    <DialogHeader className="bg-background pb-4">
                         <DialogTitle>{t('title')}</DialogTitle>
                         <DialogDescription>
                             {carName}
                             {/* Display Car Price if available */}
                             {carPrice != null && (
                                 <div className="mt-1 text-sm text-muted-foreground">
-                                    {t('priceLabel')}: {new Intl.NumberFormat('en-US', { // Adjust locale/currency as needed
+                                    {t('priceLabel')}: {new Intl.NumberFormat('en-US', {
                                         style: 'currency',
                                         currency: 'CHF',
                                     }).format(carPrice)}
@@ -203,7 +315,7 @@ export function RentReservationModal({
                         </DialogDescription>
                     </DialogHeader>
 
-                    {/* Form Element */}
+                    {/* Form Element - Will scroll in the middle */}
                     <form onSubmit={handleSubmit} className="space-y-6 mt-4">
 
                         {/* Renter Information Section */}
@@ -228,22 +340,134 @@ export function RentReservationModal({
                             </div>
                         </div>
 
-                        {/* Rental Dates Section */}
-                        <div className="space-y-2">
-                            <h4 className="text-lg font-semibold">{t('section.dates')}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* Start Date */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="start_date">{t('labels.start_date')}</Label>
-                                    <Input id="start_date" name="start_date" type="date" value={formData.start_date} onChange={handleChange} required />
-                                </div>
-                                {/* End Date */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="end_date">{t('labels.end_date')}</Label>
-                                    <Input id="end_date" name="end_date" type="date" value={formData.end_date} onChange={handleChange} required />
+                        {/* Rental Type Selection - Only show if hourly options are available */}
+                        {showHourlyOption && (
+                            <div className="space-y-3">
+                                <h4 className="text-lg font-semibold">{t('section.rentalType')}</h4>
+                                <div className="flex space-x-4">
+                                    <Button
+                                        type="button"
+                                        variant={isHourlyRental ? "outline" : "default"}
+                                        className="flex-1"
+                                        onClick={() => toggleRentalType(false)}
+                                    >
+                                        {t('buttons.dailyRental')}
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant={isHourlyRental ? "default" : "outline"}
+                                        className="flex-1"
+                                        onClick={() => toggleRentalType(true)}
+                                    >
+                                        {t('buttons.hourlyRental')}
+                                    </Button>
                                 </div>
                             </div>
-                        </div>
+                        )}
+
+                        {/* Conditional Rendering based on rental type */}
+                        {isHourlyRental && showHourlyOption ? (
+                            // Hourly Rental Section
+                            <div className="space-y-4">
+                                <h4 className="text-lg font-semibold">{t('section.hourlyRental')}</h4>
+
+                                {/* Duration Selection - Now using dropdown */}
+                                <div className="space-y-3">
+                                    <Label htmlFor="rental-duration">{t('labels.duration')}</Label>
+                                    <Select
+                                        value={formData.rental_duration.toString()}
+                                        onValueChange={handleDurationChange}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder={t('placeholders.selectDuration')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {hourlyOptions.map((hours) => (
+                                                <SelectItem key={hours} value={hours.toString()}>
+                                                    <span className="flex justify-between w-full">
+                                                        <span>{hours} {t('labels.hours')}</span>
+                                                        {hourlyPrices[hours] && (
+                                                            <span className="ml-4 text-primary font-medium">
+                                                                {new Intl.NumberFormat('en-US', {
+                                                                    style: 'currency',
+                                                                    currency: 'CHF'
+                                                                }).format(hourlyPrices[hours] || 0)}
+                                                            </span>
+                                                        )}
+                                                    </span>
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                {/* Start Time */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="start_time">{t('labels.startTime')}</Label>
+                                    <Input
+                                        id="start_time"
+                                        name="start_time"
+                                        type="datetime-local"
+                                        value={formData.start_time}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
+                                {/* Display calculated end time if start time and duration are set */}
+                                {formData.start_time && formData.rental_duration > 0 && (
+                                    <div className="p-3 bg-muted/20 rounded-md">
+                                        <p className="text-sm text-muted-foreground">{t('labels.calculatedEndTime')}</p>
+                                        <p className="font-medium">
+                                            {new Date(calculateEndTime()).toLocaleString()}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Show selected price */}
+                                {formData.rental_duration > 0 && getSelectedDurationPrice() !== null && (
+                                    <div className="p-3 bg-primary/10 rounded-md flex justify-between items-center">
+                                        <span>{t('labels.selectedPrice')}</span>
+                                        <span className="font-bold text-primary">
+                                            {new Intl.NumberFormat('en-US', {
+                                                style: 'currency',
+                                                currency: 'CHF'
+                                            }).format(getSelectedDurationPrice() || 0)}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Show deposit if available */}
+                                {rentalDeposit && (
+                                    <div className="p-3 bg-muted/20 rounded-md flex justify-between items-center">
+                                        <span>{t('labels.securityDeposit')}</span>
+                                        <span className="font-medium">
+                                            {new Intl.NumberFormat('en-US', {
+                                                style: 'currency',
+                                                currency: 'CHF'
+                                            }).format(rentalDeposit)}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            // Daily Rental Section (original functionality)
+                            <div className="space-y-2">
+                                <h4 className="text-lg font-semibold">{t('section.dates')}</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Start Date */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="start_date">{t('labels.start_date')}</Label>
+                                        <Input id="start_date" name="start_date" type="date" value={formData.start_date} onChange={handleChange} required />
+                                    </div>
+                                    {/* End Date */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="end_date">{t('labels.end_date')}</Label>
+                                        <Input id="end_date" name="end_date" type="date" value={formData.end_date} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Documents Upload Section */}
                         <div className="space-y-4">
@@ -291,8 +515,8 @@ export function RentReservationModal({
                             />
                         </div>
 
-                        {/* Dialog Footer with Actions */}
-                        <DialogFooter className="pt-6">
+                        {/* Dialog Footer - Keep fixed at the bottom */}
+                        <DialogFooter className="sticky bottom-0 pt-6 bg-background z-10 mt-8">
                             {/* Cancel Button */}
                             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
                                 {t('buttons.cancel')}

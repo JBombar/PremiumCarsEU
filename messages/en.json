@@ -763,7 +763,12 @@
             "days": "days",
             "minDays": "At least {days} days",
             "maxDays": "Up to {days} days",
-            "flexible": "Flexible"
+            "flexible": "Flexible",
+            "hourlyOptions": "Hourly Options",
+            "hours": "hours",
+            "securityDepositNo": "No Deposit Required",
+            "policyTitle": "Rental Policy",
+            "securityDeposit": "Deposit Required"
         }
     },
     "ContactFormModal": {
@@ -903,7 +908,9 @@
         "section": {
             "renterInfo": "Renter Information",
             "dates": "Rental Dates",
-            "documents": "Upload Documents"
+            "rentalType": "Rental Type",
+            "documents": "Upload Documents",
+            "hourlyRental": "Hourly Rental"
         },
         "labels": {
             "name": "Full Name",
@@ -913,7 +920,12 @@
             "end_date": "End Date",
             "idDocument": "ID Document",
             "licenseDocument": "Driver’s License",
-            "notes": "Additional Notes"
+            "notes": "Additional Notes",
+            "duration": "Duration",
+            "hours": "hours",
+            "startTime": "Start Time",
+            "selectedPrice": "Selected Price",
+            "calculatedEndTime": "Calculated End Time"
         },
         "placeholders": {
             "notes": "Any additional information or requests?"
@@ -921,7 +933,9 @@
         "buttons": {
             "cancel": "Cancel",
             "submit": "Submit Reservation",
-            "submitting": "Submitting..."
+            "submitting": "Submitting...",
+            "dailyRental": "Daily Rental",
+            "hourlyRental": "Hourly Rental"
         },
         "toast": {
             "successTitle": "Reservation Submitted",
