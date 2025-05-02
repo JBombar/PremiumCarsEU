@@ -46,7 +46,7 @@
     },
     "Footer": {
         "brand": {
-            "slogan": "Modern Car Dealership Websites, Made Simple.",
+            "slogan": "Innovative Solutions for International Car Trade",
             "copyright": "© {year} PremiumCarsEU. All rights reserved."
         },
         "quickLinks": {
@@ -300,7 +300,7 @@
             }
         },
         "team": {
-            "title": "Meet the Team",
+            "title": "Meet the Founder",
             "member1": {
                 "imageAlt": "Marco Varga",
                 "name": "Marco Varga",
@@ -373,8 +373,8 @@
             "emailTitle": "Email",
             "hoursTitle": "Working Hours",
             "connectTitle": "Connect with us",
-            "addressLine1": "Main Office — Zurich, Switzerland",
-            "addressLine2": "Bahnhofstrasse 42, 8001 Zurich",
+            "addressLine1": "Main Office — Vlčie Hrdlo 1037, 82107 Bratislava II - Ružinov",
+            "addressLine2": "Swiss Office — Am Stausee 23 4127 Birsfelden",
             "hoursLine1": "Monday - Friday: 9am – 6pm",
             "hoursLine2": "Saturday: 10am – 4pm",
             "hoursLine3": "Sunday: Closed"

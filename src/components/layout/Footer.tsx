@@ -42,7 +42,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/search" // Assuming /search route exists
+                  href="/inventory"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   {tFooter('quickLinks.search')}
@@ -58,7 +58,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/new-cars" // Assuming /new-cars route exists
+                  href="/#request-car-form" // Assuming /new-cars route exists
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   {tFooter('quickLinks.newCars')}
@@ -66,7 +66,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/preowned" // Assuming /preowned route exists
+                  href="/inventory" // Assuming /preowned route exists
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   {tFooter('quickLinks.preowned')}
@@ -113,7 +113,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/support"
+                  href="/contact"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   {tFooter('supportLegal.customerSupport')}
@@ -125,15 +125,17 @@ export function Footer() {
           {/* Contact + Social */}
           <div>
             <h3 className="font-medium text-base mb-4">{tFooter('contactUs.title')}</h3>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2 text-gray-300">
-                <Phone className="h-4 w-4" />
-                {/* Assuming phone number/email are not translated */}
-                <span>(555) 123-4567</span>
+            <ul className="space-y-2 text-gray-300">
+              <li className="flex items-start gap-2">
+                <Phone className="h-4 w-4 mt-1" />
+                <div className="flex flex-col">
+                  <span>CH: +41 78 262 73 77</span>
+                  <span>SK: +421 911 344 498</span>
+                </div>
               </li>
-              <li className="flex items-center gap-2 text-gray-300">
+              <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <span>contact@cardealer.com</span>
+                <span>info@premiumcarseu.com</span>
               </li>
             </ul>
 
@@ -141,21 +143,21 @@ export function Footer() {
               <h4 className="text-sm font-medium mb-3">{tFooter('followUs.title')}</h4>
               <div className="flex space-x-4">
                 <a
-                  href="#"
+                  href="https://www.facebook.com/profile.php?id=61566503500705"
                   className="text-gray-300 hover:text-white transition-colors"
                   aria-label={tFooter('followUs.socialAriaLabels.facebook')}
                 >
                   <Facebook className="h-5 w-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/marcoseny/"
                   className="text-gray-300 hover:text-white transition-colors"
                   aria-label={tFooter('followUs.socialAriaLabels.instagram')}
                 >
                   <Instagram className="h-5 w-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/in/jakubbombar/"
                   className="text-gray-300 hover:text-white transition-colors"
                   aria-label={tFooter('followUs.socialAriaLabels.linkedIn')}
                 >

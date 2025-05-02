@@ -1,11 +1,11 @@
 // app/about/page.tsx
 import Link from "next/link";
-import Image from "next/image"; // Keep Image import if you plan to use actual images
+import Image from "next/image"; // Keep Image import
 import { Button } from "@/components/ui/button";
 import {
   Building,
   Shield,
-  Users,
+  Users, // Keep Users icon import in case it's needed elsewhere, or remove if truly unused.
   Sparkles,
   Heart
 } from "lucide-react";
@@ -17,7 +17,7 @@ export default async function AboutPage() {
   const t = await getTranslations('AboutPage');
   const tNav = await getTranslations('Navbar'); // For reusing "Contact Us"
 
-  // Define keys for values and team members for easier mapping
+  // Define keys for values
   const valueKeys = ['trust', 'transparency', 'innovation', 'customerFirst'];
   const valueIcons = {
     trust: <Shield className="h-8 w-8 text-primary" />,
@@ -25,13 +25,30 @@ export default async function AboutPage() {
     innovation: <Sparkles className="h-8 w-8 text-primary" />,
     customerFirst: <Heart className="h-8 w-8 text-primary" />,
   };
-  const teamKeys = ['member1', 'member2', 'member3'];
+
+  // --- Define ONLY the founder key for the team section ---
+  const founderKey = 'member1';
+
+  // --- Image Paths (Assumed locations within your /public folder) ---
+  const heroImagePath = "/images/about/hero-background.jpg"; // Formerly aston.jpg
+  const storyImagePath = "/images/about/our-story.jpg";
+  // Assumes founder image is named after the key 'member1'
+  const founderImagePath = "/images/team/member1.webp"; // Formerly founder.webp
+  // -------------------------------------------------------------------
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary/90 to-primary/70 text-white">
-        <div className="absolute inset-0 bg-black/30 mix-blend-multiply" />
+      {/* Hero Section (Unchanged) */}
+      <section className="relative bg-gradient-to-r from-primary/90 to-primary/70 text-white isolate">
+        <Image
+          src="/images/team/hero-about.jpg"
+          // --- IMPORTANT: Add "imageAlt": "..." under AboutPage.hero in en.json ---
+          alt={t('hero.title')} // TEMPORARY - Use t('hero.imageAlt') once added
+          fill
+          priority
+          className="object-cover -z-10"
+        />
+        <div className="absolute inset-0 bg-black/30 mix-blend-multiply -z-10" />
         <div className="relative container max-w-7xl mx-auto px-6 sm:px-8 py-24 md:py-32 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl mb-6">
             {t('hero.title')}
@@ -42,7 +59,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Our Story */}
+      {/* Our Story (Unchanged) */}
       <section className="py-20 bg-background">
         <div className="container max-w-7xl mx-auto px-6 sm:px-8">
           <h2 className="text-3xl font-bold tracking-tight mb-12 text-center">
@@ -55,17 +72,19 @@ export default async function AboutPage() {
               <p className="text-md text-muted-foreground">{t('story.paragraph3')}</p>
             </div>
             <div className="order-1 lg:order-2 bg-muted rounded-xl overflow-hidden h-[400px] relative">
-              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                <Building size={64} className="opacity-20" />
-              </div>
-              {/* Add Image component here if needed, using t('story.imageAlt') */}
-              {/* <Image src="/images/about/our-story.jpg" alt={t('story.imageAlt')} fill className="object-cover" /> */}
+              <Image
+                src="/images/our-story.jpg"
+                alt={t('story.imageAlt')}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Our Values */}
+      {/* Our Values (Unchanged) */}
       <section className="py-20 bg-muted/30">
         <div className="container max-w-7xl mx-auto px-6 sm:px-8">
           <h2 className="text-3xl font-bold tracking-tight mb-12 text-center">
@@ -75,7 +94,6 @@ export default async function AboutPage() {
             {valueKeys.map((key) => (
               <div key={key} className="bg-background rounded-lg p-8 text-center flex flex-col items-center shadow-sm">
                 <div className="bg-primary/10 p-4 rounded-full mb-4">
-                  {/* Use the icon map */}
                   {valueIcons[key as keyof typeof valueIcons]}
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{t(`values.${key}.title`)}</h3>
@@ -86,34 +104,36 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Meet the Team */}
+      {/* Meet the Team (Founder Only - Centered) */}
       <section className="py-20 bg-background">
         <div className="container max-w-7xl mx-auto px-6 sm:px-8">
           <h2 className="text-3xl font-bold tracking-tight mb-12 text-center">
             {t('team.title')}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamKeys.map((key) => (
-              <div key={key} className="bg-white rounded-lg overflow-hidden shadow-sm">
-                <div className="h-64 bg-muted relative">
-                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                    <Users size={48} className="opacity-20" />
-                  </div>
-                  {/* Add Image component here if needed, using t(`team.${key}.imageAlt`) */}
-                  {/* <Image src={`/images/team/${key}.jpg`} alt={t(`team.${key}.imageAlt`)} fill className="object-cover" /> */}
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-1">{t(`team.${key}.name`)}</h3>
-                  <p className="text-primary font-medium mb-4">{t(`team.${key}.title`)}</p>
-                  <p className="text-muted-foreground italic">{t(`team.${key}.quote`)}</p>
-                </div>
+          {/* Centering container for the single card */}
+          <div className="flex justify-center">
+            <div className="w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-sm"> {/* Added max-width for better presentation */}
+              <div className="h-64 bg-muted relative">
+                {/* Founder Image ('member1') - No Cropping */}
+                <Image
+                  src="/images/team/founder.webp" // Path relative to /public
+                  alt={t(`team.${founderKey}.imageAlt`)} // Use the specific founder key
+                  fill
+                  className="object-cover" // Use contain to avoid cropping
+                  sizes="(max-width: 640px) 100vw, 384px" // Adjusted sizes for max-w-sm
+                />
               </div>
-            ))}
+              <div className="p-6 text-center"> {/* Centered text */}
+                <h3 className="text-xl font-semibold mb-1">{t(`team.${founderKey}.name`)}</h3>
+                <p className="text-primary font-medium mb-4">{t(`team.${founderKey}.title`)}</p>
+                <p className="text-muted-foreground italic">{t(`team.${founderKey}.quote`)}</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Call to Action */}
+      {/* Call to Action (Unchanged) */}
       <section className="py-20 bg-muted">
         <div className="container max-w-7xl mx-auto px-6 sm:px-8 text-center">
           <h2 className="text-3xl font-bold tracking-tight mb-6">
@@ -124,7 +144,6 @@ export default async function AboutPage() {
           </p>
           <Link href="/contact">
             <Button size="lg" className="px-8">
-              {/* Reuse key from Navbar */}
               {tNav('links.contact')}
             </Button>
           </Link>

@@ -180,20 +180,28 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Address */}
-                <div className="flex items-start space-x-4">
-                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h3 className="font-medium">{t('infoCard.addressTitle')}</h3>
-                    <p className="text-muted-foreground">{t('infoCard.addressLine1')}</p>
-                    <p className="text-muted-foreground">{t('infoCard.addressLine2')}</p>
+                <div>
+                  <h3 className="font-medium">{t('infoCard.addressTitle')}</h3>
+                  <div className="mt-2 space-y-2 text-muted-foreground">
+                    <div>
+                      <p className="font-semibold">Slovakia:</p>
+                      <p>{t('infoCard.addressLine1')}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Switzerland:</p>
+                      <p>{t('infoCard.addressLine2')}</p>
+                    </div>
                   </div>
                 </div>
+
                 {/* Phone */}
                 <div className="flex items-start space-x-4">
                   <Phone className="h-5 w-5 text-primary mt-0.5" />
                   <div>
                     <h3 className="font-medium">{t('infoCard.phoneTitle')}</h3>
-                    <p className="text-muted-foreground">+41 79 123 45 67</p> {/* Keep phone number static */}
+                    <p className="text-muted-foreground">+41 78 262 73 77</p>
+                    <p className="text-muted-foreground">+421 911 344 498</p>
+
                   </div>
                 </div>
                 {/* Email */}
@@ -201,7 +209,7 @@ export default function ContactPage() {
                   <Mail className="h-5 w-5 text-primary mt-0.5" />
                   <div>
                     <h3 className="font-medium">{t('infoCard.emailTitle')}</h3>
-                    <p className="text-muted-foreground">info@PremiumCarsEU.ch</p> {/* Keep email static */}
+                    <p className="text-muted-foreground">info@premiumcarseu.com</p> {/* Keep email static */}
                   </div>
                 </div>
                 {/* Working Hours */}
