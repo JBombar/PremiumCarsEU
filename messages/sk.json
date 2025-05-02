@@ -1,17 +1,17 @@
 {
     "HomePage": {
         "hero": {
-            "title": "Nájdite svoje dokonalé auto",
+            "title": "Nájdite Svoje Perfektné Auto",
             "subtitle": "Vaša prémiová destinácia pre nové a ojazdené vozidlá",
-            "browseButton": "Prehliadať inventár",
+            "browseButton": "Prehliadať ponuku",
             "contactButton": "Kontaktujte nás",
-            "imageAlt": "Luxusné čierne auto"
+            "imageAlt": "Luxusné Čierne Auto"
         },
         "testimonials": {
-            "title": "Čo hovoria zákazníci",
+            "title": "Čo Hovoria Zákazníci",
             "trustpilot": {
                 "title": "Recenzie TrustPilot",
-                "quote": "Tím mi pomohol nájsť dokonalé auto pre moju rodinu. Ich servis bol profesionálny a celý proces bol bez stresu.",
+                "quote": "Tím mi pomohol nájsť perfektné auto pre moju rodinu. Ich servis bol profesionálny a proces bol bez stresu.",
                 "author": "- Michael Weber"
             },
             "google": {
@@ -21,9 +21,9 @@
             }
         },
         "stats": {
-            "title": "Dôverujú nám tisíce",
-            "carsSoldLabel": "Predané autá",
-            "averageRatingLabel": "Priemerné hodnotenie",
+            "title": "Dôverujú Nám Tisíce",
+            "carsSoldLabel": "Predané Autá",
+            "averageRatingLabel": "Priemerné Hodnotenie",
             "locationsLabel": "Pobočky vo Švajčiarsku"
         }
     },
@@ -38,7 +38,7 @@
         },
         "mobileMenu": {
             "openLabel": "Otvoriť menu",
-            "closeLabel": "Zatvoriť menu"
+            "closeLabel": "Zavrieť menu"
         },
         "languageSwitcher": {
             "labelPrefix": "Jazyk: "
@@ -46,20 +46,20 @@
     },
     "Footer": {
         "brand": {
-            "slogan": "Moderné webové stránky predajcov áut, jednoducho.",
-            "copyright": "© {year} CarBiz. Všetky práva vyhradené."
+            "slogan": "Inovatívne Riešenia pre Medzinárodný Obchod s Automobilmi",
+            "copyright": "© {year} PremiumCarsEU. Všetky práva vyhradené."
         },
         "quickLinks": {
             "title": "Rýchle odkazy",
             "search": "Hľadať",
             "newCars": "Nové autá",
-            "preowned": "Ojazdené"
+            "preowned": "Ojazdené autá"
         },
         "supportLegal": {
-            "title": "Podpora a právne informácie",
+            "title": "Podpora a Právne informácie",
             "privacyPolicy": "Zásady ochrany osobných údajov",
             "terms": "Podmienky používania",
-            "faq": "Často kladené otázky",
+            "faq": "FAQ",
             "customerSupport": "Zákaznícka podpora"
         },
         "contactUs": {
@@ -94,123 +94,123 @@
             "googlePlaceholder": "Widget Recenzie Google"
         },
         "carousel": {
-            "ariaLabel": "Zobraziť referenciu {index}"
+            "ariaLabel": "Zobraziť hodnotenie {index}"
         },
         "sampleTestimonials": [
             {
                 "id": 1,
                 "name": "Thomas Weber",
-                "quote": "CarBiz mi pomohol nájsť dokonalé auto pre moju rodinu. Ich tím bol profesionálny a celý proces bol bez stresu."
+                "quote": "PremiumCarsEU mi pomohlo nájsť perfektné auto pre moju rodinu. Ich tím bol profesionálny a proces bol bez stresu."
             },
             {
                 "id": 2,
                 "name": "Laura Schmid",
-                "quote": "Bol som ohromený, ako rýchlo našli presne to, čo som hľadal. Skvelý výber a vynikajúci servis."
+                "quote": "Bola som ohromená, ako rýchlo našli presne to, čo som hľadala. Skvelý výber a vynikajúci servis."
             },
             {
                 "id": 3,
                 "name": "Daniel Meier",
-                "quote": "Tím v CarBiz išiel nad rámec očakávaní, aby mi pomohol nájsť auto v rámci môjho rozpočtu. Veľmi odporúčam!"
+                "quote": "Tím v PremiumCarsEU urobil maximum, aby mi pomohol nájsť auto v rámci môjho rozpočtu. Vrelo odporúčam!"
             }
         ]
     },
     "WhyChooseUs": {
-        "title": "Prečo si vybrať nás",
+        "title": "Prečo si Vybrať Nás",
         "features": {
             "quality": {
-                "title": "Certifikovaná kvalita",
-                "description": "Všetky naše autá prechádzajú 150-bodovou kontrolou na zabezpečenie bezpečnosti a výkonu."
+                "title": "Certifikovaná Kvalita",
+                "description": "Všetky naše autá prechádzajú 150-bodovou kontrolou, aby sa zabezpečila bezpečnosť a výkon."
             },
             "process": {
-                "title": "Rýchly a jednoduchý proces",
-                "description": "Získajte schválenie a odvezte sa za menej ako 24 hodín vďaka nášmu zjednodušenému procesu."
+                "title": "Rýchly a Jednoduchý Proces",
+                "description": "Získajte schválenie a odíďte za menej ako 24 hodín s naším zjednodušeným procesom."
             },
             "customer": {
-                "title": "Zákazník na prvom mieste",
-                "description": "Uprednostňujeme transparentnosť a podporu – pred, počas a po vašom nákupe."
+                "title": "Zákazník na Prvom Mieste",
+                "description": "Uprednostňujeme transparentnosť a podporu — pred, počas a po nákupe."
             }
         }
     },
     "SpecialOfferCarousel": {
-        "title": "Špeciálne ponuky",
+        "title": "Špeciálne Ponuky",
         "loadingError": "Nepodarilo sa načítať špeciálne ponuky",
         "emptyState": "Momentálne nie sú k dispozícii žiadne špeciálne ponuky.",
-        "defaultOfferLabel": "🔥 Špeciálna ponuka",
+        "defaultOfferLabel": "🔥 Špeciálna Ponuka",
         "imageAlt": "{carTitle}",
         "kmUnit": "km",
-        "viewOfferButton": "Zobraziť ponuku",
+        "viewOfferButton": "Zobraziť Ponuku",
         "srPrevious": "Predchádzajúci",
-        "srNext": "Ďalší",
+        "srNext": "Nasledujúci",
         "indicatorAriaLabel": "Prejsť na snímku {index}"
     },
     "OurServices": {
-        "title": "Naše služby",
+        "title": "Naše Služby",
         "services": {
             "maintenance": {
-                "title": "Servisné balíčky",
+                "title": "Servisné Balíky",
                 "description": "Cenovo dostupné servisné plány prispôsobené potrebám vášho auta."
             },
             "tradeIn": {
-                "title": "Program výkupu",
-                "description": "Jednoducho vymeňte svoje súčasné vozidlo za kredit na váš ďalší nákup."
+                "title": "Program Výkupu",
+                "description": "Ľahko vymeňte svoje súčasné vozidlo za kredit na ďalší nákup."
             },
             "financing": {
-                "title": "Flexibilné financovanie",
+                "title": "Flexibilné Financovanie",
                 "description": "Spolupracujeme s poprednými finančnými inštitúciami, aby sme vám zabezpečili najlepšie sadzby."
             }
         }
     },
     "CTASection": {
-        "title": "Ste pripravení šoférovať svoje vysnívané auto?",
-        "subtitle": "Kontaktujte nás ešte dnes a my vám pomôžeme nájsť dokonalú jazdu."
+        "title": "Ste Pripravení Viesť Svoje Vysnívané Auto?",
+        "subtitle": "Kontaktujte nás ešte dnes a dovoľte nám pomôcť vám nájsť perfektné vozidlo."
     },
     "RequestCarForm": {
         "section": {
-            "title": "Nemôžete nájsť, čo hľadáte?",
+            "title": "Nemôžete Nájsť, Čo Hľadáte?",
             "subtitle": "Pomôžte nám nájsť vaše ideálne auto prostredníctvom našej siete predajcov tým, že nám oznámite svoje preferencie."
         },
         "card": {
-            "title": "Požiadať o auto",
-            "description": "Vyplňte formulár nižšie s preferenciami vášho vozidla a naši špecialisti vás budú čoskoro kontaktovať."
+            "title": "Požiadať o Auto",
+            "description": "Vyplňte nižšie uvedený formulár s preferenciami vozidla a naši špecialisti vás čoskoro kontaktujú."
         },
         "subheadings": {
-            "contactInfo": "Kontaktné informácie",
-            "vehicleDetails": "Detaily vozidla",
-            "specifications": "Špecifikácie vozidla",
-            "additionalInfo": "Ďalšie poznámky"
+            "contactInfo": "Kontaktné Informácie",
+            "vehicleDetails": "Podrobnosti o Vozidle",
+            "specifications": "Špecifikácie Vozidla",
+            "additionalInfo": "Dodatočné Poznámky"
         },
         "labels": {
-            "fullName": "Celé meno",
-            "email": "E-mailová adresa",
-            "phone": "Telefónne číslo",
+            "fullName": "Celé Meno",
+            "email": "Emailová Adresa",
+            "phone": "Telefónne Číslo",
             "location": "Lokalita / Región",
-            "make": "Požadovaná značka auta",
-            "model": "Požadovaný model auta",
-            "yearFrom": "Rok výroby (Od)",
-            "yearTo": "Rok výroby (Do)",
-            "budget": "Preferovaný rozpočet",
-            "color": "Preferovaná farba/y",
-            "condition": "Stav auta",
-            "transmission": "Typ prevodovky",
-            "fuelType": "Typ paliva",
-            "maxMileage": "Maximálny počet najazdených kilometrov",
-            "notes": "Ďalšie poznámky"
+            "make": "Požadovaná Značka Auta",
+            "model": "Požadovaný Model Auta",
+            "yearFrom": "Rok (Od)",
+            "yearTo": "Rok (Do)",
+            "budget": "Preferovaný Rozpočet",
+            "color": "Preferovaná Farba(y)",
+            "condition": "Stav Auta",
+            "transmission": "Typ Prevodovky",
+            "fuelType": "Typ Paliva",
+            "maxMileage": "Maximálny Počet Kilometrov",
+            "notes": "Dodatočné Poznámky"
         },
         "placeholders": {
-            "fullName": "Ján Vzorový",
+            "fullName": "Ján Vážny",
             "email": "jan@priklad.com",
-            "phone": "+421 9xx xxx xxx",
+            "phone": "(123) 456-7890",
             "location": "Mesto, Kraj alebo PSČ",
             "make": "BMW, Toyota, atď.",
             "model": "X5, Camry, atď.",
-            "yearFrom": "Od roku",
-            "yearTo": "Do roku",
-            "budget": "30 000 €",
+            "yearFrom": "Od Roku",
+            "yearTo": "Do Roku",
+            "budget": "€30,000",
             "color": "Čierna, Strieborná, atď.",
             "transmission": "Vyberte prevodovku",
             "fuelType": "Vyberte typ paliva",
             "maxMileage": "50000",
-            "notes": "Akékoľvek špecifické požiadavky alebo preferencie?"
+            "notes": "Nejaké špecifické požiadavky alebo preferencie?"
         },
         "options": {
             "conditionNew": "Nové",
@@ -226,14 +226,14 @@
             "fuelAny": "Nezáleží"
         },
         "buttons": {
-            "submit": "Odoslať požiadavku",
-            "submitting": "Odosiela sa...",
-            "submitAnother": "Odoslať ďalšiu požiadavku"
+            "submit": "Odoslať Požiadavku",
+            "submitting": "Odosielanie...",
+            "submitAnother": "Odoslať Ďalšiu Požiadavku"
         },
         "success": {
-            "title": "Požiadavka odoslaná!",
-            "description": "Ďakujeme za vašu požiadavku na auto. Náš tím skontroluje vaše preferencie a čoskoro vás bude kontaktovať.",
-            "confirmation": "Čoskoro sa vám ozveme na adresu {email}."
+            "title": "Požiadavka Odoslaná!",
+            "description": "Ďakujeme za vašu požiadavku na auto. Náš tím preverí vaše preferencie a čoskoro vás kontaktuje.",
+            "confirmation": "Čoskoro vás budeme kontaktovať na {email}."
         },
         "error": {
             "prefix": "Nepodarilo sa uložiť vašu požiadavku: ",
@@ -241,16 +241,16 @@
         }
     },
     "MostSearchedCars": {
-        "title": "Najvyhľadávanejšie autá",
-        "loading": "Načítavam obľúbené vozidlá...",
-        "error": "Nepodarilo sa načítať obľúbené autá. Skúste to prosím neskôr znova.",
+        "title": "Najvyhľadávanejšie Autá",
+        "loading": "Načítavanie populárnych vozidiel...",
+        "error": "Nepodarilo sa načítať populárne autá. Skúste to prosím neskôr.",
         "errorPrefix": "Nepodarilo sa načítať autá: ",
-        "empty": "Momentálne sa nenašli žiadne obľúbené vozidlá.",
+        "empty": "Momentálne sa nenašli žiadne populárne vozidlá.",
         "card": {
             "badgeNew": "Nové",
             "badgeSold": "Predané",
             "unitMiles": "km",
-            "viewDetailsButton": "Zobraziť detaily",
+            "viewDetailsButton": "Zobraziť Podrobnosti",
             "imageAltFallback": "Inzerát auta"
         },
         "fuelTypes": {
@@ -265,26 +265,27 @@
             "CVT": "CVT",
             "DCT": "DCT",
             "Automatic": "Automatická",
-            "Unknown": "Neznámy"
+            "Unknown": "Neznáma"
         }
     },
     "AboutPage": {
         "hero": {
-            "title": "Poháňaní excelentnosťou",
-            "subtitle": "Zistite, kto sme a čo poháňa našu misiu."
+            "title": "Poháňaní Excelentnosťou",
+            "subtitle": "Zistite, kto sme a čo poháňa našu misiu.",
+            "imageAlt": "Tmavé prémiové auto idúce po ceste"
         },
         "story": {
-            "title": "Náš príbeh",
-            "paragraph1": "S viac ako 15-ročnými odbornými skúsenosťami na trhu prémiových vozidiel sa špecializujeme na predaj, sprostredkovanie, import a export výnimočných luxusných a športových automobilov. Naše hlboké znalosti odvetvia využívame na to, aby sme spojili náročných klientov s jedinečnými vozidlami.",
-            "paragraph2": "Vozidlá v našej ponuke starostlivo získavame prostredníctvom siete dôveryhodných klientov a obchodných partnerov – vzťahov, ktoré sme budovali roky na základe vzájomnej dôvery. Zameriavame sa predovšetkým na nové vozidlá, pričom všetky jazdené automobily prechádzajú dôkladnou kontrolou a disponujú kompletnou servisnou históriou.",
-            "paragraph3": "Vďaka našim rozsiahlym skúsenostiam a silnej partnerskej sieti dokážeme prekročiť hranice bežných služieb. Špecializujeme sa na zabezpečenie špecifických vozidiel na mieru – vrátane ťažko dostupných modelov, limitovaných edícií a dokonca aj získania výhodných výrobných kvót pre nové vozidlá prestížnych značiek.",
-            "imageAlt": "Showroom a tím CarBiz"
+            "title": "Náš Príbeh",
+            "paragraph1": "S viac ako 15-ročnými skúsenosťami na trhu prémiových vozidiel sa naša odbornosť zameriava na predaj, sprostredkovanie, dovoz a vývoz výnimočných prémiových a športových automobilov. Využívame naše hlboké znalosti odvetvia na spojenie náročných klientov s mimoriadnymi automobilmi.",
+            "paragraph2": "Vozidlá, ktoré ponúkame, sú starostlivo získavané prostredníctvom siete dôveryhodných klientov a obchodných partnerov – vzťahov pestovaných rokmi a pevne postavených na vzájomnej dôvere. Primárne ponúkame nové vozidlá a akékoľvek ojazdené autá prechádzajú prísnym overením, vždy sprevádzané kompletnou servisnou históriou.",
+            "paragraph3": "Naše rozsiahle skúsenosti a robustná sieť partnerov nám umožňujú prekročiť konvenčné hranice. Špecializujeme sa na obstarávanie špecifických vozidiel na požiadanie, vrátane ťažko dostupných modelov, limitovaných edícií a dokonca aj zabezpečenie výhodných výrobných kvót pre nové vozidlá rôznych prestížnych značiek.",
+            "imageAlt": "Showroom a tím PremiumCarsEU"
         },
         "values": {
-            "title": "Naše hodnoty",
+            "title": "Naše Hodnoty",
             "trust": {
                 "title": "Dôvera",
-                "description": "Budujeme trvalé vzťahy založené na čestnosti, integrite a spoľahlivosti v každom kroku zákazníckej cesty."
+                "description": "Budujeme trvalé vzťahy založené na úprimnosti, integrite a spoľahlivosti v každom kroku zákazníckej cesty."
             },
             "transparency": {
                 "title": "Transparentnosť",
@@ -295,34 +296,34 @@
                 "description": "Neustále prijímame nové technológie a prístupy na zlepšenie zážitku z nákupu a predaja áut."
             },
             "customerFirst": {
-                "title": "Zákazník na prvom mieste",
-                "description": "Každé naše rozhodnutie uprednostňuje potreby, preferencie a spokojnosť našich zákazníkov nad všetko ostatné."
+                "title": "Zákazník na Prvom Mieste",
+                "description": "Každé naše rozhodnutie uprednostňuje potreby, preferencie a spokojnosť našich zákazníkov nadovšetko."
             }
         },
         "team": {
-            "title": "Zoznámte sa s tímom",
+            "title": "Spoznajte Zakladateľa",
             "member1": {
                 "imageAlt": "Marco Varga",
                 "name": "Marco Varga",
                 "title": "Zakladateľ a CEO",
-                "quote": "\"Našou víziou je priniesť nový pohľad na kúpu a predaj automobilov a vytvoriť z neho skutočne pozitívnu skúsenosť pre každého zákazníka.\""
+                "quote": "\"Naším cieľom je znovuobjaviť spôsob, akým ľudia kupujú a predávajú autá, a urobiť z toho najpríjemnejší nákup, aký kedy urobili.\""
             },
             "member2": {
                 "imageAlt": "Sarah Mueller",
                 "name": "Sarah Mueller",
-                "title": "Obchodná riaditeľka",
-                "quote": "\"Verím v budovanie vzťahov, nielen v predaj áut. Naši zákazníci sa stávajú súčasťou rodiny CarBiz.\""
+                "title": "Obchodná Riaditeľka",
+                "quote": "\"Verím v budovanie vzťahov, nielen v predaj áut. Naši zákazníci sa stávajú súčasťou rodiny PremiumCarsEU.\""
             },
             "member3": {
                 "imageAlt": "Thomas Weber",
                 "name": "Thomas Weber",
-                "title": "Technologický riaditeľ (CTO)",
-                "quote": "\"Technológia by mala uľahčiť a sprehľadniť nákup auta. To je to, čo poháňa našu digitálnu inováciu.\""
+                "title": "Technologický Riaditeľ (CTO)",
+                "quote": "\"Technológia by mala uľahčiť a sprehľadniť nákup auta. To poháňa našu digitálnu inováciu.\""
             }
         },
         "cta": {
-            "title": "Chcete sa pripojiť k PremiumCarsEU?",
-            "subtitle": "Neustále hľadáme talentovaných jednotlivcov, ktorí zdieľajú našu vášeň pre automobilovú excelentnosť a zákaznícky servis."
+            "title": "Chcete sa pridať k našej ceste?",
+            "subtitle": "Vždy hľadáme talentovaných jednotlivcov, ktorí zdieľajú našu vášeň pre automobilovú excelentnosť a zákaznícky servis."
         }
     },
     "ContactPage": {
@@ -332,21 +333,21 @@
         },
         "formCard": {
             "title": "Pošlite nám správu",
-            "description": "Vyplňte formulár nižšie s vašou požiadavkou a my odpovieme čo najskôr."
+            "description": "Vyplňte nižšie uvedený formulár s vašou otázkou a my odpovieme čo najskôr."
         },
         "labels": {
-            "fullName": "Celé meno",
-            "email": "E-mailová adresa",
-            "phone": "Telefónne číslo (Voliteľné)",
+            "fullName": "Celé Meno",
+            "email": "Emailová Adresa",
+            "phone": "Telefónne Číslo (Voliteľné)",
             "subject": "Predmet",
             "message": "Správa"
         },
         "placeholders": {
-            "fullName": "Zadajte svoje celé meno",
-            "email": "vas@priklad.com",
-            "phone": "Zadajte svoje telefónne číslo",
+            "fullName": "Zadajte vaše celé meno",
+            "email": "vy@priklad.com",
+            "phone": "Zadajte vaše telefónne číslo",
             "subject": "Vyberte predmet",
-            "message": "Napíšte svoju správu sem..."
+            "message": "Napíšte vašu správu tu..."
         },
         "subjectOptions": {
             "general": "Všeobecná otázka",
@@ -356,93 +357,93 @@
         },
         "validation": {
             "nameRequired": "Meno je povinné",
-            "emailRequired": "E-mail je povinný",
-            "emailInvalid": "Zadajte platnú e-mailovú adresu",
+            "emailRequired": "Email je povinný",
+            "emailInvalid": "Zadajte platnú emailovú adresu",
             "subjectRequired": "Vyberte predmet",
             "messageRequired": "Správa je povinná"
         },
         "buttons": {
-            "send": "Odoslať správu",
-            "sending": "Odosiela sa..."
+            "send": "Odoslať Správu",
+            "sending": "Odosielanie..."
         },
         "infoCard": {
-            "title": "Kontaktné informácie",
+            "title": "Kontaktné Informácie",
             "description": "Môžete nás tiež kontaktovať priamo pomocou nižšie uvedených informácií.",
             "addressTitle": "Adresa",
             "phoneTitle": "Telefón",
-            "emailTitle": "E-mail",
-            "hoursTitle": "Pracovná doba",
+            "emailTitle": "Email",
+            "hoursTitle": "Otváracie Hodiny",
             "connectTitle": "Spojte sa s nami",
-            "addressLine1": "Hlavná kancelária — Zürich, Švajčiarsko",
-            "addressLine2": "Bahnhofstrasse 42, 8001 Zürich",
+            "addressLine1": "Hlavná kancelária — Vlčie Hrdlo 1037, 82107 Bratislava II - Ružinov",
+            "addressLine2": "Švajčiarska kancelária — Am Stausee 23, 4127 Birsfelden",
             "hoursLine1": "Pondelok - Piatok: 9:00 – 18:00",
             "hoursLine2": "Sobota: 10:00 – 16:00",
             "hoursLine3": "Nedeľa: Zatvorené"
         },
         "success": {
-            "title": "Správa úspešne odoslaná!",
-            "description": "Ďakujeme, že ste nás kontaktovali. Prijali sme vašu správu a čoskoro sa vám ozveme.",
-            "heading": "Čoskoro sa ozveme",
+            "title": "Správa Úspešne Odoslaná!",
+            "description": "Ďakujeme, že ste nás kontaktovali. Dostali sme vašu správu a čoskoro sa vám ozveme.",
+            "heading": "Čoskoro sa Ozveme",
             "confirmation": "Náš tím zvyčajne odpovedá do 24-48 hodín počas pracovných dní.",
-            "button": "Odoslať ďalšiu správu"
+            "button": "Odoslať Ďalšiu Správu"
         }
     },
     "SellPage": {
         "hero": {
-            "title": "Predajte svoje auto s dôverou",
-            "subtitle": "Získajte férovú cenu a bezproblémový zážitok pri predaji vášho auta cez CarBiz. Žiadni sprostredkovatelia, žiadne skryté poplatky - len priamy servis."
+            "title": "Predajte Svoje Auto s Dôverou",
+            "subtitle": "Získajte spravodlivú cenu a bezproblémový zážitok pri predaji vášho auta cez PremiumCarsEU. Žiadni sprostredkovatelia, žiadne skryté poplatky - len priamy servis."
         },
         "benefits": {
-            "title": "Prečo predávať s nami?",
+            "title": "Prečo Predávať s Nami?",
             "pricing": {
-                "title": "Konkurencieschopné ceny",
-                "description": "Ponúkame férovú trhovú hodnotu vášho vozidla na základe jeho stavu, histórie a aktuálnych trhových trendov."
+                "title": "Konkurencieschopné Ceny",
+                "description": "Ponúkame spravodlivú trhovú hodnotu vášho vozidla na základe jeho stavu, histórie a aktuálnych trhových trendov."
             },
             "process": {
-                "title": "Bezproblémový proces",
-                "description": "Náš zjednodušený predajný proces znamená menej papierovania a rýchlejšie transakcie. Väčšina obchodov sa uzavrie do 48 hodín."
+                "title": "Bezproblémový Proces",
+                "description": "Náš zjednodušený proces predaja znamená menej papierovania a rýchlejšie transakcie. Väčšina obchodov sa uzatvára do 48 hodín."
             },
             "service": {
-                "title": "Dôveryhodný servis",
-                "description": "S viac ako 10 rokmi v odbore hovorí naša reputácia pre transparentnosť a spokojnosť zákazníkov sama za seba."
+                "title": "Dôveryhodný Servis",
+                "description": "S viac ako 10-ročnými skúsenosťami v odbore naša reputácia pre transparentnosť a spokojnosť zákazníkov hovorí sama za seba."
             }
         },
         "trustIndicator": {
             "title": "Dôveruje nám viac ako 2 300 vodičov",
-            "description": "Pridajte sa k tisíckam spokojných zákazníkov, ktorí úspešne predali svoje vozidlá prostredníctvom našej platformy."
+            "description": "Pridajte sa k tisícom spokojných zákazníkov, ktorí úspešne predali svoje vozidlá prostredníctvom našej platformy."
         }
     },
     "CarSellForm": {
         "card": {
-            "title": "Predajte svoje auto",
-            "description": "Vyplňte formulár nižšie s údajmi o vašom aute. Náš tím ich skontroluje a bude vás kontaktovať do 24-48 hodín."
+            "title": "Predajte Svoje Auto",
+            "description": "Vyplňte nižšie uvedený formulár s údajmi o vašom aute. Náš tím ich preverí a kontaktuje vás do 24-48 hodín."
         },
         "sections": {
-            "ownerInfo": "Informácie o vlastníkovi",
-            "carInfo": "Informácie o aute",
-            "pricingMedia": "Ceny a médiá",
-            "additionalInfo": "Ďalšie informácie"
+            "ownerInfo": "Informácie o Majiteľovi",
+            "carInfo": "Informácie o Aute",
+            "pricingMedia": "Cena a Médiá",
+            "additionalInfo": "Dodatočné Informácie"
         },
         "labels": {
-            "fullName": "Celé meno",
-            "email": "E-mailová adresa",
-            "phone": "Telefónne číslo",
-            "make": "Značka auta",
-            "model": "Model auta",
+            "fullName": "Celé Meno",
+            "email": "Emailová Adresa",
+            "phone": "Telefónne Číslo",
+            "make": "Značka Auta",
+            "model": "Model Auta",
             "year": "Rok",
-            "mileage": "Najazdené kilometre",
-            "fuelType": "Typ paliva",
+            "mileage": "Počet Kilometrov",
+            "fuelType": "Typ Paliva",
             "transmission": "Prevodovka",
             "condition": "Stav",
             "city": "Mesto",
-            "askingPrice": "Požadovaná cena (Voliteľné)",
-            "photos": "Nahrať fotografie",
+            "askingPrice": "Požadovaná Cena (Voliteľné)",
+            "photos": "Nahrať Fotografie",
             "description": "Popis / Poznámky"
         },
         "placeholders": {
-            "fullName": "Ján Vzorový",
+            "fullName": "Ján Vážny",
             "email": "vas@email.com",
-            "phone": "+421 9xx xxx xxx",
+            "phone": "(123) 456-7890",
             "make": "napr. Toyota",
             "model": "napr. Camry",
             "year": "napr. 2019",
@@ -451,7 +452,7 @@
             "transmission": "Vyberte prevodovku",
             "city": "napr. Bratislava",
             "askingPrice": "napr. 25000",
-            "description": "Uveďte prosím akékoľvek ďalšie podrobnosti o vašom aute..."
+            "description": "Prosím, uveďte akékoľvek ďalšie podrobnosti o vašom aute..."
         },
         "options": {
             "fuelGasoline": "Benzín",
@@ -465,24 +466,24 @@
         },
         "descriptions": {
             "askingPrice": "Nechajte prázdne, ak chcete, aby sme poskytli trhové ocenenie.",
-            "filesSelected": "{count} súbor(ov) vybraných:",
-            "fileTypes": "PNG, JPG, GIF, HEIC do 10 MB každý"
+            "filesSelected": "Vybraných súborov: {count}",
+            "fileTypes": "PNG, JPG, GIF, HEIC do 10MB každý"
         },
         "fileUpload": {
             "upload": "Nahrať súbory",
-            "dragDrop": "alebo pretiahnite"
+            "dragDrop": "alebo presuňte myšou"
         },
         "validation": {
             "nameRequired": "Meno je povinné",
-            "emailRequired": "E-mail je povinný",
-            "emailInvalid": "Neplatný formát e-mailu",
-            "phoneRequired": "Telefón je povinný",
+            "emailRequired": "Email je povinný",
+            "emailInvalid": "Neplatný formát emailu",
+            "phoneRequired": "Telefónne číslo je povinné",
             "makeRequired": "Značka je povinná",
             "modelRequired": "Model je povinný",
             "yearRequired": "Rok je povinný",
             "yearInvalid": "Neplatný formát roku",
-            "mileageRequired": "Najazdené kilometre sú povinné",
-            "mileageInvalid": "Najazdené kilometre musia byť číslo",
+            "mileageRequired": "Počet kilometrov je povinný",
+            "mileageInvalid": "Počet kilometrov musí byť číslo",
             "fuelTypeRequired": "Typ paliva je povinný",
             "transmissionRequired": "Prevodovka je povinná",
             "conditionRequired": "Stav je povinný",
@@ -490,86 +491,87 @@
             "priceInvalid": "Cena musí byť číslo"
         },
         "buttons": {
-            "submit": "Odoslať auto na posúdenie",
-            "submitting": "Odosiela sa...",
-            "submitAnother": "Odoslať ďalšie auto"
+            "submit": "Odoslať Auto na Preverenie",
+            "submitting": "Odosielanie...",
+            "submitAnother": "Odoslať Ďalšie Auto"
         },
         "success": {
-            "title": "Podanie prijaté!",
-            "description": "Ďakujeme! Skontrolujeme údaje o vašom aute a čoskoro sa vám ozveme.",
-            "heading": "Údaje odoslané",
-            "confirmation": "Na kontaktovanie použijeme {email}."
+            "title": "Odoslanie Prijaté!",
+            "description": "Ďakujeme! Preveríme údaje o vašom aute a čoskoro sa vám ozveme.",
+            "heading": "Údaje Odoslané",
+            "confirmation": "Budeme vás kontaktovať na {email}."
         },
         "error": {
             "submitFallback": "Pri odosielaní vašich informácií sa vyskytla chyba. Skúste to prosím znova.",
-            "updatePhotoUrlError": "Fotografie boli nahrané, ale nepodarilo sa uložiť URL: {message}",
-            "updatePhotoUrlException": "Fotografie boli nahrané, ale pri ukladaní URL sa vyskytla chyba",
+            "updatePhotoUrlError": "Fotografie nahrané, ale nepodarilo sa uložiť URL adresy: {message}",
+            "updatePhotoUrlException": "Fotografie nahrané, ale pri ukladaní URL adries sa vyskytla chyba",
             "noPhotosUploaded": "Žiadne fotografie neboli úspešne nahrané"
         }
     },
     "InventoryPage": {
-        "loading": "Načítavam inventár...",
+        "loading": "Načítavanie Ponuky...",
         "errorTitle": "Chyba",
-        "errorLoading": "Nepodarilo sa načítať inventár. {message}",
-        "errorTryAgain": "Skúsiť znova",
+        "errorLoading": "Nepodarilo sa načítať ponuku. {message}",
+        "errorTryAgain": "Skúsiť Znova",
         "hero": {
-            "title": "Prehliadať náš inventár",
-            "subtitle": "Preskúmajte našu rozsiahlu kolekciu prémiových vozidiel. Použite filtre na nájdenie dokonalej zhody."
+            "title": "Prehliadať Našu Ponuku",
+            "subtitle": "Preskúmajte našu rozsiahlu kolekciu prémiových vozidiel. Použite filtre na nájdenie perfektnej zhody."
         },
         "listingTypeToggle": {
             "buy": "Kúpiť",
             "rent": "Prenajať",
-            "both": "Všetky"
+            "both": "Oboje"
         },
         "aiSearch": {
             "title": "Čo hľadáte?",
             "placeholder": "napr. Víkendové kupé pod 50 tisíc",
             "buttonIdle": "Hľadať",
-            "buttonLoading": "Hľadám...",
+            "buttonLoading": "Hľadanie...",
             "errorPrefix": "Nepodarilo sa spracovať vaše vyhľadávanie",
-            "errorCouldNotUnderstand": "Nerozumeli sme vášmu vyhľadávaniu. Skúste to prosím znova s iným znením.",
+            "errorCouldNotUnderstand": "Nepodarilo sa porozumieť vášmu vyhľadávaniu. Skúste to prosím s inými slovami.",
             "toastTitle": "Vyhľadávanie spracované",
             "toastDescSuccess": "Našli sme presne to, čo hľadáte!",
-            "toastDescPotential": "Našli sme potenciálne zhody. V prípade potreby môžete upraviť filtre."
+            "toastDescPotential": "Našli sa potenciálne zhody. V prípade potreby môžete upraviť filtre."
         },
         "filters": {
             "makeLabel": "Značka",
             "modelLabel": "Model",
-            "bodyTypeLabel": "Typ karosérie",
-            "priceLabel": "Cenové rozpätie",
-            "yearLabel": "Rozsah rokov výroby",
-            "mileageLabel": "Rozsah najazdených kilometrov",
-            "fuelTypeLabel": "Typ paliva",
+            "bodyTypeLabel": "Typ Karosérie",
+            "priceLabel": "Cenové Rozpätie",
+            "yearLabel": "Rozpätie Rokov",
+            "mileageLabel": "Rozpätie Kilometrov",
+            "fuelTypeLabel": "Typ Paliva",
             "transmissionLabel": "Prevodovka",
             "conditionLabel": "Stav",
             "minLabel": "Min",
             "maxLabel": "Max",
             "fromLabel": "Od",
             "toLabel": "Do",
-            "exteriorColorLabel": "Farba exteriéru",
-            "interiorColorLabel": "Farba interiéru",
-            "makePlaceholderLoading": "Načítavam značky...",
+            "exteriorColorLabel": "Farba Exteriéru",
+            "interiorColorLabel": "Farba Interiéru",
+            "colorPlaceholder": "Vyberte Farbu",
+            "makePlaceholderLoading": "Načítavanie značiek...",
             "makePlaceholder": "Vyberte značku",
-            "modelPlaceholderLoading": "Načítavam modely...",
+            "modelPlaceholderLoading": "Načítavanie modelov...",
             "modelPlaceholder": "Vyberte model",
             "modelSearchPlaceholder": "Hľadať modely...",
             "modelNotFound": "Žiadne zodpovedajúce modely",
-            "modelNotAvailable": "Žiadne modely k dispozícii",
+            "modelNotAvailable": "Žiadne dostupné modely",
             "bodyTypePlaceholder": "Vyberte typ karosérie",
             "fuelTypePlaceholder": "Vyberte typ paliva",
             "transmissionPlaceholder": "Vyberte prevodovku",
             "conditionPlaceholder": "Vyberte stav",
-            "priceMinPlaceholder": "Min cena",
-            "priceMaxPlaceholder": "Max cena",
-            "yearMinPlaceholder": "Od roku",
-            "yearMaxPlaceholder": "Do roku",
-            "mileageMinPlaceholder": "Min km",
-            "mileageMaxPlaceholder": "Max km",
-            "applyButton": "Použiť filtre",
+            "priceMinPlaceholder": "Min Cena",
+            "priceMaxPlaceholder": "Max Cena",
+            "yearMinPlaceholder": "Od Roku",
+            "yearMaxPlaceholder": "Do Roku",
+            "mileageMinPlaceholder": "Min Km",
+            "mileageMaxPlaceholder": "Max Km",
+            "applyButton": "Použiť Filtre",
             "resetButton": "Resetovať",
-            "showAdvancedButton": "Zobraziť rozšírené",
-            "hideAdvancedButton": "Skryť rozšírené",
-            "backButton": "Späť na filtre",
+            "showAdvancedButton": "Zobraziť Rozšírené",
+            "hideAdvancedButton": "Skryť Rozšírené",
+            "backButton": "Späť na Filtre",
             "optionAny": "Akýkoľvek",
             "colors": {
                 "anthracite": "Antracitová",
@@ -593,11 +595,11 @@
             }
         },
         "advancedFilters": {
-            "title": "Rozšírené filtre",
-            "closeAriaLabel": "Zatvoriť rozšírené filtre",
+            "title": "Rozšírené Filtre",
+            "closeAriaLabel": "Zavrieť rozšírené filtre",
             "horsepowerLabel": "Výkon (PS)",
             "horsepowerUnit": "PS",
-            "displacementLabel": "Zdvihový objem motora (cm³)",
+            "displacementLabel": "Objem Motora (cm³)",
             "displacementUnit": "cm³",
             "cylindersLabel": "Valce",
             "minLabel": "Min",
@@ -605,59 +607,59 @@
         },
         "results": {
             "count": "Zobrazuje sa {count} vozidiel",
-            "notFoundTitle": "Nenašli sme žiadne autá zodpovedajúce vášmu vyhľadávaniu. Môžete nám dať presne vedieť, čo hľadáte, a náš predajca vám nájde zodpovedajúce vozidlo.",
+            "notFoundTitle": "Nenašli sme žiadne autá zodpovedajúce vášmu vyhľadávaniu. Môžete nám presne povedať, čo hľadáte, a naša predajňa nájde pre vás zodpovedajúce vozidlo.",
             "sortByLabel": "Zoradiť podľa:",
             "sortPlaceholder": "Zoradiť podľa",
             "emptyTitle": "Nenašli sa žiadne vozidlá zodpovedajúce vašim kritériám.",
-            "resetFiltersButton": "Resetovať filtre"
+            "resetFiltersButton": "Resetovať Filtre"
         },
         "sortOptions": {
-            "price-asc": "Cena: od najnižšej",
-            "price-desc": "Cena: od najvyššej",
-            "year-desc": "Rok: Najnovšie prvé",
-            "year-asc": "Rok: Najstaršie prvé",
-            "mileage-asc": "Km: od najnižších",
-            "mileage-desc": "Km: od najvyšších",
-            "created_at-desc": "Najnovšie inzeráty"
+            "price-asc": "Cena: Vzostupne",
+            "price-desc": "Cena: Zostupne",
+            "year-desc": "Rok: Najnovšie",
+            "year-asc": "Rok: Najstaršie",
+            "mileage-asc": "Kilometre: Vzostupne",
+            "mileage-desc": "Kilometre: Zostupne",
+            "created_at-desc": "Najnovšie Inzeráty"
         },
         "card": {
-            "imageAlt": "{make} {model} - zobrazenie {index}",
+            "imageAlt": "{make} {model} - pohľad {index}",
             "imageAltFallback": "Obrázok auta",
             "noImage": "Obrázok nie je k dispozícii",
             "prevImageLabel": "Predchádzajúci obrázok",
             "nextImageLabel": "Nasledujúci obrázok",
-            "priceNA": "Neuvedené",
-            "mileageNA": "Neuvedené",
-            "fuelNA": "Neuvedené",
-            "transmissionNA": "Neuvedené",
-            "yearNA": "Neuvedené",
+            "priceNA": "N/A",
+            "mileageNA": "N/A",
+            "fuelNA": "N/A",
+            "transmissionNA": "N/A",
+            "yearNA": "N/A",
             "unitMiles": "km",
-            "addToCompareButton": "Pridať na porovnanie",
-            "viewDetailsButton": "Zobraziť detaily"
+            "addToCompareButton": "Pridať do Porovnania",
+            "viewDetailsButton": "Zobraziť Podrobnosti"
         },
         "pagination": {
             "previous": "Predchádzajúca strana",
             "next": "Nasledujúca strana"
         },
         "toastMessages": {
-            "compareAddedTitle": "Pridané na porovnanie",
-            "compareAddedDesc": "{make} {model} pridané do zoznamu na porovnanie.",
+            "compareAddedTitle": "Pridané do porovnania",
+            "compareAddedDesc": "{make} {model} pridané do zoznamu porovnania.",
             "errorTitle": "Chyba",
-            "errorViewDetails": "Nie je možné zobraziť detaily: Chýba ID auta."
+            "errorViewDetails": "Nie je možné zobraziť podrobnosti: Chýba ID auta."
         },
         "bodyTypes": {
-            "Any": "Akákoľvek",
+            "Any": "Akýkoľvek",
             "Sedan": "Sedan",
             "SUV": "SUV",
             "Coupe": "Kupé",
             "Convertible": "Kabriolet",
             "Hatchback": "Hatchback",
             "Wagon": "Kombi",
-            "Truck": "Pickup",
+            "Truck": "Nákladné auto",
             "Van": "Dodávka"
         },
         "fuelTypes": {
-            "Any": "Akékoľvek",
+            "Any": "Akýkoľvek",
             "Gasoline": "Benzín",
             "Diesel": "Diesel",
             "Hybrid": "Hybrid",
@@ -677,7 +679,7 @@
         }
     },
     "CarListingPage": {
-        "backToInventory": "Späť do inventára",
+        "backToInventory": "Späť do ponuky",
         "carIdLabel": "ID:",
         "tabs": {
             "overview": "Prehľad",
@@ -695,151 +697,257 @@
             "make": "Značka",
             "model": "Model",
             "year": "Rok",
-            "bodyType": "Typ karosérie",
-            "fuelType": "Typ paliva",
+            "bodyType": "Typ Karosérie",
+            "fuelType": "Typ Paliva",
             "transmission": "Prevodovka",
-            "mileage": "Najazdené kilometre",
-            "interiorColor": "Farba interiéru",
-            "exteriorColor": "Farba exteriéru",
+            "mileage": "Počet Kilometrov",
+            "interiorColor": "Farba Interiéru",
+            "exteriorColor": "Farba Exteriéru",
             "vin": "VIN",
             "engine": "Motor",
             "condition": "Stav",
             "notAvailable": "-"
         },
         "features": {
-            "title": "Výbava a možnosti",
+            "title": "Výbava a Možnosti",
             "noFeatures": "Pre toto vozidlo nie je uvedená žiadna výbava."
         },
         "pricing": {
-            "contactForPrice": "Cena na vyžiadanie",
-            "dailyRentalLabel": "Denný prenájom",
+            "contactForPrice": "Kontaktujte pre cenu",
+            "dailyRentalLabel": "Denný Prenájom",
             "perDaySuffix": "/deň"
         },
         "quickFacts": {
             "year": "Rok",
-            "mileage": "Km",
+            "mileage": "Kilometre",
             "fuel": "Palivo",
             "transmission": "Prevodovka",
             "notAvailable": "-",
             "unitMiles": "km"
         },
         "sellerInfo": {
-            "title": "Informácie o predajcovi",
-            "fallbackName": "Predajca CarBiz",
+            "title": "Informácie o Predajcovi",
+            "fallbackName": "Predajca PremiumCarsEU",
             "memberSince": "Člen od {year}",
             "fallbackInitial": "P",
             "fallbackYear": "2022"
+        },
+        "buttons": {
+            "viewRentalInfo": "Zobraziť Informácie o Prenájme"
         },
         "imageGallery": {
             "imageAlt": "{year} {make} {model} - Obrázok {index}",
             "imageAltFallback": "Obrázok auta {index}",
             "conditionBadgeNew": "Nové",
             "conditionBadgeUsed": "Ojazdené",
-            "listingTypeBadgeSale": "Na predaj",
-            "listingTypeBadgeRent": "Na prenájom"
+            "listingTypeBadgeSale": "Na Predaj",
+            "listingTypeBadgeRent": "Na Prenájom"
         },
         "conditionValues": {
             "new": "Nové",
             "used": "Ojazdené"
+        },
+        "rental": {
+            "rentalAvailable": "Na Prenájom",
+            "viewSaleDetails": "Zobraziť Podrobnosti Predaja",
+            "viewFullDetails": "Zobraziť Všetky Podrobnosti",
+            "termsTitle": "Podmienky Prenájmu",
+            "dailyRateLabel": "Denná Sadzba",
+            "depositLabel": "Záloha",
+            "securityDepositLabel": "Bezpečnostná Záloha",
+            "noDeposit": "Nevyžaduje sa Záloha",
+            "minDaysLabel": "Minimálny Počet Dní",
+            "maxDaysLabel": "Maximálny Počet Dní",
+            "rentalDurationLabel": "Dĺžka Prenájmu",
+            "perDayLabel": "Na Deň",
+            "depositQuickLabel": "Záloha",
+            "days": "dni",
+            "minDays": "Najmenej {days} dní",
+            "maxDays": "Až do {days} dní",
+            "flexible": "Flexibilné",
+            "hourlyOptions": "Hodinové Možnosti",
+            "hours": "hodiny",
+            "securityDepositNo": "Nevyžaduje sa Záloha",
+            "policyTitle": "Pravidlá Prenájmu",
+            "securityDeposit": "Vyžaduje sa Záloha"
         }
     },
     "ContactFormModal": {
-        "triggerButton": "Kontaktovať predajcu",
-        "title": "Kontaktovať predajcu",
-        "description": "Vyplňte tento formulár a informujte sa o {carName}. Predajca sa vám čoskoro ozve.",
+        "triggerButton": "Kontaktovať Predajcu",
+        "title": "Kontaktovať Predajcu",
+        "description": "Vyplňte tento formulár a informujte sa o {carName}. Predajca vás čoskoro kontaktuje.",
         "labels": {
-            "name": "Vaše meno",
-            "phone": "Telefónne číslo",
-            "email": "E-mail (voliteľné)",
+            "name": "Vaše Meno",
+            "phone": "Telefónne Číslo",
+            "email": "Email (voliteľné)",
             "message": "Správa",
             "whatsappConsent": "Súhlasím s kontaktovaním cez WhatsApp"
         },
         "placeholders": {
             "name": "Zadajte vaše meno",
             "phone": "Zadajte vaše telefónne číslo",
-            "email": "Váš E-mail",
+            "email": "Váš Email",
             "message": "Zadajte vašu správu"
         },
         "buttons": {
             "cancel": "Zrušiť",
-            "submit": "Odoslať správu",
-            "submitting": "Odosiela sa..."
+            "submit": "Odoslať Správu",
+            "submitting": "Odosielanie..."
         },
         "defaultMessage": "Mám záujem o {carName}. Prosím, kontaktujte ma s ďalšími informáciami.",
         "toast": {
-            "successTitle": "Správa odoslaná!",
-            "successDescription": "Ďakujeme! Čoskoro sa vám ozveme cez WhatsApp.",
+            "successTitle": "Správa Odoslaná!",
+            "successDescription": "Ďakujeme! Čoskoro vás budeme kontaktovať cez WhatsApp.",
             "errorTitle": "Chyba",
             "errorDescription": "Pri odosielaní vašej správy sa vyskytol problém. Skúste to prosím znova."
         }
     },
     "ReservationModal": {
-        "triggerButton": "Rezervovať toto vozidlo",
-        "title": "Rezervovať vozidlo",
-        "description": "Vyplňte tento formulár na rezerváciu {carName}. Budeme vás kontaktovať na potvrdenie detailov.",
+        "triggerButton": "Rezervovať Toto Vozidlo",
+        "title": "Rezervovať Vozidlo",
+        "description": "Vyplňte tento formulár na rezerváciu {carName}. Budeme vás kontaktovať na potvrdenie podrobností.",
         "labels": {
-            "name": "Celé meno",
-            "email": "E-mail",
-            "phone": "Telefónne číslo"
+            "name": "Celé Meno",
+            "email": "Email",
+            "phone": "Telefónne Číslo"
         },
         "placeholders": {
             "name": "Zadajte vaše celé meno",
-            "email": "Zadajte vašu e-mailovú adresu",
-            "phone": "Zadajte vaše telefónne číslo"
+            "email": "Zadajte vašu emailovú adresu",
+            "phone": "Zadajte vaše telefónne číslo",
+            "selectDuration": "Vyberte Trvanie"
         },
         "validation": {
             "nameMin": "Meno musí mať aspoň 2 znaky.",
-            "emailInvalid": "Zadajte platnú e-mailovú adresu.",
+            "emailInvalid": "Zadajte platnú emailovú adresu.",
             "phoneMin": "Zadajte platné telefónne číslo."
         },
-        "reservingVehicle": "Rezervujem: {carName}",
-        "termsNotice": "Odoslaním tohto formulára súhlasíte s našimi rezervačnými podmienkami a zásadami.",
+        "reservingVehicle": "Rezervácia pre: {carName}",
+        "termsNotice": "Odoslaním tohto formulára súhlasíte s našimi podmienkami a pravidlami rezervácie.",
         "buttons": {
             "cancel": "Zrušiť",
-            "submit": "Rezervovať vozidlo",
-            "submitting": "Odosiela sa..."
+            "submit": "Rezervovať Vozidlo",
+            "submitting": "Odosielanie..."
         },
         "toast": {
-            "successTitle": "Rezervácia odoslaná",
-            "successDescription": "Prijali sme vašu rezerváciu pre {carName}. Čoskoro vás budeme kontaktovať.",
-            "errorTitle": "Rezervácia zlyhala",
+            "successTitle": "Rezervácia Odoslaná",
+            "successDescription": "Dostali sme vašu rezerváciu pre {carName}. Čoskoro vás budeme kontaktovať.",
+            "errorTitle": "Rezervácia Zlyhala",
             "errorDescription": "Pri odosielaní vašej rezervácie sa vyskytol problém. Skúste to prosím znova."
         }
     },
     "TestDriveModal": {
-        "triggerButton": "Naplánovať testovaciu jazdu",
-        "title": "Naplánovať testovaciu jazdu",
-        "description": "Vyplňte formulár nižšie a naplánujte si testovaciu jazdu pre {carName}.",
+        "triggerButton": "Naplánovať Skúšobnú Jazdu",
+        "title": "Naplánovať Skúšobnú Jazdu",
+        "description": "Vyplňte nižšie uvedený formulár na naplánovanie skúšobnej jazdy pre {carName}.",
         "labels": {
-            "fullName": "Celé meno",
-            "email": "E-mail",
-            "phone": "Telefónne číslo",
-            "date": "Preferovaný dátum",
-            "time": "Preferovaný čas"
+            "fullName": "Celé Meno",
+            "email": "Email",
+            "phone": "Telefónne Číslo",
+            "date": "Preferovaný Dátum",
+            "time": "Preferovaný Čas"
         },
         "placeholders": {
-            "fullName": "Ján Vzorový",
-            "email": "vas@priklad.com",
-            "phone": "+421 9xx xxx xxx",
+            "fullName": "Ján Vážny",
+            "email": "vy@priklad.com",
+            "phone": "(123) 456-7890",
             "date": "Vyberte dátum",
             "time": "Vyberte čas"
         },
         "validation": {
             "nameRequired": "Meno je povinné",
-            "emailRequired": "Vyžaduje sa platný e-mail",
+            "emailRequired": "Vyžaduje sa platný email",
             "phoneRequired": "Vyžaduje sa platné telefónne číslo",
             "dateRequired": "Vyberte dátum",
             "timeRequired": "Vyberte čas"
         },
         "buttons": {
-            "submit": "Naplánovať testovaciu jazdu",
-            "submitting": "Odosiela sa..."
+            "submit": "Naplánovať Skúšobnú Jazdu",
+            "submitting": "Odosielanie..."
         },
         "toast": {
-            "successTitle": "Testovacia jazda naplánovaná",
+            "successTitle": "Skúšobná jazda naplánovaná",
             "successDescription": "Budeme vás kontaktovať na potvrdenie vášho termínu.",
-            "errorTitle": "Nepodarilo sa naplánovať testovaciu jazdu",
-            "errorDescription": "Skúste to prosím neskôr znova alebo kontaktujte podporu."
+            "errorTitle": "Nepodarilo sa naplánovať skúšobnú jazdu",
+            "errorDescription": "Skúste to prosím neskôr alebo kontaktujte podporu."
+        }
+    },
+    "ContactRenterModal": {
+        "title": "Kontaktovať Nájomcu",
+        "description": "Vyplňte formulár na kontaktovanie nájomcu ohľadom {carName}.",
+        "labels": {
+            "name": "Vaše Meno",
+            "phone": "Telefónne Číslo",
+            "email": "Email (voliteľné)",
+            "message": "Správa",
+            "whatsappConsent": "Súhlasím s kontaktovaním cez WhatsApp"
+        },
+        "placeholders": {
+            "name": "Zadajte vaše meno",
+            "phone": "Zadajte vaše telefónne číslo",
+            "email": "Váš Email",
+            "message": "Zadajte vašu správu"
+        },
+        "defaultMessage": "Dobrý deň, mám záujem o prenájom {carName}. Prosím, pošlite mi viac detailov.",
+        "buttons": {
+            "submit": "Odoslať Správu",
+            "submitting": "Odosielanie...",
+            "cancel": "Zrušiť"
+        },
+        "toast": {
+            "successTitle": "Správa Odoslaná",
+            "successDescription": "Vaša správa bola odoslaná nájomcovi.",
+            "errorTitle": "Niečo sa pokazilo",
+            "errorDescription": "Skúste to prosím znova alebo kontaktujte podporu."
+        },
+        "triggerButton": "Kontaktovať Nájomcu"
+    },
+    "RentalReservationModal": {
+        "triggerButton": "Rezervovať Toto Vozidlo",
+        "title": "Rezervovať Toto Auto",
+        "description": "Vyberte si preferované dátumy na rezerváciu {carName}.",
+        "priceLabel": "Cena",
+        "section": {
+            "renterInfo": "Informácie o Nájomcovi",
+            "dates": "Dátumy Prenájmu",
+            "rentalType": "Typ Prenájmu",
+            "documents": "Nahrať Dokumenty",
+            "hourlyRental": "Hodinový Prenájom"
+        },
+        "labels": {
+            "name": "Celé Meno",
+            "email": "Emailová Adresa",
+            "phone": "Telefónne Číslo",
+            "start_date": "Dátum Začiatku",
+            "end_date": "Dátum Konca",
+            "idDocument": "Doklad Totožnosti",
+            "licenseDocument": "Vodičský Preukaz",
+            "notes": "Dodatočné Poznámky",
+            "duration": "Trvanie",
+            "hours": "hodiny",
+            "startTime": "Čas Začiatku",
+            "selectedPrice": "Vybraná Cena",
+            "calculatedEndTime": "Vypočítaný Čas Konca",
+            "totalPrice": "Celková Cena",
+            "day": "deň",
+            "days": "dní"
+        },
+        "placeholders": {
+            "notes": "Nejaké dodatočné informácie alebo požiadavky?",
+            "selectDuration": "Vyberte trvanie..."
+        },
+        "buttons": {
+            "cancel": "Zrušiť",
+            "submit": "Odoslať Rezerváciu",
+            "submitting": "Odosielanie...",
+            "dailyRental": "Denný Prenájom",
+            "hourlyRental": "Hodinový Prenájom"
+        },
+        "toast": {
+            "successTitle": "Rezervácia Odoslaná",
+            "successDescription": "Čoskoro potvrdíme vašu rezerváciu.",
+            "errorTitle": "Odoslanie Zlyhalo",
+            "error": "Nepodarilo sa odoslať vašu rezerváciu."
         }
     },
     "Common": {

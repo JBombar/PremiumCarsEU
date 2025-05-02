@@ -2,16 +2,16 @@
     "HomePage": {
         "hero": {
             "title": "Znajdź Swój Idealny Samochód",
-            "subtitle": "Twoje ekskluzywne miejsce na nowe i używane pojazdy",
-            "browseButton": "Przeglądaj Ofertę",
-            "contactButton": "Skontaktuj się z Nami",
+            "subtitle": "Twoje ekskluzywne miejsce docelowe dla nowych i używanych pojazdów",
+            "browseButton": "Przeglądaj ofertę",
+            "contactButton": "Skontaktuj się z nami",
             "imageAlt": "Luksusowy Czarny Samochód"
         },
         "testimonials": {
             "title": "Co Mówią Klienci",
             "trustpilot": {
                 "title": "Opinie TrustPilot",
-                "quote": "Zespół pomógł mi znaleźć idealny samochód dla mojej rodziny. Ich obsługa była profesjonalna i sprawiła, że proces był bezstresowy.",
+                "quote": "Zespół pomógł mi znaleźć idealny samochód dla mojej rodziny. Ich obsługa była profesjonalna i sprawiła, że proces przebiegł bezstresowo.",
                 "author": "- Michael Weber"
             },
             "google": {
@@ -21,7 +21,7 @@
             }
         },
         "stats": {
-            "title": "Zaufały nam tysiące",
+            "title": "Zaufany przez Tysiące",
             "carsSoldLabel": "Sprzedane Samochody",
             "averageRatingLabel": "Średnia Ocena",
             "locationsLabel": "Lokalizacje w Szwajcarii"
@@ -29,11 +29,11 @@
     },
     "Navbar": {
         "links": {
-            "home": "Strona Główna",
-            "requestCar": "Zamów Samochód",
-            "sellCar": "Sprzedaj Samochód",
-            "searchCars": "Szukaj Samochodów",
-            "aboutUs": "O Nas",
+            "home": "Strona główna",
+            "requestCar": "Zamów samochód",
+            "sellCar": "Sprzedaj samochód",
+            "searchCars": "Szukaj samochodów",
+            "aboutUs": "O nas",
             "contact": "Kontakt"
         },
         "mobileMenu": {
@@ -46,27 +46,27 @@
     },
     "Footer": {
         "brand": {
-            "slogan": "Nowoczesne Strony Dealerów Samochodowych, Uproszczone.",
+            "slogan": "Innowacyjne Rozwiązania dla Międzynarodowego Handlu Samochodami",
             "copyright": "© {year} PremiumCarsEU. Wszelkie prawa zastrzeżone."
         },
         "quickLinks": {
-            "title": "Szybkie Linki",
+            "title": "Szybkie linki",
             "search": "Szukaj",
-            "newCars": "Nowe Samochody",
-            "preowned": "Używane"
+            "newCars": "Nowe samochody",
+            "preowned": "Używane samochody"
         },
         "supportLegal": {
-            "title": "Wsparcie i Prawo",
-            "privacyPolicy": "Polityka Prywatności",
-            "terms": "Warunki Świadczenia Usług",
+            "title": "Wsparcie i prawne",
+            "privacyPolicy": "Polityka prywatności",
+            "terms": "Warunki świadczenia usług",
             "faq": "FAQ",
-            "customerSupport": "Obsługa Klienta"
+            "customerSupport": "Obsługa klienta"
         },
         "contactUs": {
-            "title": "Skontaktuj się z Nami"
+            "title": "Skontaktuj się z nami"
         },
         "followUs": {
-            "title": "Obserwuj Nas",
+            "title": "Obserwuj nas",
             "socialAriaLabels": {
                 "facebook": "Facebook",
                 "instagram": "Instagram",
@@ -76,22 +76,22 @@
         }
     },
     "BrowseByType": {
-        "title": "Przeglądaj Według Typu",
+        "title": "Przeglądaj według typu",
         "types": {
             "suv": "SUV",
             "sedan": "Sedan",
             "hatchback": "Hatchback",
             "electric": "Elektryczny",
             "convertible": "Kabriolet",
-            "hybrid": "Hybryda",
+            "hybrid": "Hybrydowy",
             "coupe": "Coupe",
             "van": "Van"
         }
     },
     "CredibilitySection": {
         "widgets": {
-            "trustpilotPlaceholder": "Widget Opinii TrustPilot",
-            "googlePlaceholder": "Widget Opinii Google"
+            "trustpilotPlaceholder": "Widget Opinie TrustPilot",
+            "googlePlaceholder": "Widget Opinie Google"
         },
         "carousel": {
             "ariaLabel": "Zobacz opinię {index}"
@@ -100,7 +100,7 @@
             {
                 "id": 1,
                 "name": "Thomas Weber",
-                "quote": "PremiumCarsEU pomogło mi znaleźć idealny samochód dla mojej rodziny. Ich zespół był profesjonalny i sprawił, że proces był bezstresowy."
+                "quote": "PremiumCarsEU pomogło mi znaleźć idealny samochód dla mojej rodziny. Ich zespół był profesjonalny i sprawił, że proces przebiegł bezstresowo."
             },
             {
                 "id": 2,
@@ -110,20 +110,20 @@
             {
                 "id": 3,
                 "name": "Daniel Meier",
-                "quote": "Zespół w PremiumCarsEU zrobił wszystko, aby pomóc mi znaleźć samochód w moim budżecie. Gorąco polecam!"
+                "quote": "Zespół w PremiumCarsEU zrobił wszystko, co w ich mocy, aby pomóc mi znaleźć samochód w moim budżecie. Gorąco polecam!"
             }
         ]
     },
     "WhyChooseUs": {
-        "title": "Dlaczego Wybrać Nas",
+        "title": "Dlaczego My",
         "features": {
             "quality": {
                 "title": "Certyfikowana Jakość",
-                "description": "Wszystkie nasze samochody przechodzą 150-punktową kontrolę, aby zapewnić bezpieczeństwo i wydajność."
+                "description": "Wszystkie nasze samochody przechodzą 150-punktową inspekcję, aby zapewnić bezpieczeństwo i wydajność."
             },
             "process": {
                 "title": "Szybki i Łatwy Proces",
-                "description": "Uzyskaj zatwierdzenie i wyjedź w mniej niż 24 godziny dzięki naszemu usprawnionemu procesowi."
+                "description": "Uzyskaj zgodę i wyjedź w mniej niż 24 godziny dzięki naszemu usprawnionemu procesowi."
             },
             "customer": {
                 "title": "Klient na Pierwszym Miejscu",
@@ -134,7 +134,7 @@
     "SpecialOfferCarousel": {
         "title": "Oferty Specjalne",
         "loadingError": "Nie udało się załadować ofert specjalnych",
-        "emptyState": "Obecnie brak dostępnych ofert specjalnych.",
+        "emptyState": "Brak dostępnych ofert specjalnych w tej chwili.",
         "defaultOfferLabel": "🔥 Oferta Specjalna",
         "imageAlt": "{carTitle}",
         "kmUnit": "km",
@@ -156,22 +156,22 @@
             },
             "financing": {
                 "title": "Elastyczne Finansowanie",
-                "description": "Współpracujemy z wiodącymi instytucjami finansowymi, aby uzyskać najlepsze stawki."
+                "description": "Współpracujemy z wiodącymi instytucjami finansowymi, aby zapewnić Ci najlepsze stawki."
             }
         }
     },
     "CTASection": {
-        "title": "Gotowy Prowadzić Swój Wymarzony Samochód?",
-        "subtitle": "Skontaktuj się z nami już dziś, a pomożemy Ci znaleźć idealną jazdę."
+        "title": "Gotowy, by Prowadzić Samochód Marzeń?",
+        "subtitle": "Skontaktuj się z nami już dziś i pozwól nam pomóc Ci znaleźć idealny pojazd."
     },
     "RequestCarForm": {
         "section": {
-            "title": "Nie Możesz Znaleźć Tego, Czego Szukasz?",
+            "title": "Nie możesz znaleźć tego, czego szukasz?",
             "subtitle": "Pomóż nam znaleźć Twój idealny samochód za pośrednictwem naszej sieci dealerów, informując nas o swoich preferencjach."
         },
         "card": {
             "title": "Zamów Samochód",
-            "description": "Wypełnij poniższy formularz swoimi preferencjami dotyczącymi pojazdu, a nasi specjaliści wkrótce się z Tobą skontaktują."
+            "description": "Wypełnij poniższy formularz preferencjami dotyczącymi pojazdu, a nasi specjaliści skontaktują się z Tobą wkrótce."
         },
         "subheadings": {
             "contactInfo": "Informacje Kontaktowe",
@@ -184,8 +184,8 @@
             "email": "Adres Email",
             "phone": "Numer Telefonu",
             "location": "Lokalizacja / Region",
-            "make": "Preferowana Marka Samochodu",
-            "model": "Preferowany Model Samochodu",
+            "make": "Pożądana Marka Samochodu",
+            "model": "Pożądany Model Samochodu",
             "yearFrom": "Rocznik (Od)",
             "yearTo": "Rocznik (Do)",
             "budget": "Preferowany Budżet",
@@ -199,13 +199,13 @@
         "placeholders": {
             "fullName": "Jan Kowalski",
             "email": "jan@przyklad.com",
-            "phone": "+48 123 456 789",
+            "phone": "(123) 456-789",
             "location": "Miasto, Województwo lub Kod Pocztowy",
             "make": "BMW, Toyota, itp.",
             "model": "X5, Camry, itp.",
             "yearFrom": "Od Roku",
             "yearTo": "Do Roku",
-            "budget": "150 000 PLN",
+            "budget": "100 000 zł",
             "color": "Czarny, Srebrny, itp.",
             "transmission": "Wybierz skrzynię biegów",
             "fuelType": "Wybierz typ paliwa",
@@ -215,15 +215,15 @@
         "options": {
             "conditionNew": "Nowy",
             "conditionPreowned": "Używany",
-            "conditionEither": "Dowolny",
+            "conditionEither": "Obojętnie",
             "transmissionAutomatic": "Automatyczna",
             "transmissionManual": "Manualna",
-            "transmissionAny": "Bez znaczenia",
+            "transmissionAny": "Obojętnie",
             "fuelGasoline": "Benzyna",
             "fuelDiesel": "Diesel",
-            "fuelHybrid": "Hybryda",
+            "fuelHybrid": "Hybrydowy",
             "fuelElectric": "Elektryczny",
-            "fuelAny": "Bez znaczenia"
+            "fuelAny": "Obojętnie"
         },
         "buttons": {
             "submit": "Wyślij Zapytanie",
@@ -232,20 +232,20 @@
         },
         "success": {
             "title": "Zapytanie Wysłane!",
-            "description": "Dziękujemy za Twoje zapytanie o samochód. Nasz zespół przeanalizuje Twoje preferencje i wkrótce się z Tobą skontaktuje.",
+            "description": "Dziękujemy za zapytanie o samochód. Nasz zespół przeanalizuje Twoje preferencje i wkrótce się z Tobą skontaktuje.",
             "confirmation": "Wkrótce skontaktujemy się z Tobą pod adresem {email}."
         },
         "error": {
             "prefix": "Nie udało się zapisać Twojego zapytania: ",
-            "fallback": "Wystąpił błąd podczas wysyłania zapytania. Proszę spróbować ponownie."
+            "fallback": "Wystąpił błąd podczas wysyłania zapytania. Spróbuj ponownie."
         }
     },
     "MostSearchedCars": {
         "title": "Najczęściej Wyszukiwane Samochody",
         "loading": "Ładowanie popularnych pojazdów...",
-        "error": "Nie udało się załadować popularnych samochodów. Proszę spróbować ponownie później.",
+        "error": "Nie udało się załadować popularnych samochodów. Spróbuj ponownie później.",
         "errorPrefix": "Nie udało się pobrać samochodów: ",
-        "empty": "Obecnie nie znaleziono popularnych pojazdów.",
+        "empty": "Brak popularnych pojazdów w tej chwili.",
         "card": {
             "badgeNew": "Nowy",
             "badgeSold": "Sprzedany",
@@ -255,7 +255,7 @@
         },
         "fuelTypes": {
             "Electric": "Elektryczny",
-            "Hybrid": "Hybryda",
+            "Hybrid": "Hybrydowy",
             "Diesel": "Diesel",
             "Gasoline": "Benzyna",
             "Unknown": "Nieznany"
@@ -271,13 +271,14 @@
     "AboutPage": {
         "hero": {
             "title": "Napędzani Doskonałością",
-            "subtitle": "Dowiedz się, kim jesteśmy i co napędza naszą misję."
+            "subtitle": "Dowiedz się, kim jesteśmy i co napędza naszą misję.",
+            "imageAlt": "Ciemny samochód premium jadący drogą"
         },
         "story": {
             "title": "Nasza Historia",
-            "paragraph1": "Z ponad 15-letnim doświadczeniem na rynku pojazdów premium, nasza ekspertyza obejmuje sprzedaż, pośrednictwo, import i eksport wyjątkowych samochodów premium i sportowych. Wykorzystujemy naszą głęboką wiedzę branżową, aby łączyć wymagających klientów z niezwykłymi pojazdami.",
-            "paragraph2": "Oferowane przez nas pojazdy są starannie pozyskiwane poprzez sieć zaufanych klientów i partnerów biznesowych, relacje budowane przez lata i oparte na wzajemnym zaufaniu. Głównie oferujemy nowe pojazdy, a wszelkie samochody używane przechodzą rygorystyczną weryfikację i zawsze posiadają pełną historię serwisową.",
-            "paragraph3": "Nasze bogate doświadczenie i solidna sieć partnerów pozwalają nam wykraczać poza standardy. Specjalizujemy się w pozyskiwaniu konkretnych pojazdów na żądanie, w tym modeli trudno dostępnych, edycji limitowanych, a nawet w zabezpieczaniu korzystnych kwot produkcyjnych dla nowych pojazdów różnych prestiżowych marek.",
+            "paragraph1": "Z ponad 15-letnim doświadczeniem na rynku pojazdów premium, nasza ekspertyza obejmuje sprzedaż, pośrednictwo, import i eksport wyjątkowych samochodów premium i sportowych. Wykorzystujemy naszą głęboką wiedzę branżową, aby łączyć wymagających klientów z niezwykłymi samochodami.",
+            "paragraph2": "Oferowane przez nas pojazdy są starannie pozyskiwane za pośrednictwem sieci zaufanych klientów i partnerów biznesowych – relacji pielęgnowanych przez lata i opartych na wzajemnym zaufaniu. Oferujemy głównie nowe pojazdy, a wszystkie używane samochody przechodzą rygorystyczną weryfikację, zawsze z pełną historią serwisową.",
+            "paragraph3": "Nasze bogate doświadczenie i solidna sieć partnerów pozwalają nam wykraczać poza konwencjonalne ramy. Specjalizujemy się w pozyskiwaniu konkretnych pojazdów na żądanie, w tym trudno dostępnych modeli, edycji limitowanych, a nawet w zabezpieczaniu korzystnych kwot produkcyjnych dla nowych pojazdów różnych prestiżowych marek.",
             "imageAlt": "Salon i zespół PremiumCarsEU"
         },
         "values": {
@@ -288,19 +289,19 @@
             },
             "transparency": {
                 "title": "Przejrzystość",
-                "description": "Wierzymy w jasną komunikację, uczciwe ceny i dostarczanie pełnych informacji o pojeździe bez ukrytych niespodzianek."
+                "description": "Wierzymy w jasną komunikację, uczciwe ceny i dostarczanie pełnych informacji o pojazdach bez ukrytych niespodzianek."
             },
             "innovation": {
                 "title": "Innowacja",
-                "description": "Ciągle wdrażamy nowe technologie i podejścia, aby poprawić doświadczenie zakupu i sprzedaży samochodu."
+                "description": "Ciągle wdrażamy nowe technologie i podejścia, aby poprawić doświadczenie kupna i sprzedaży samochodów."
             },
             "customerFirst": {
                 "title": "Klient na Pierwszym Miejscu",
-                "description": "Każda podejmowana przez nas decyzja stawia na pierwszym miejscu potrzeby, preferencje i satysfakcję naszych klientów."
+                "description": "Każda podejmowana przez nas decyzja priorytetowo traktuje potrzeby, preferencje i satysfakcję naszych klientów ponad wszystko inne."
             }
         },
         "team": {
-            "title": "Poznaj Zespół",
+            "title": "Poznaj Założyciela",
             "member1": {
                 "imageAlt": "Marco Varga",
                 "name": "Marco Varga",
@@ -327,7 +328,7 @@
     },
     "ContactPage": {
         "hero": {
-            "title": "Skontaktuj się z Nami",
+            "title": "Skontaktuj się z nami",
             "subtitle": "Chętnie Cię wysłuchamy. Wypełnij formularz, a nasz zespół wkrótce się z Tobą skontaktuje."
         },
         "formCard": {
@@ -343,7 +344,7 @@
         },
         "placeholders": {
             "fullName": "Wpisz swoje imię i nazwisko",
-            "email": "twoj@przyklad.com",
+            "email": "ty@przyklad.com",
             "phone": "Wpisz swój numer telefonu",
             "subject": "Wybierz temat",
             "message": "Napisz swoją wiadomość tutaj..."
@@ -357,8 +358,8 @@
         "validation": {
             "nameRequired": "Imię i nazwisko jest wymagane",
             "emailRequired": "Email jest wymagany",
-            "emailInvalid": "Proszę podać prawidłowy adres email",
-            "subjectRequired": "Proszę wybrać temat",
+            "emailInvalid": "Wprowadź prawidłowy adres email",
+            "subjectRequired": "Wybierz temat",
             "messageRequired": "Wiadomość jest wymagana"
         },
         "buttons": {
@@ -371,17 +372,17 @@
             "addressTitle": "Adres",
             "phoneTitle": "Telefon",
             "emailTitle": "Email",
-            "hoursTitle": "Godziny Pracy",
+            "hoursTitle": "Godziny Otwarcia",
             "connectTitle": "Połącz się z nami",
-            "addressLine1": "Główne Biuro — Zurych, Szwajcaria",
-            "addressLine2": "Bahnhofstrasse 42, 8001 Zurych",
+            "addressLine1": "Główne Biuro — Vlčie Hrdlo 1037, 82107 Bratislava II - Ružinov",
+            "addressLine2": "Biuro w Szwajcarii — Am Stausee 23, 4127 Birsfelden",
             "hoursLine1": "Poniedziałek - Piątek: 9:00 – 18:00",
             "hoursLine2": "Sobota: 10:00 – 16:00",
             "hoursLine3": "Niedziela: Zamknięte"
         },
         "success": {
             "title": "Wiadomość Wysłana Pomyślnie!",
-            "description": "Dziękujemy za skontaktowanie się z nami. Otrzymaliśmy Twoją wiadomość i wkrótce się odezwiemy.",
+            "description": "Dziękujemy za skontaktowanie się z nami. Otrzymaliśmy Twoją wiadomość i wkrótce się z Tobą skontaktujemy.",
             "heading": "Wkrótce Się Skontaktujemy",
             "confirmation": "Nasz zespół zazwyczaj odpowiada w ciągu 24-48 godzin w dni robocze.",
             "button": "Wyślij Kolejną Wiadomość"
@@ -390,13 +391,13 @@
     "SellPage": {
         "hero": {
             "title": "Sprzedaj Swój Samochód z Pewnością",
-            "subtitle": "Uzyskaj uczciwą cenę i bezproblemowe doświadczenie, sprzedając swój samochód przez PremiumCarsEU. Bez pośredników, bez ukrytych opłat - tylko prosta obsługa."
+            "subtitle": "Uzyskaj uczciwą cenę i bezproblemowe doświadczenie, sprzedając swój samochód za pośrednictwem PremiumCarsEU. Bez pośredników, bez ukrytych opłat - tylko prosta obsługa."
         },
         "benefits": {
             "title": "Dlaczego Sprzedawać z Nami?",
             "pricing": {
                 "title": "Konkurencyjne Ceny",
-                "description": "Oferujemy uczciwą wartość rynkową Twojego pojazdu w oparciu o jego stan, historię i aktualne trendy rynkowe."
+                "description": "Oferujemy uczciwą wartość rynkową Twojego pojazdu na podstawie jego stanu, historii i aktualnych trendów rynkowych."
             },
             "process": {
                 "title": "Bezproblemowy Proces",
@@ -404,23 +405,23 @@
             },
             "service": {
                 "title": "Zaufana Obsługa",
-                "description": "Dzięki ponad 10-letniemu doświadczeniu w branży, nasza reputacja w zakresie przejrzystości i zadowolenia klientów mówi sama za siebie."
+                "description": "Dzięki ponad 10-letniemu doświadczeniu w branży, nasza reputacja oparta na przejrzystości i satysfakcji klienta mówi sama za siebie."
             }
         },
         "trustIndicator": {
-            "title": "Zaufało nam ponad 2 300 kierowców",
+            "title": "Zaufany przez ponad 2300 kierowców",
             "description": "Dołącz do tysięcy zadowolonych klientów, którzy pomyślnie sprzedali swoje pojazdy za pośrednictwem naszej platformy."
         }
     },
     "CarSellForm": {
         "card": {
             "title": "Sprzedaj Swój Samochód",
-            "description": "Wypełnij poniższy formularz danymi swojego samochodu. Nasz zespół przeanalizuje je i skontaktuje się z Tobą w ciągu 24-48 godzin."
+            "description": "Wypełnij poniższy formularz szczegółami swojego samochodu. Nasz zespół przeanalizuje je i skontaktuje się z Tobą w ciągu 24-48 godzin."
         },
         "sections": {
-            "ownerInfo": "Informacje o Właścicielu",
+            "ownerInfo": "Informacje Właściciela",
             "carInfo": "Informacje o Samochodzie",
-            "pricingMedia": "Ceny i Multimedia",
+            "pricingMedia": "Cena i Multimedia",
             "additionalInfo": "Dodatkowe Informacje"
         },
         "labels": {
@@ -429,7 +430,7 @@
             "phone": "Numer Telefonu",
             "make": "Marka Samochodu",
             "model": "Model Samochodu",
-            "year": "Rok",
+            "year": "Rocznik",
             "mileage": "Przebieg",
             "fuelType": "Typ Paliwa",
             "transmission": "Skrzynia Biegów",
@@ -442,7 +443,7 @@
         "placeholders": {
             "fullName": "Jan Kowalski",
             "email": "twoj@email.com",
-            "phone": "+48 123 456 789",
+            "phone": "(123) 456-789",
             "make": "np. Toyota",
             "model": "np. Camry",
             "year": "np. 2019",
@@ -450,22 +451,22 @@
             "fuelType": "Wybierz typ paliwa",
             "transmission": "Wybierz skrzynię biegów",
             "city": "np. Warszawa",
-            "askingPrice": "np. 120000",
-            "description": "Proszę podać dodatkowe szczegóły dotyczące samochodu..."
+            "askingPrice": "np. 80000",
+            "description": "Podaj dodatkowe szczegóły dotyczące Twojego samochodu..."
         },
         "options": {
             "fuelGasoline": "Benzyna",
             "fuelDiesel": "Diesel",
             "fuelElectric": "Elektryczny",
-            "fuelHybrid": "Hybryda",
+            "fuelHybrid": "Hybrydowy",
             "transmissionManual": "Manualna",
             "transmissionAutomatic": "Automatyczna",
             "conditionNew": "Nowy",
             "conditionUsed": "Używany"
         },
         "descriptions": {
-            "askingPrice": "Zostaw puste, jeśli chcesz, abyśmy przedstawili wycenę rynkową.",
-            "filesSelected": "Wybrano {count} plik(ów):",
+            "askingPrice": "Pozostaw puste, jeśli chcesz, abyśmy przedstawili wycenę rynkową.",
+            "filesSelected": "Wybrano plików: {count}",
             "fileTypes": "PNG, JPG, GIF, HEIC do 10MB każdy"
         },
         "fileUpload": {
@@ -479,8 +480,8 @@
             "phoneRequired": "Telefon jest wymagany",
             "makeRequired": "Marka jest wymagana",
             "modelRequired": "Model jest wymagany",
-            "yearRequired": "Rok jest wymagany",
-            "yearInvalid": "Nieprawidłowy format roku",
+            "yearRequired": "Rocznik jest wymagany",
+            "yearInvalid": "Nieprawidłowy format rocznika",
             "mileageRequired": "Przebieg jest wymagany",
             "mileageInvalid": "Przebieg musi być liczbą",
             "fuelTypeRequired": "Typ paliwa jest wymagany",
@@ -491,20 +492,20 @@
         },
         "buttons": {
             "submit": "Prześlij Samochód do Weryfikacji",
-            "submitting": "Przesyłanie...",
+            "submitting": "Wysyłanie...",
             "submitAnother": "Prześlij Kolejny Samochód"
         },
         "success": {
             "title": "Zgłoszenie Otrzymane!",
-            "description": "Dziękujemy! Sprawdzimy szczegóły Twojego samochodu i wkrótce się odezwiemy.",
+            "description": "Dziękujemy! Przeanalizujemy szczegóły Twojego samochodu i wkrótce się z Tobą skontaktujemy.",
             "heading": "Szczegóły Przesłane",
             "confirmation": "Skontaktujemy się z Tobą pod adresem {email}."
         },
         "error": {
-            "submitFallback": "Wystąpił błąd podczas przesyłania informacji. Proszę spróbować ponownie.",
+            "submitFallback": "Wystąpił błąd podczas wysyłania informacji. Spróbuj ponownie.",
             "updatePhotoUrlError": "Zdjęcia przesłane, ale nie udało się zapisać adresów URL: {message}",
             "updatePhotoUrlException": "Zdjęcia przesłane, ale wystąpił błąd podczas zapisywania adresów URL",
-            "noPhotosUploaded": "Nie przesłano pomyślnie żadnych zdjęć"
+            "noPhotosUploaded": "Żadne zdjęcia nie zostały pomyślnie przesłane"
         }
     },
     "InventoryPage": {
@@ -523,12 +524,12 @@
         },
         "aiSearch": {
             "title": "Czego szukasz?",
-            "placeholder": "np. Weekendowe coupe poniżej 200 tys.",
+            "placeholder": "np. Coupe na weekend poniżej 200 tys.",
             "buttonIdle": "Szukaj",
             "buttonLoading": "Szukanie...",
-            "errorPrefix": "Nie udało się przetworzyć Twojego wyszukiwania",
-            "errorCouldNotUnderstand": "Nie mogliśmy zrozumieć Twojego wyszukiwania. Proszę spróbować ponownie, używając innych słów.",
-            "toastTitle": "Wyszukiwanie przetworzone",
+            "errorPrefix": "Nie udało się przetworzyć Twojego zapytania",
+            "errorCouldNotUnderstand": "Nie udało się zrozumieć Twojego zapytania. Spróbuj użyć innych słów.",
+            "toastTitle": "Zapytanie przetworzone",
             "toastDescSuccess": "Znaleziono dokładnie to, czego szukasz!",
             "toastDescPotential": "Znaleziono potencjalne dopasowania. W razie potrzeby możesz dostosować filtry."
         },
@@ -536,18 +537,19 @@
             "makeLabel": "Marka",
             "modelLabel": "Model",
             "bodyTypeLabel": "Typ Nadwozia",
-            "priceLabel": "Zakres Cenowy",
-            "yearLabel": "Zakres Roczników",
-            "mileageLabel": "Zakres Przebiegu",
+            "priceLabel": "Przedział Cenowy",
+            "yearLabel": "Przedział Roczników",
+            "mileageLabel": "Przedział Przebiegu",
             "fuelTypeLabel": "Typ Paliwa",
             "transmissionLabel": "Skrzynia Biegów",
             "conditionLabel": "Stan",
             "minLabel": "Min",
-            "maxLabel": "Maks",
+            "maxLabel": "Max",
             "fromLabel": "Od",
             "toLabel": "Do",
-            "exteriorColorLabel": "Kolor zewnętrzny",
-            "interiorColorLabel": "Kolor wewnętrzny",
+            "exteriorColorLabel": "Kolor Zewnętrzny",
+            "interiorColorLabel": "Kolor Wewnętrzny",
+            "colorPlaceholder": "Wybierz Kolor",
             "makePlaceholderLoading": "Ładowanie marek...",
             "makePlaceholder": "Wybierz markę",
             "modelPlaceholderLoading": "Ładowanie modeli...",
@@ -559,12 +561,12 @@
             "fuelTypePlaceholder": "Wybierz typ paliwa",
             "transmissionPlaceholder": "Wybierz skrzynię biegów",
             "conditionPlaceholder": "Wybierz stan",
-            "priceMinPlaceholder": "Min Cena",
-            "priceMaxPlaceholder": "Maks Cena",
-            "yearMinPlaceholder": "Od Roku",
-            "yearMaxPlaceholder": "Do Roku",
-            "mileageMinPlaceholder": "Min Przebieg",
-            "mileageMaxPlaceholder": "Maks Przebieg",
+            "priceMinPlaceholder": "Cena Min",
+            "priceMaxPlaceholder": "Cena Max",
+            "yearMinPlaceholder": "Rocznik Od",
+            "yearMaxPlaceholder": "Rocznik Do",
+            "mileageMinPlaceholder": "Przebieg Min",
+            "mileageMaxPlaceholder": "Przebieg Max",
             "applyButton": "Zastosuj Filtry",
             "resetButton": "Resetuj",
             "showAdvancedButton": "Pokaż Zaawansowane",
@@ -572,7 +574,7 @@
             "backButton": "Wróć do Filtrów",
             "optionAny": "Dowolny",
             "colors": {
-                "anthracite": "Antracytowy",
+                "anthracite": "Antracyt",
                 "beige": "Beżowy",
                 "blue": "Niebieski",
                 "bordeaux": "Bordowy",
@@ -601,21 +603,21 @@
             "displacementUnit": "cm³",
             "cylindersLabel": "Cylindry",
             "minLabel": "Min",
-            "maxLabel": "Maks"
+            "maxLabel": "Max"
         },
         "results": {
             "count": "Wyświetlanie {count} pojazdów",
-            "notFoundTitle": "Nie znaleźliśmy żadnych samochodów pasujących do Twojego wyszukiwania. Możesz nam dokładnie powiedzieć, czego szukasz, a nasz salon znajdzie dla Ciebie pasujący pojazd.",
+            "notFoundTitle": "Nie znaleźliśmy żadnych samochodów pasujących do Twojego wyszukiwania. Możesz nam dokładnie powiedzieć, czego szukasz, a nasza firma znajdzie dla Ciebie pasujący pojazd.",
             "sortByLabel": "Sortuj według:",
             "sortPlaceholder": "Sortuj według",
-            "emptyTitle": "Nie znaleziono pojazdów pasujących do Twoich kryteriów.",
+            "emptyTitle": "Nie znaleziono pojazdów spełniających Twoje kryteria.",
             "resetFiltersButton": "Resetuj Filtry"
         },
         "sortOptions": {
             "price-asc": "Cena: Rosnąco",
             "price-desc": "Cena: Malejąco",
-            "year-desc": "Rok: Najnowsze",
-            "year-asc": "Rok: Najstarsze",
+            "year-desc": "Rocznik: Najnowsze",
+            "year-asc": "Rocznik: Najstarsze",
             "mileage-asc": "Przebieg: Rosnąco",
             "mileage-desc": "Przebieg: Malejąco",
             "created_at-desc": "Najnowsze Ogłoszenia"
@@ -623,7 +625,7 @@
         "card": {
             "imageAlt": "{make} {model} - widok {index}",
             "imageAltFallback": "Zdjęcie samochodu",
-            "noImage": "Brak zdjęcia",
+            "noImage": "Brak dostępnego zdjęcia",
             "prevImageLabel": "Poprzednie zdjęcie",
             "nextImageLabel": "Następne zdjęcie",
             "priceNA": "Brak danych",
@@ -643,7 +645,7 @@
             "compareAddedTitle": "Dodano do porównania",
             "compareAddedDesc": "{make} {model} dodano do listy porównawczej.",
             "errorTitle": "Błąd",
-            "errorViewDetails": "Nie można wyświetlić szczegółów: Brakuje ID samochodu."
+            "errorViewDetails": "Nie można wyświetlić szczegółów: Brak ID samochodu."
         },
         "bodyTypes": {
             "Any": "Dowolny",
@@ -653,14 +655,14 @@
             "Convertible": "Kabriolet",
             "Hatchback": "Hatchback",
             "Wagon": "Kombi",
-            "Truck": "Pickup",
+            "Truck": "Ciężarówka",
             "Van": "Van"
         },
         "fuelTypes": {
             "Any": "Dowolny",
             "Gasoline": "Benzyna",
             "Diesel": "Diesel",
-            "Hybrid": "Hybryda",
+            "Hybrid": "Hybrydowy",
             "Electric": "Elektryczny"
         },
         "transmissions": {
@@ -677,7 +679,7 @@
         }
     },
     "CarListingPage": {
-        "backToInventory": "Powrót do oferty",
+        "backToInventory": "Wróć do oferty",
         "carIdLabel": "ID:",
         "tabs": {
             "overview": "Przegląd",
@@ -686,7 +688,7 @@
         },
         "overview": {
             "descriptionTitle": "Opis",
-            "noDescription": "Brak opisu dla tego pojazdu.",
+            "noDescription": "Brak dostępnego opisu dla tego pojazdu.",
             "locationTitle": "Lokalizacja",
             "noLocation": "Lokalizacja nieokreślona"
         },
@@ -694,7 +696,7 @@
             "title": "Specyfikacje",
             "make": "Marka",
             "model": "Model",
-            "year": "Rok",
+            "year": "Rocznik",
             "bodyType": "Typ Nadwozia",
             "fuelType": "Typ Paliwa",
             "transmission": "Skrzynia Biegów",
@@ -708,18 +710,18 @@
         },
         "features": {
             "title": "Wyposażenie i Opcje",
-            "noFeatures": "Brak listy wyposażenia dla tego pojazdu."
+            "noFeatures": "Brak wymienionego wyposażenia dla tego pojazdu."
         },
         "pricing": {
-            "contactForPrice": "Cena na zapytanie",
+            "contactForPrice": "Skontaktuj się w sprawie ceny",
             "dailyRentalLabel": "Wynajem Dzienny",
             "perDaySuffix": "/dzień"
         },
         "quickFacts": {
-            "year": "Rok",
+            "year": "Rocznik",
             "mileage": "Przebieg",
             "fuel": "Paliwo",
-            "transmission": "Skrzynia",
+            "transmission": "Skrzynia Biegów",
             "notAvailable": "-",
             "unitMiles": "km"
         },
@@ -730,22 +732,49 @@
             "fallbackInitial": "D",
             "fallbackYear": "2022"
         },
+        "buttons": {
+            "viewRentalInfo": "Zobacz Informacje o Wynajmie"
+        },
         "imageGallery": {
             "imageAlt": "{year} {make} {model} - Zdjęcie {index}",
             "imageAltFallback": "Zdjęcie samochodu {index}",
             "conditionBadgeNew": "Nowy",
             "conditionBadgeUsed": "Używany",
             "listingTypeBadgeSale": "Na Sprzedaż",
-            "listingTypeBadgeRent": "Na Wynajem"
+            "listingTypeBadgeRent": "Do Wynajęcia"
         },
         "conditionValues": {
             "new": "Nowy",
             "used": "Używany"
+        },
+        "rental": {
+            "rentalAvailable": "Do Wynajęcia",
+            "viewSaleDetails": "Zobacz Szczegóły Sprzedaży",
+            "viewFullDetails": "Zobacz Pełne Szczegóły",
+            "termsTitle": "Warunki Wynajmu",
+            "dailyRateLabel": "Stawka Dzienna",
+            "depositLabel": "Kaucja",
+            "securityDepositLabel": "Kaucja Zabezpieczająca",
+            "noDeposit": "Brak Wymaganej Kaucji",
+            "minDaysLabel": "Minimalna Liczba Dni",
+            "maxDaysLabel": "Maksymalna Liczba Dni",
+            "rentalDurationLabel": "Okres Wynajmu",
+            "perDayLabel": "Za Dzień",
+            "depositQuickLabel": "Kaucja",
+            "days": "dni",
+            "minDays": "Co najmniej {days} dni",
+            "maxDays": "Do {days} dni",
+            "flexible": "Elastyczny",
+            "hourlyOptions": "Opcje Godzinowe",
+            "hours": "godziny",
+            "securityDepositNo": "Brak Wymaganej Kaucji",
+            "policyTitle": "Polityka Wynajmu",
+            "securityDeposit": "Wymagana Kaucja"
         }
     },
     "ContactFormModal": {
-        "triggerButton": "Kontakt ze Sprzedawcą",
-        "title": "Kontakt ze Sprzedawcą",
+        "triggerButton": "Skontaktuj się ze Sprzedawcą",
+        "title": "Skontaktuj się ze Sprzedawcą",
         "description": "Wypełnij ten formularz, aby zapytać o {carName}. Sprzedawca wkrótce się z Tobą skontaktuje.",
         "labels": {
             "name": "Twoje Imię",
@@ -765,12 +794,12 @@
             "submit": "Wyślij Wiadomość",
             "submitting": "Wysyłanie..."
         },
-        "defaultMessage": "Jestem zainteresowany {carName}. Proszę o kontakt w celu uzyskania więcej informacji.",
+        "defaultMessage": "Jestem zainteresowany/a {carName}. Proszę o kontakt w celu uzyskania dodatkowych informacji.",
         "toast": {
             "successTitle": "Wiadomość Wysłana!",
-            "successDescription": "Dziękujemy! Wkrótce skontaktujemy się przez WhatsApp.",
+            "successDescription": "Dziękujemy! Wkrótce skontaktujemy się z Tobą przez WhatsApp.",
             "errorTitle": "Błąd",
-            "errorDescription": "Wystąpił problem z wysłaniem wiadomości. Proszę spróbować ponownie."
+            "errorDescription": "Wystąpił problem podczas wysyłania wiadomości. Spróbuj ponownie."
         }
     },
     "ReservationModal": {
@@ -785,25 +814,26 @@
         "placeholders": {
             "name": "Wpisz swoje imię i nazwisko",
             "email": "Wpisz swój adres email",
-            "phone": "Wpisz swój numer telefonu"
+            "phone": "Wpisz swój numer telefonu",
+            "selectDuration": "Wybierz Okres"
         },
         "validation": {
             "nameMin": "Imię i nazwisko musi mieć co najmniej 2 znaki.",
-            "emailInvalid": "Proszę podać prawidłowy adres email.",
-            "phoneMin": "Proszę podać prawidłowy numer telefonu."
+            "emailInvalid": "Wprowadź prawidłowy adres email.",
+            "phoneMin": "Wprowadź prawidłowy numer telefonu."
         },
-        "reservingVehicle": "Rezerwacja: {carName}",
+        "reservingVehicle": "Rezerwacja dla: {carName}",
         "termsNotice": "Wysyłając ten formularz, zgadzasz się na nasze warunki i zasady rezerwacji.",
         "buttons": {
             "cancel": "Anuluj",
             "submit": "Zarezerwuj Pojazd",
-            "submitting": "Przesyłanie..."
+            "submitting": "Wysyłanie..."
         },
         "toast": {
-            "successTitle": "Rezerwacja Przesłana",
+            "successTitle": "Rezerwacja Wysłana",
             "successDescription": "Otrzymaliśmy Twoją rezerwację na {carName}. Wkrótce się z Tobą skontaktujemy.",
             "errorTitle": "Rezerwacja Nieudana",
-            "errorDescription": "Wystąpił problem z przesłaniem rezerwacji. Proszę spróbować ponownie."
+            "errorDescription": "Wystąpił problem podczas wysyłania rezerwacji. Spróbuj ponownie."
         }
     },
     "TestDriveModal": {
@@ -815,31 +845,109 @@
             "email": "Email",
             "phone": "Numer Telefonu",
             "date": "Preferowana Data",
-            "time": "Preferowany Czas"
+            "time": "Preferowana Godzina"
         },
         "placeholders": {
             "fullName": "Jan Kowalski",
-            "email": "twoj@przyklad.com",
-            "phone": "+48 123 456 789",
+            "email": "ty@przyklad.com",
+            "phone": "(123) 456-789",
             "date": "Wybierz datę",
-            "time": "Wybierz czas"
+            "time": "Wybierz godzinę"
         },
         "validation": {
             "nameRequired": "Imię i nazwisko jest wymagane",
             "emailRequired": "Wymagany jest prawidłowy email",
             "phoneRequired": "Wymagany jest prawidłowy numer telefonu",
-            "dateRequired": "Proszę wybrać datę",
-            "timeRequired": "Proszę wybrać czas"
+            "dateRequired": "Wybierz datę",
+            "timeRequired": "Wybierz godzinę"
         },
         "buttons": {
             "submit": "Umów Jazdę Próbną",
-            "submitting": "Przesyłanie..."
+            "submitting": "Wysyłanie..."
         },
         "toast": {
             "successTitle": "Jazda próbna umówiona",
             "successDescription": "Skontaktujemy się z Tobą, aby potwierdzić termin.",
             "errorTitle": "Nie udało się umówić jazdy próbnej",
-            "errorDescription": "Proszę spróbować ponownie później lub skontaktować się z pomocą techniczną."
+            "errorDescription": "Spróbuj ponownie później lub skontaktuj się z pomocą techniczną."
+        }
+    },
+    "ContactRenterModal": {
+        "title": "Skontaktuj się z Wynajmującym",
+        "description": "Wypełnij formularz, aby skontaktować się z wynajmującym w sprawie {carName}.",
+        "labels": {
+            "name": "Twoje Imię",
+            "phone": "Numer Telefonu",
+            "email": "Email (opcjonalnie)",
+            "message": "Wiadomość",
+            "whatsappConsent": "Zgadzam się na kontakt przez WhatsApp"
+        },
+        "placeholders": {
+            "name": "Wpisz swoje imię",
+            "phone": "Wpisz swój numer telefonu",
+            "email": "Twój Email",
+            "message": "Wpisz swoją wiadomość"
+        },
+        "defaultMessage": "Witam, jestem zainteresowany/a wynajmem {carName}. Proszę o przesłanie dodatkowych szczegółów.",
+        "buttons": {
+            "submit": "Wyślij Wiadomość",
+            "submitting": "Wysyłanie...",
+            "cancel": "Anuluj"
+        },
+        "toast": {
+            "successTitle": "Wiadomość Wysłana",
+            "successDescription": "Twoja wiadomość została wysłana do wynajmującego.",
+            "errorTitle": "Coś poszło nie tak",
+            "errorDescription": "Spróbuj ponownie lub skontaktuj się z pomocą techniczną."
+        },
+        "triggerButton": "Skontaktuj się z Wynajmującym"
+    },
+    "RentalReservationModal": {
+        "triggerButton": "Zarezerwuj Ten Pojazd",
+        "title": "Zarezerwuj Ten Samochód",
+        "description": "Wybierz preferowane daty rezerwacji dla {carName}.",
+        "priceLabel": "Cena",
+        "section": {
+            "renterInfo": "Informacje Wynajmującego",
+            "dates": "Daty Wynajmu",
+            "rentalType": "Typ Wynajmu",
+            "documents": "Prześlij Dokumenty",
+            "hourlyRental": "Wynajem Godzinowy"
+        },
+        "labels": {
+            "name": "Imię i Nazwisko",
+            "email": "Adres Email",
+            "phone": "Numer Telefonu",
+            "start_date": "Data Rozpoczęcia",
+            "end_date": "Data Zakończenia",
+            "idDocument": "Dokument Tożsamości",
+            "licenseDocument": "Prawo Jazdy",
+            "notes": "Dodatkowe Uwagi",
+            "duration": "Czas Trwania",
+            "hours": "godziny",
+            "startTime": "Godzina Rozpoczęcia",
+            "selectedPrice": "Wybrana Cena",
+            "calculatedEndTime": "Obliczona Godzina Zakończenia",
+            "totalPrice": "Cena Całkowita",
+            "day": "dzień",
+            "days": "dni"
+        },
+        "placeholders": {
+            "notes": "Jakieś dodatkowe informacje lub prośby?",
+            "selectDuration": "Wybierz czas trwania..."
+        },
+        "buttons": {
+            "cancel": "Anuluj",
+            "submit": "Prześlij Rezerwację",
+            "submitting": "Wysyłanie...",
+            "dailyRental": "Wynajem Dzienny",
+            "hourlyRental": "Wynajem Godzinowy"
+        },
+        "toast": {
+            "successTitle": "Rezerwacja Przesłana",
+            "successDescription": "Wkrótce potwierdzimy Twoją rezerwację.",
+            "errorTitle": "Przesyłanie Nieudane",
+            "error": "Nie udało się przesłać Twojej rezerwacji."
         }
     },
     "Common": {

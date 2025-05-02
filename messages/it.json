@@ -3,7 +3,7 @@
         "hero": {
             "title": "Trova la Tua Auto Perfetta",
             "subtitle": "La tua destinazione premium per veicoli nuovi e usati",
-            "browseButton": "Sfoglia Inventario",
+            "browseButton": "Sfoglia l'inventario",
             "contactButton": "Contattaci",
             "imageAlt": "Auto Nera di Lusso"
         },
@@ -21,7 +21,7 @@
             }
         },
         "stats": {
-            "title": "Scelto da Migliaia di Persone",
+            "title": "Scelto da Migliaia",
             "carsSoldLabel": "Auto Vendute",
             "averageRatingLabel": "Valutazione Media",
             "locationsLabel": "Sedi in Svizzera"
@@ -30,10 +30,10 @@
     "Navbar": {
         "links": {
             "home": "Home",
-            "requestCar": "Richiedi un'Auto",
-            "sellCar": "Vendi un'Auto",
-            "searchCars": "Cerca Auto",
-            "aboutUs": "Chi Siamo",
+            "requestCar": "Richiedi un'auto",
+            "sellCar": "Vendi un'auto",
+            "searchCars": "Cerca auto",
+            "aboutUs": "Chi siamo",
             "contact": "Contatti"
         },
         "mobileMenu": {
@@ -46,14 +46,14 @@
     },
     "Footer": {
         "brand": {
-            "slogan": "Siti Web Moderni per Concessionarie Auto, Semplificati.",
+            "slogan": "Soluzioni Innovative per il Commercio Internazionale di Auto",
             "copyright": "© {year} PremiumCarsEU. Tutti i diritti riservati."
         },
         "quickLinks": {
             "title": "Link Rapidi",
             "search": "Cerca",
             "newCars": "Auto Nuove",
-            "preowned": "Usato"
+            "preowned": "Auto Usate"
         },
         "supportLegal": {
             "title": "Supporto e Legale",
@@ -110,7 +110,7 @@
             {
                 "id": 3,
                 "name": "Daniel Meier",
-                "quote": "Il team di PremiumCarsEU si è superato per aiutarmi a trovare un'auto nel mio budget. Lo consiglio vivamente!"
+                "quote": "Il team di PremiumCarsEU ha fatto di tutto per aiutarmi a trovare un'auto nel mio budget. Altamente raccomandato!"
             }
         ]
     },
@@ -119,14 +119,14 @@
         "features": {
             "quality": {
                 "title": "Qualità Certificata",
-                "description": "Tutte le nostre auto passano un'ispezione di 150 punti per garantire sicurezza e prestazioni."
+                "description": "Tutte le nostre auto superano un'ispezione di 150 punti per garantire sicurezza e prestazioni."
             },
             "process": {
                 "title": "Processo Rapido e Semplice",
                 "description": "Ottieni l'approvazione e parti in meno di 24 ore con il nostro processo semplificato."
             },
             "customer": {
-                "title": "Il Cliente Prima di Tutto",
+                "title": "Cliente al Primo Posto",
                 "description": "Diamo priorità alla trasparenza e al supporto — prima, durante e dopo l'acquisto."
             }
         }
@@ -141,22 +141,22 @@
         "viewOfferButton": "Vedi Offerta",
         "srPrevious": "Precedente",
         "srNext": "Successivo",
-        "indicatorAriaLabel": "Vai alla diapositiva {index}"
+        "indicatorAriaLabel": "Vai alla slide {index}"
     },
     "OurServices": {
         "title": "I Nostri Servizi",
         "services": {
             "maintenance": {
-                "title": "Pacchetti di Manutenzione",
+                "title": "Pacchetti Manutenzione",
                 "description": "Piani di servizio convenienti su misura per le esigenze della tua auto."
             },
             "tradeIn": {
-                "title": "Programma di Permuta",
+                "title": "Programma Permuta",
                 "description": "Permuta facilmente il tuo veicolo attuale per ottenere credito sul tuo prossimo acquisto."
             },
             "financing": {
-                "title": "Finanziamento Flessibile",
-                "description": "Collaboriamo con le principali istituzioni finanziarie per offrirti le migliori tariffe."
+                "title": "Finanziamenti Flessibili",
+                "description": "Collaboriamo con i principali istituti finanziari per offrirti i tassi migliori."
             }
         }
     },
@@ -167,16 +167,16 @@
     "RequestCarForm": {
         "section": {
             "title": "Non Trovi Quello Che Cerchi?",
-            "subtitle": "Aiutaci a trovare la tua auto ideale attraverso la nostra rete di concessionari facendoci sapere le tue preferenze."
+            "subtitle": "Aiutaci a trovare la tua auto ideale attraverso la nostra rete di concessionari comunicandoci le tue preferenze."
         },
         "card": {
             "title": "Richiedi un'Auto",
-            "description": "Compila il modulo sottostante con le preferenze del tuo veicolo e i nostri specialisti ti contatteranno a breve."
+            "description": "Compila il modulo sottostante con le tue preferenze sul veicolo e i nostri specialisti ti contatteranno a breve."
         },
         "subheadings": {
             "contactInfo": "Informazioni di Contatto",
-            "vehicleDetails": "Dettagli del Veicolo",
-            "specifications": "Specifiche del Veicolo",
+            "vehicleDetails": "Dettagli Veicolo",
+            "specifications": "Specifiche Veicolo",
             "additionalInfo": "Note Aggiuntive"
         },
         "labels": {
@@ -189,7 +189,7 @@
             "yearFrom": "Anno (Da)",
             "yearTo": "Anno (A)",
             "budget": "Budget Preferito",
-            "color": "Colore/i Preferito/i",
+            "color": "Colore(i) Preferito(i)",
             "condition": "Condizione Auto",
             "transmission": "Tipo di Cambio",
             "fuelType": "Tipo di Carburante",
@@ -198,17 +198,17 @@
         },
         "placeholders": {
             "fullName": "Mario Rossi",
-            "email": "mario@esempio.it",
-            "phone": "+39 012 345 6789",
+            "email": "mario@esempio.com",
+            "phone": "(123) 456-7890",
             "location": "Città, Provincia o CAP",
             "make": "BMW, Toyota, ecc.",
             "model": "X5, Camry, ecc.",
-            "yearFrom": "Anno Da",
-            "yearTo": "Anno A",
+            "yearFrom": "Dall'Anno",
+            "yearTo": "All'Anno",
             "budget": "€30.000",
             "color": "Nero, Argento, ecc.",
             "transmission": "Seleziona cambio",
-            "fuelType": "Seleziona tipo di carburante",
+            "fuelType": "Seleziona carburante",
             "maxMileage": "50000",
             "notes": "Eventuali requisiti o preferenze specifiche?"
         },
@@ -228,22 +228,22 @@
         "buttons": {
             "submit": "Invia Richiesta",
             "submitting": "Invio in corso...",
-            "submitAnother": "Invia un'Altra Richiesta"
+            "submitAnother": "Invia un'altra Richiesta"
         },
         "success": {
             "title": "Richiesta Inviata!",
-            "description": "Grazie per la tua richiesta di auto. Il nostro team esaminerà le tue preferenze e ti contatterà presto.",
+            "description": "Grazie per la tua richiesta auto. Il nostro team esaminerà le tue preferenze e ti contatterà presto.",
             "confirmation": "Ti contatteremo presto all'indirizzo {email}."
         },
         "error": {
             "prefix": "Impossibile salvare la tua richiesta: ",
-            "fallback": "Si è verificato un errore durante l'invio della richiesta. Per favore riprova."
+            "fallback": "Si è verificato un errore durante l'invio della richiesta. Riprova."
         }
     },
     "MostSearchedCars": {
         "title": "Auto Più Cercate",
         "loading": "Caricamento veicoli popolari...",
-        "error": "Impossibile caricare le auto popolari. Per favore riprova più tardi.",
+        "error": "Impossibile caricare le auto popolari. Riprova più tardi.",
         "errorPrefix": "Impossibile recuperare le auto: ",
         "empty": "Nessun veicolo popolare trovato al momento.",
         "card": {
@@ -271,13 +271,14 @@
     "AboutPage": {
         "hero": {
             "title": "Guidati dall'Eccellenza",
-            "subtitle": "Scopri chi siamo e cosa guida la nostra missione."
+            "subtitle": "Scopri chi siamo e cosa guida la nostra missione.",
+            "imageAlt": "Auto premium scura in viaggio su strada"
         },
         "story": {
             "title": "La Nostra Storia",
             "paragraph1": "Con oltre 15 anni di esperienza dedicata nel mercato dei veicoli premium, la nostra competenza risiede nella vendita, intermediazione, importazione ed esportazione di eccezionali auto premium e sportive. Sfruttiamo la nostra profonda conoscenza del settore per mettere in contatto clienti esigenti con automobili straordinarie.",
-            "paragraph2": "I veicoli che offriamo sono meticolosamente reperiti attraverso una rete di clienti e partner commerciali fidati, relazioni coltivate nel corso degli anni e saldamente costruite sulla fiducia reciproca. Principalmente proponiamo veicoli nuovi, e qualsiasi auto usata viene sottoposta a rigorose verifiche, sempre accompagnata da una cronologia completa dei tagliandi.",
-            "paragraph3": "La nostra vasta esperienza e la solida rete di partner ci consentono di andare oltre il convenzionale. Siamo specializzati nell'approvvigionamento di veicoli specifici su richiesta, compresi modelli difficili da trovare, edizioni limitate e persino nell'assicurare quote di produzione vantaggiose per veicoli nuovi di varie marche prestigiose.",
+            "paragraph2": "I veicoli che offriamo provengono meticolosamente da una rete di clienti e partner commerciali fidati, relazioni coltivate negli anni e saldamente costruite sulla fiducia reciproca. Proponiamo principalmente veicoli nuovi, e qualsiasi auto usata viene sottoposta a rigorose verifiche, sempre accompagnata da uno storico completo dei tagliandi.",
+            "paragraph3": "La nostra vasta esperienza e la solida rete di partner ci consentono di andare oltre il convenzionale. Siamo specializzati nel reperire veicoli specifici su richiesta, inclusi modelli difficili da trovare, edizioni limitate e persino nell'assicurare quote di produzione vantaggiose per veicoli nuovi di vari marchi prestigiosi.",
             "imageAlt": "Showroom e team PremiumCarsEU"
         },
         "values": {
@@ -295,12 +296,12 @@
                 "description": "Abbracciamo continuamente nuove tecnologie e approcci per migliorare l'esperienza di acquisto e vendita di auto."
             },
             "customerFirst": {
-                "title": "Il Cliente Prima di Tutto",
-                "description": "Ogni decisione che prendiamo dà priorità alle esigenze, preferenze e soddisfazione dei nostri clienti sopra ogni altra cosa."
+                "title": "Cliente al Primo Posto",
+                "description": "Ogni decisione che prendiamo dà priorità alle esigenze, alle preferenze e alla soddisfazione dei nostri clienti sopra ogni altra cosa."
             }
         },
         "team": {
-            "title": "Incontra il Team",
+            "title": "Incontra il Fondatore",
             "member1": {
                 "imageAlt": "Marco Varga",
                 "name": "Marco Varga",
@@ -310,25 +311,25 @@
             "member2": {
                 "imageAlt": "Sarah Mueller",
                 "name": "Sarah Mueller",
-                "title": "Direttore Vendite",
+                "title": "Direttrice Vendite",
                 "quote": "\"Credo nella costruzione di relazioni, non solo nella vendita di auto. I nostri clienti diventano parte della famiglia PremiumCarsEU.\""
             },
             "member3": {
                 "imageAlt": "Thomas Weber",
                 "name": "Thomas Weber",
-                "title": "Direttore Tecnologico (CTO)",
+                "title": "Chief Technology Officer (CTO)",
                 "quote": "\"La tecnologia dovrebbe rendere l'acquisto di un'auto più facile e trasparente. Questo è ciò che guida la nostra innovazione digitale.\""
             }
         },
         "cta": {
             "title": "Vuoi unirti al nostro viaggio?",
-            "subtitle": "Siamo sempre alla ricerca di persone talentuose che condividano la nostra passione per l'eccellenza automobilistica e il servizio clienti."
+            "subtitle": "Siamo sempre alla ricerca di persone di talento che condividano la nostra passione per l'eccellenza automobilistica e il servizio clienti."
         }
     },
     "ContactPage": {
         "hero": {
             "title": "Contattaci",
-            "subtitle": "Ci piacerebbe sentirti. Compila il modulo e il nostro team ti risponderà a breve."
+            "subtitle": "Ci farebbe piacere sentirti. Compila il modulo e il nostro team ti risponderà a breve."
         },
         "formCard": {
             "title": "Inviaci un messaggio",
@@ -343,7 +344,7 @@
         },
         "placeholders": {
             "fullName": "Inserisci il tuo nome completo",
-            "email": "tuo@esempio.it",
+            "email": "tu@esempio.com",
             "phone": "Inserisci il tuo numero di telefono",
             "subject": "Seleziona un oggetto",
             "message": "Scrivi qui il tuo messaggio..."
@@ -367,14 +368,14 @@
         },
         "infoCard": {
             "title": "Informazioni di Contatto",
-            "description": "Puoi anche contattarci direttamente utilizzando le informazioni sottostanti.",
+            "description": "Puoi raggiungerci direttamente anche utilizzando le informazioni sottostanti.",
             "addressTitle": "Indirizzo",
             "phoneTitle": "Telefono",
             "emailTitle": "Email",
             "hoursTitle": "Orari di Apertura",
             "connectTitle": "Connettiti con noi",
-            "addressLine1": "Sede Principale — Zurigo, Svizzera",
-            "addressLine2": "Bahnhofstrasse 42, 8001 Zurigo",
+            "addressLine1": "Sede Principale — Vlčie Hrdlo 1037, 82107 Bratislava II - Ružinov",
+            "addressLine2": "Sede Svizzera — Am Stausee 23, 4127 Birsfelden",
             "hoursLine1": "Lunedì - Venerdì: 9:00 – 18:00",
             "hoursLine2": "Sabato: 10:00 – 16:00",
             "hoursLine3": "Domenica: Chiuso"
@@ -383,7 +384,7 @@
             "title": "Messaggio Inviato con Successo!",
             "description": "Grazie per averci contattato. Abbiamo ricevuto il tuo messaggio e ti risponderemo a breve.",
             "heading": "Ti Contatteremo Presto",
-            "confirmation": "Il nostro team risponde tipicamente entro 24-48 ore nei giorni lavorativi.",
+            "confirmation": "Il nostro team risponde solitamente entro 24-48 ore nei giorni lavorativi.",
             "button": "Invia un Altro Messaggio"
         }
     },
@@ -393,14 +394,14 @@
             "subtitle": "Ottieni un prezzo equo e un'esperienza senza problemi quando vendi la tua auto tramite PremiumCarsEU. Nessun intermediario, nessuna commissione nascosta - solo un servizio diretto."
         },
         "benefits": {
-            "title": "Perché Vendere Con Noi?",
+            "title": "Perché Vendere con Noi?",
             "pricing": {
                 "title": "Prezzi Competitivi",
-                "description": "Offriamo un valore di mercato equo per il tuo veicolo basato sulle sue condizioni, sulla sua storia e sulle attuali tendenze di mercato."
+                "description": "Offriamo un valore di mercato equo per il tuo veicolo basato sulle sue condizioni, sulla storia e sulle attuali tendenze di mercato."
             },
             "process": {
                 "title": "Processo Senza Problemi",
-                "description": "Il nostro processo di vendita semplificato significa meno scartoffie e transazioni più rapide. La maggior parte delle trattative si conclude entro 48 ore."
+                "description": "Il nostro processo di vendita semplificato significa meno burocrazia e transazioni più rapide. La maggior parte degli accordi si conclude entro 48 ore."
             },
             "service": {
                 "title": "Servizio Affidabile",
@@ -409,7 +410,7 @@
         },
         "trustIndicator": {
             "title": "Scelto da oltre 2.300 automobilisti",
-            "description": "Unisciti a migliaia di clienti soddisfatti che hanno venduto con successo i loro veicoli attraverso la nostra piattaforma."
+            "description": "Unisciti a migliaia di clienti soddisfatti che hanno venduto con successo i loro veicoli tramite la nostra piattaforma."
         }
     },
     "CarSellForm": {
@@ -418,9 +419,9 @@
             "description": "Compila il modulo sottostante con i dettagli della tua auto. Il nostro team esaminerà e ti contatterà entro 24-48 ore."
         },
         "sections": {
-            "ownerInfo": "Informazioni sul Proprietario",
-            "carInfo": "Informazioni sull'Auto",
-            "pricingMedia": "Prezzi e Media",
+            "ownerInfo": "Informazioni Proprietario",
+            "carInfo": "Informazioni Auto",
+            "pricingMedia": "Prezzo e Media",
             "additionalInfo": "Informazioni Aggiuntive"
         },
         "labels": {
@@ -431,7 +432,7 @@
             "model": "Modello Auto",
             "year": "Anno",
             "mileage": "Chilometraggio",
-            "fuelType": "Tipo di Carburante",
+            "fuelType": "Tipo Carburante",
             "transmission": "Cambio",
             "condition": "Condizione",
             "city": "Città",
@@ -441,13 +442,13 @@
         },
         "placeholders": {
             "fullName": "Mario Rossi",
-            "email": "tuo@email.com",
-            "phone": "+39 012 345 6789",
+            "email": "tua@email.com",
+            "phone": "(123) 456-7890",
             "make": "es. Toyota",
             "model": "es. Camry",
             "year": "es. 2019",
             "mileage": "es. 45000",
-            "fuelType": "Seleziona tipo di carburante",
+            "fuelType": "Seleziona tipo carburante",
             "transmission": "Seleziona cambio",
             "city": "es. Roma",
             "askingPrice": "es. 25000",
@@ -464,8 +465,8 @@
             "conditionUsed": "Usato"
         },
         "descriptions": {
-            "askingPrice": "Lascia vuoto se desideri che forniamo una valutazione di mercato.",
-            "filesSelected": "{count} file selezionato/i:",
+            "askingPrice": "Lascia vuoto se desideri una valutazione di mercato da parte nostra.",
+            "filesSelected": "{count} file selezionato(i):",
             "fileTypes": "PNG, JPG, GIF, HEIC fino a 10MB ciascuno"
         },
         "fileUpload": {
@@ -492,18 +493,18 @@
         "buttons": {
             "submit": "Invia Auto per Revisione",
             "submitting": "Invio in corso...",
-            "submitAnother": "Invia un'Altra Auto"
+            "submitAnother": "Invia un'altra Auto"
         },
         "success": {
             "title": "Invio Ricevuto!",
             "description": "Grazie! Esamineremo i dettagli della tua auto e ti ricontatteremo presto.",
             "heading": "Dettagli Inviati",
-            "confirmation": "Useremo {email} per contattarti."
+            "confirmation": "Ti contatteremo tramite {email}."
         },
         "error": {
-            "submitFallback": "Si è verificato un errore durante l'invio delle informazioni. Per favore riprova.",
+            "submitFallback": "Si è verificato un errore durante l'invio delle informazioni. Riprova.",
             "updatePhotoUrlError": "Foto caricate ma impossibile salvare gli URL: {message}",
-            "updatePhotoUrlException": "Foto caricate ma si è verificato un errore durante il salvataggio degli URL",
+            "updatePhotoUrlException": "Foto caricate ma si è verificato un errore nel salvataggio degli URL",
             "noPhotosUploaded": "Nessuna foto è stata caricata con successo"
         }
     },
@@ -518,26 +519,26 @@
         },
         "listingTypeToggle": {
             "buy": "Acquista",
-            "rent": "Affitta",
+            "rent": "Noleggia",
             "both": "Entrambi"
         },
         "aiSearch": {
             "title": "Cosa stai cercando?",
             "placeholder": "es. Una coupé per il weekend sotto i 50k",
             "buttonIdle": "Cerca",
-            "buttonLoading": "Ricerca in corso...",
+            "buttonLoading": "Ricerca...",
             "errorPrefix": "Impossibile elaborare la tua ricerca",
-            "errorCouldNotUnderstand": "Impossibile comprendere la tua ricerca. Per favore riprova con parole diverse.",
+            "errorCouldNotUnderstand": "Impossibile comprendere la tua ricerca. Riprova con parole diverse.",
             "toastTitle": "Ricerca elaborata",
             "toastDescSuccess": "Trovato esattamente quello che cercavi!",
-            "toastDescPotential": "Trovate corrispondenze potenziali. Puoi modificare i filtri se necessario."
+            "toastDescPotential": "Trovate corrispondenze potenziali. Puoi regolare i filtri se necessario."
         },
         "filters": {
             "makeLabel": "Marca",
             "modelLabel": "Modello",
             "bodyTypeLabel": "Tipo Carrozzeria",
             "priceLabel": "Fascia di Prezzo",
-            "yearLabel": "Fascia Anno",
+            "yearLabel": "Fascia Anni",
             "mileageLabel": "Fascia Chilometraggio",
             "fuelTypeLabel": "Tipo Carburante",
             "transmissionLabel": "Cambio",
@@ -546,8 +547,9 @@
             "maxLabel": "Max",
             "fromLabel": "Da",
             "toLabel": "A",
-            "exteriorColorLabel": "Colore esterno",
-            "interiorColorLabel": "Colore interno",
+            "exteriorColorLabel": "Colore Esterno",
+            "interiorColorLabel": "Colore Interno",
+            "colorPlaceholder": "Seleziona Colore",
             "makePlaceholderLoading": "Caricamento marche...",
             "makePlaceholder": "Seleziona marca",
             "modelPlaceholderLoading": "Caricamento modelli...",
@@ -561,8 +563,8 @@
             "conditionPlaceholder": "Seleziona condizione",
             "priceMinPlaceholder": "Prezzo Min",
             "priceMaxPlaceholder": "Prezzo Max",
-            "yearMinPlaceholder": "Anno Da",
-            "yearMaxPlaceholder": "Anno A",
+            "yearMinPlaceholder": "Da Anno",
+            "yearMaxPlaceholder": "Ad Anno",
             "mileageMinPlaceholder": "Km Min",
             "mileageMaxPlaceholder": "Km Max",
             "applyButton": "Applica Filtri",
@@ -597,7 +599,7 @@
             "closeAriaLabel": "Chiudi filtri avanzati",
             "horsepowerLabel": "Potenza (CV)",
             "horsepowerUnit": "CV",
-            "displacementLabel": "Cilindrata Motore (cm³)",
+            "displacementLabel": "Cilindrata (cm³)",
             "displacementUnit": "cm³",
             "cylindersLabel": "Cilindri",
             "minLabel": "Min",
@@ -605,7 +607,7 @@
         },
         "results": {
             "count": "Mostrando {count} veicoli",
-            "notFoundTitle": "Non abbiamo trovato auto che corrispondano alla tua ricerca. Puoi dirci esattamente cosa stai cercando e la nostra concessionaria troverà un veicolo adatto a te.",
+            "notFoundTitle": "Non siamo riusciti a trovare auto corrispondenti alla tua ricerca. Puoi farci sapere esattamente cosa stai cercando e la nostra concessionaria troverà un veicolo corrispondente per te.",
             "sortByLabel": "Ordina per:",
             "sortPlaceholder": "Ordina per",
             "emptyTitle": "Nessun veicolo trovato corrispondente ai tuoi criteri.",
@@ -614,8 +616,8 @@
         "sortOptions": {
             "price-asc": "Prezzo: Crescente",
             "price-desc": "Prezzo: Decrescente",
-            "year-desc": "Anno: Più Recenti",
-            "year-asc": "Anno: Meno Recenti",
+            "year-desc": "Anno: Più Recente",
+            "year-asc": "Anno: Meno Recente",
             "mileage-asc": "Chilometraggio: Crescente",
             "mileage-desc": "Chilometraggio: Decrescente",
             "created_at-desc": "Annunci Più Recenti"
@@ -636,8 +638,8 @@
             "viewDetailsButton": "Vedi Dettagli"
         },
         "pagination": {
-            "previous": "Pagina precedente",
-            "next": "Pagina successiva"
+            "previous": "Pagina Precedente",
+            "next": "Pagina Successiva"
         },
         "toastMessages": {
             "compareAddedTitle": "Aggiunto al confronto",
@@ -653,7 +655,7 @@
             "Convertible": "Cabriolet",
             "Hatchback": "Due volumi",
             "Wagon": "Station Wagon",
-            "Truck": "Pickup",
+            "Truck": "Camion",
             "Van": "Furgone"
         },
         "fuelTypes": {
@@ -707,7 +709,7 @@
             "notAvailable": "-"
         },
         "features": {
-            "title": "Caratteristiche e Opzioni",
+            "title": "Caratteristiche e Optional",
             "noFeatures": "Nessuna caratteristica elencata per questo veicolo."
         },
         "pricing": {
@@ -717,18 +719,21 @@
         },
         "quickFacts": {
             "year": "Anno",
-            "mileage": "Km",
+            "mileage": "Chilometraggio",
             "fuel": "Carburante",
             "transmission": "Cambio",
             "notAvailable": "-",
             "unitMiles": "km"
         },
         "sellerInfo": {
-            "title": "Informazioni sul Venditore",
+            "title": "Informazioni Venditore",
             "fallbackName": "Concessionario PremiumCarsEU",
             "memberSince": "Membro dal {year}",
             "fallbackInitial": "C",
             "fallbackYear": "2022"
+        },
+        "buttons": {
+            "viewRentalInfo": "Visualizza Info Noleggio"
         },
         "imageGallery": {
             "imageAlt": "{year} {make} {model} - Immagine {index}",
@@ -741,18 +746,42 @@
         "conditionValues": {
             "new": "Nuovo",
             "used": "Usato"
+        },
+        "rental": {
+            "rentalAvailable": "A Noleggio",
+            "viewSaleDetails": "Vedi Dettagli Vendita",
+            "viewFullDetails": "Vedi Dettagli Completi",
+            "termsTitle": "Termini di Noleggio",
+            "dailyRateLabel": "Tariffa Giornaliera",
+            "depositLabel": "Deposito",
+            "securityDepositLabel": "Deposito Cauzionale",
+            "noDeposit": "Nessun Deposito Richiesto",
+            "minDaysLabel": "Giorni Minimi",
+            "maxDaysLabel": "Giorni Massimi",
+            "rentalDurationLabel": "Durata Noleggio",
+            "perDayLabel": "Al Giorno",
+            "depositQuickLabel": "Deposito",
+            "days": "giorni",
+            "minDays": "Almeno {days} giorni",
+            "maxDays": "Fino a {days} giorni",
+            "flexible": "Flessibile",
+            "hourlyOptions": "Opzioni Orarie",
+            "hours": "ore",
+            "securityDepositNo": "Nessun Deposito Richiesto",
+            "policyTitle": "Politica di Noleggio",
+            "securityDeposit": "Deposito Richiesto"
         }
     },
     "ContactFormModal": {
-        "triggerButton": "Contatta il Venditore",
-        "title": "Contatta il Venditore",
-        "description": "Compila questo modulo per chiedere informazioni su {carName}. Il venditore ti contatterà a breve.",
+        "triggerButton": "Contatta Venditore",
+        "title": "Contatta Venditore",
+        "description": "Compila questo modulo per richiedere informazioni sulla {carName}. Il venditore ti ricontatterà a breve.",
         "labels": {
             "name": "Il Tuo Nome",
             "phone": "Numero di Telefono",
             "email": "Email (opzionale)",
             "message": "Messaggio",
-            "whatsappConsent": "Acconsento ad essere contattato tramite WhatsApp"
+            "whatsappConsent": "Acconsento a essere contattato tramite WhatsApp"
         },
         "placeholders": {
             "name": "Inserisci il tuo nome",
@@ -765,18 +794,18 @@
             "submit": "Invia Messaggio",
             "submitting": "Invio in corso..."
         },
-        "defaultMessage": "Sono interessato a {carName}. Per favore contattatemi con maggiori informazioni.",
+        "defaultMessage": "Sono interessato/a alla {carName}. Per favore, contattatemi con maggiori informazioni.",
         "toast": {
             "successTitle": "Messaggio Inviato!",
             "successDescription": "Grazie! Ti contatteremo presto su WhatsApp.",
             "errorTitle": "Errore",
-            "errorDescription": "Si è verificato un problema durante l'invio del messaggio. Per favore riprova."
+            "errorDescription": "Si è verificato un problema nell'invio del messaggio. Riprova."
         }
     },
     "ReservationModal": {
         "triggerButton": "Prenota Questo Veicolo",
         "title": "Prenota Veicolo",
-        "description": "Completa questo modulo per prenotare {carName}. Ti contatteremo per confermare i dettagli.",
+        "description": "Completa questo modulo per prenotare la {carName}. Ti contatteremo per confermare i dettagli.",
         "labels": {
             "name": "Nome Completo",
             "email": "Email",
@@ -785,14 +814,15 @@
         "placeholders": {
             "name": "Inserisci il tuo nome completo",
             "email": "Inserisci il tuo indirizzo email",
-            "phone": "Inserisci il tuo numero di telefono"
+            "phone": "Inserisci il tuo numero di telefono",
+            "selectDuration": "Seleziona Durata"
         },
         "validation": {
             "nameMin": "Il nome deve contenere almeno 2 caratteri.",
             "emailInvalid": "Inserisci un indirizzo email valido.",
             "phoneMin": "Inserisci un numero di telefono valido."
         },
-        "reservingVehicle": "Prenotazione di: {carName}",
+        "reservingVehicle": "Prenotazione per: {carName}",
         "termsNotice": "Inviando questo modulo, accetti i nostri termini e politiche di prenotazione.",
         "buttons": {
             "cancel": "Annulla",
@@ -801,9 +831,9 @@
         },
         "toast": {
             "successTitle": "Prenotazione Inviata",
-            "successDescription": "Abbiamo ricevuto la tua prenotazione per {carName}. Ti contatteremo presto.",
+            "successDescription": "Abbiamo ricevuto la tua prenotazione per la {carName}. Ti contatteremo a breve.",
             "errorTitle": "Prenotazione Fallita",
-            "errorDescription": "Si è verificato un problema durante l'invio della prenotazione. Per favore riprova."
+            "errorDescription": "Si è verificato un problema nell'invio della prenotazione. Riprova."
         }
     },
     "TestDriveModal": {
@@ -819,10 +849,10 @@
         },
         "placeholders": {
             "fullName": "Mario Rossi",
-            "email": "tuo@esempio.it",
-            "phone": "+39 012 345 6789",
+            "email": "tu@esempio.com",
+            "phone": "(123) 456-7890",
             "date": "Scegli una data",
-            "time": "Seleziona l'orario"
+            "time": "Seleziona orario"
         },
         "validation": {
             "nameRequired": "Il nome è obbligatorio",
@@ -839,7 +869,85 @@
             "successTitle": "Test drive pianificato",
             "successDescription": "Ti contatteremo per confermare il tuo appuntamento.",
             "errorTitle": "Impossibile pianificare il test drive",
-            "errorDescription": "Per favore riprova più tardi o contatta il supporto."
+            "errorDescription": "Riprova più tardi o contatta il supporto."
+        }
+    },
+    "ContactRenterModal": {
+        "title": "Contatta il Noleggiatore",
+        "description": "Compila il modulo per contattare il noleggiatore riguardo la {carName}.",
+        "labels": {
+            "name": "Il Tuo Nome",
+            "phone": "Numero di Telefono",
+            "email": "Email (opzionale)",
+            "message": "Messaggio",
+            "whatsappConsent": "Acconsento a essere contattato tramite WhatsApp"
+        },
+        "placeholders": {
+            "name": "Inserisci il tuo nome",
+            "phone": "Inserisci il tuo numero di telefono",
+            "email": "La Tua Email",
+            "message": "Inserisci il tuo messaggio"
+        },
+        "defaultMessage": "Salve, sono interessato/a al noleggio della {carName}. Potrebbe inviarmi maggiori dettagli?",
+        "buttons": {
+            "submit": "Invia Messaggio",
+            "submitting": "Invio in corso...",
+            "cancel": "Annulla"
+        },
+        "toast": {
+            "successTitle": "Messaggio Inviato",
+            "successDescription": "Il tuo messaggio è stato inviato al noleggiatore.",
+            "errorTitle": "Qualcosa è andato storto",
+            "errorDescription": "Riprova o contatta il supporto."
+        },
+        "triggerButton": "Contatta Noleggiatore"
+    },
+    "RentalReservationModal": {
+        "triggerButton": "Prenota Questo Veicolo",
+        "title": "Prenota Questa Auto",
+        "description": "Scegli le date preferite per prenotare la {carName}.",
+        "priceLabel": "Prezzo",
+        "section": {
+            "renterInfo": "Informazioni Noleggiatore",
+            "dates": "Date Noleggio",
+            "rentalType": "Tipo Noleggio",
+            "documents": "Carica Documenti",
+            "hourlyRental": "Noleggio Orario"
+        },
+        "labels": {
+            "name": "Nome Completo",
+            "email": "Indirizzo Email",
+            "phone": "Numero di Telefono",
+            "start_date": "Data Inizio",
+            "end_date": "Data Fine",
+            "idDocument": "Documento d'Identità",
+            "licenseDocument": "Patente di Guida",
+            "notes": "Note Aggiuntive",
+            "duration": "Durata",
+            "hours": "ore",
+            "startTime": "Orario Inizio",
+            "selectedPrice": "Prezzo Selezionato",
+            "calculatedEndTime": "Orario Fine Calcolato",
+            "totalPrice": "Prezzo Totale",
+            "day": "giorno",
+            "days": "giorni"
+        },
+        "placeholders": {
+            "notes": "Eventuali informazioni o richieste aggiuntive?",
+            "selectDuration": "Seleziona durata..."
+        },
+        "buttons": {
+            "cancel": "Annulla",
+            "submit": "Invia Prenotazione",
+            "submitting": "Invio in corso...",
+            "dailyRental": "Noleggio Giornaliero",
+            "hourlyRental": "Noleggio Orario"
+        },
+        "toast": {
+            "successTitle": "Prenotazione Inviata",
+            "successDescription": "Confermeremo la tua prenotazione a breve.",
+            "errorTitle": "Invio Fallito",
+            "error": "Impossibile inviare la tua prenotazione."
         }
     },
     "Common": {
