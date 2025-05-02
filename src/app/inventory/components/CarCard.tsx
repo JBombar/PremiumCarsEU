@@ -183,21 +183,9 @@ export function CarCard({
                     </div>
                 </CardContent>
 
-                <CardFooter className="flex justify-between border-t pt-4 mt-auto"> {/* Added mt-auto */}
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                            toast({
-                                title: t('toastMessages.compareAddedTitle'),
-                                description: t('toastMessages.compareAddedDesc', { make: car.make, model: car.model }),
-                            });
-                        }}
-                    >
-                        {t('card.addToCompareButton')}
-                    </Button>
+                <CardFooter className="mt-auto"> {/* Simplified footer with single button */}
                     <Link
-                        href={`/inventory/${car.id}`} // Assumes car.id is valid due to check at start
+                        href={`/inventory/${car.id}`}
                         onClick={(e) => {
                             // Call the tracking callback passed from the parent
                             try {
@@ -207,10 +195,9 @@ export function CarCard({
                                 // Do NOT prevent navigation - let the link proceed even if tracking fails
                             }
                         }}
-                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2"
+                        className="w-full whitespace-normal text-[clamp(0.7rem,1vw,0.875rem)] text-center px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                         {t('card.viewDetailsButton')}
-                        <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                 </CardFooter>
             </div>
