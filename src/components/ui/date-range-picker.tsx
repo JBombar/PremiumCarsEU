@@ -53,8 +53,9 @@ export function DateRangePicker({
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                    className="w-auto p-0 bg-white shadow-lg z-50 border rounded-md"
+                    className="w-auto p-0 bg-white shadow-lg border rounded-md z-[100]"
                     align="start"
+                    onInteractOutside={(e) => e.preventDefault()}
                 >
                     <div className="enhanced-calendar">
                         <Calendar
@@ -64,7 +65,7 @@ export function DateRangePicker({
                             selected={value}
                             onSelect={onChange}
                             numberOfMonths={2}
-                            className="bg-white rounded-md"
+                            className="bg-white rounded-md pointer-events-auto"
                         />
                     </div>
                     <style jsx global>{`

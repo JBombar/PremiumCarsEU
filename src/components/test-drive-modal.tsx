@@ -1,8 +1,18 @@
-// src/components/test-drive-modal.tsx
+// src/components/test-drive-modal.tsx (Restored Calendar, focus on z-index)
 "use client";
 
+import * as React from "react";
 import { useState } from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useTranslations } from 'next-intl';
+
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar"; // Put Calendar back
 import {
     Dialog,
     DialogContent,
@@ -10,8 +20,6 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    // DialogPortal, // Not explicitly used, can be removed if not needed
-    // DialogOverlay, // Not explicitly used, can be removed if not needed
 } from "@/components/ui/dialog";
 import {
     Form,
@@ -22,7 +30,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
 import {
     Popover,
     PopoverContent,
@@ -35,241 +42,147 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { format } from "date-fns";
-import { createClient } from "@/utils/supabase/client"; // Assuming correct path
 import { toast } from "@/components/ui/use-toast";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { useTranslations } from 'next-intl'; // Import useTranslations
+import { createClient } from "@/utils/supabase/client";
 
+// Define Props Interface
 interface TestDriveModalProps {
     carId: string;
     carName: string;
     userId?: string;
 }
 
+// Component Definition
 export function TestDriveModal({ carId, carName, userId }: TestDriveModalProps) {
-    const t = useTranslations('TestDriveModal'); // Initialize translations
+    const t = useTranslations('TestDriveModal');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    // Define validation schema using zod with translated messages
+    // Define Zod Schema
     const testDriveFormSchema = z.object({
         fullName: z.string().min(2, t('validation.nameRequired')),
         email: z.string().email(t('validation.emailRequired')),
         phone: z.string().min(10, t('validation.phoneRequired')),
-        date: z.date({
-            required_error: t('validation.dateRequired'),
-        }),
-        time: z.string({
-            required_error: t('validation.timeRequired'),
-        }),
+        date: z.date({ required_error: t('validation.dateRequired') }), // Keep date required
+        time: z.string({ required_error: t('validation.timeRequired') }),
     });
 
     type TestDriveFormValues = z.infer<typeof testDriveFormSchema>;
 
+    // Initialize React Hook Form
     const form = useForm<TestDriveFormValues>({
         resolver: zodResolver(testDriveFormSchema),
-        defaultValues: {
-            fullName: "",
-            email: "",
-            phone: "",
-            time: "",
-            // date: undefined // default is handled by RHF/Zod
-        },
+        defaultValues: { fullName: "", email: "", phone: "", time: "", date: undefined, },
     });
 
+    // Handle Form Submission
     async function onSubmit(data: TestDriveFormValues) {
         setIsSubmitting(true);
-
         try {
             const supabase = createClient();
-
             const { error } = await supabase.from("test_drive_reservations").insert({
-                car_id: carId,
-                vehicle: carName, // Keep original carName for backend
-                customer_name: data.fullName,
-                email: data.email,
-                phone: data.phone,
-                date: format(data.date, "yyyy-MM-dd"), // Keep standard format for DB
-                time: data.time,
-                status: "pending", // ✅ ENUM-compatible value
-                user_id: userId || null,
-                contacted: false,
+                car_id: carId, vehicle: carName, customer_name: data.fullName, email: data.email,
+                phone: data.phone, date: format(data.date, "yyyy-MM-dd"), time: data.time,
+                status: "pending", user_id: userId || null, contacted: false,
             });
-
             if (error) throw error;
-
-            toast({
-                title: t('toast.successTitle'),
-                description: t('toast.successDescription'),
-                variant: "default",
-            });
-
-            form.reset();
-            setIsOpen(false);
+            toast({ title: t('toast.successTitle'), description: t('toast.successDescription') });
+            form.reset(); setIsDialogOpen(false);
         } catch (error) {
             console.error("Error scheduling test drive:", error);
-            // Attempt to provide a more specific error if possible
             const errorMessage = error instanceof Error ? error.message : t('toast.errorDescription');
-            toast({
-                title: t('toast.errorTitle'),
-                description: errorMessage,
-                variant: "destructive",
-            });
+            toast({ title: t('toast.errorTitle'), description: errorMessage, variant: "destructive" });
         } finally {
             setIsSubmitting(false);
         }
     }
 
-    // Time slots generation logic remains the same
-    const timeSlots = Array.from({ length: 17 }, (_, i) => {
-        const hour24 = Math.floor((i + 18) / 2); // 9 AM to 5 PM (17 slots, starting at 9:00) -> 9 to 17
-        const hour12 = hour24 % 12 || 12; // Convert to 12-hour format
-        const minute = i % 2 === 0 ? "00" : "30";
-        const period = hour24 < 12 ? "AM" : "PM";
-        const value = `${String(hour24).padStart(2, '0')}:${minute}`; // Store as 24hr format for consistency? Or keep 12hr? Let's keep 12hr for display consistency.
-        const label = `${hour12}:${minute} ${period}`;
-        return {
-            value: label, // Use the display label as the value for simplicity here
-            label: label,
-        };
+    // Generate Time Slots
+    const timeSlots = Array.from({ length: 16 }, (_, i) => { // 16 slots: 9:00 to 16:30
+        const totalMinutes = 9 * 60 + i * 30;
+        const hour24 = Math.floor(totalMinutes / 60); const minute = totalMinutes % 60;
+        const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12; const period = hour24 < 12 ? "AM" : "PM";
+        const label = `${hour12}:${String(minute).padStart(2, '0')} ${period}`;
+        return { value: label, label: label };
     });
 
-
+    // Render Component
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" className="w-full flex items-center justify-center gap-2">
-                    <CalendarIcon className="h-4 w-4" />
-                    {t('triggerButton')}
+                    <CalendarIcon className="h-4 w-4" /> {t('triggerButton')}
                 </Button>
             </DialogTrigger>
-            {/* Removed overflow-visible as PopoverContent handles its own positioning */}
+            {/* STEP 1: Ensure NO z-index or position:relative causing stacking context here */}
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>{t('title')}</DialogTitle>
-                    <DialogDescription>
-                        {t('description', { carName })}
-                    </DialogDescription>
+                    <DialogDescription>{t('description', { carName })}</DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="fullName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('labels.fullName')}</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder={t('placeholders.fullName')} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
+                        {/* FullName, Email, Phone fields - Check these FormItems for z-index */}
+                        <FormField control={form.control} name="fullName" render={({ field }) => (<FormItem><FormLabel>{t('labels.fullName')}</FormLabel><FormControl><Input placeholder={t('placeholders.fullName')} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="email" render={({ field }) => (<FormItem><FormLabel>{t('labels.email')}</FormLabel><FormControl><Input type="email" placeholder={t('placeholders.email')} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                        <FormField control={form.control} name="phone" render={({ field }) => (<FormItem><FormLabel>{t('labels.phone')}</FormLabel><FormControl><Input placeholder={t('placeholders.phone')} {...field} /></FormControl><FormMessage /></FormItem>)} />
 
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('labels.email')}</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder={t('placeholders.email')} type="email" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('labels.phone')}</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder={t('placeholders.phone')} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="date"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>{t('labels.date')}</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                {/* Added explicit height h-10 to match Input */}
-                                                <Button
-                                                    variant="outline"
-                                                    className="w-full justify-start pl-3 text-left font-normal h-10" // Ensure consistent height
-                                                >
-                                                    <CalendarIcon className="mr-2 h-4 w-4" /> {/* Added Icon */}
-                                                    {field.value ? format(field.value, "PPP") : (
-                                                        <span className="text-muted-foreground">{t('placeholders.date')}</span>
-                                                    )}
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        {/* Removed z-50, Popover handles layering. Removed pointer-events-auto */}
-                                        <PopoverContent
-                                            className="w-auto p-0 bg-background shadow-md border rounded-md" // Use bg-background for theme consistency
-                                            align="start"
-                                            sideOffset={5}
-                                        >
+                        {/* Date Field */}
+                        <FormField control={form.control} name="date" render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>{t('labels.date')}</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button variant={"outline"} className={cn("w-full h-10 pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                                {field.value ? format(field.value, "PPP") : <span>{t('placeholders.date')}</span>}
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent
+                                        className="w-auto p-0 bg-white shadow-lg border rounded-md z-[200]"
+                                        align="start"
+                                        sideOffset={5}
+                                        onOpenAutoFocus={(e) => { e.preventDefault(); }}
+                                        onInteractOutside={(e) => { e.preventDefault(); }}
+                                    >
+                                        <div className="pointer-events-auto">
                                             <Calendar
                                                 mode="single"
                                                 selected={field.value}
                                                 onSelect={field.onChange}
-                                                disabled={(date) =>
-                                                    date < new Date(new Date().setHours(0, 0, 0, 0)) || // Disable past dates
-                                                    date.getDay() === 0 // Disable Sundays
-                                                }
-                                                initialFocus
+                                                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0)) || date.getDay() === 0}
+                                                className="pointer-events-auto"
                                             />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
 
-                        <FormField
-                            control={form.control}
-                            name="time"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('labels.time')}</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                {/* Use SelectValue for placeholder */}
-                                                <SelectValue placeholder={t('placeholders.time')} />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {timeSlots.map((slot) => (
-                                                <SelectItem key={slot.value} value={slot.value}>
-                                                    {slot.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {/* Time Field */}
+                        <FormField control={form.control} name="time" render={({ field }) => (
+                            // STEP 3: Check this FormItem and SelectTrigger for z-index
+                            <FormItem>
+                                <FormLabel>{t('labels.time')}</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger className="h-10">
+                                            <SelectValue placeholder={t('placeholders.time')} />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent> {/* SelectContent usually handles its own z-index */}
+                                        {timeSlots.map((slot) => (<SelectItem key={slot.value} value={slot.value}>{slot.label}</SelectItem>))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
 
+                        {/* STEP 4: Check this Button for z-index */}
                         <Button type="submit" className="w-full" disabled={isSubmitting}>
                             {isSubmitting ? t('buttons.submitting') : t('buttons.submit')}
                         </Button>
