@@ -250,7 +250,7 @@ export default async function AnalyticsPage() {
             {car.year} {car.make} {car.model}
           </h4>
           <p className="text-sm text-muted-foreground mt-1">
-            ${car.price?.toLocaleString() || "Price unavailable"}
+            CHF{car.price?.toLocaleString() || "Price unavailable"}
           </p>
         </div>
         <Badge className="ml-2" variant="secondary">
