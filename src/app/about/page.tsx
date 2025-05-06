@@ -26,14 +26,18 @@ export default async function AboutPage() {
     customerFirst: <Heart className="h-8 w-8 text-primary" />,
   };
 
-  // --- Define ONLY the founder key for the team section ---
-  const founderKey = 'member1';
+  // --- Define BOTH team members instead of just the founder ---
+  const memberKeys = ['member1', 'member2']; // member1 = founder, member2 = head of sales
+
+  // --- Map member keys to their specific image paths ---
+  const memberImages = {
+    member1: "/images/team/founder.webp",
+    member2: "/images/team/Patricia.webp"
+  };
 
   // --- Image Paths (Assumed locations within your /public folder) ---
   const heroImagePath = "/images/about/hero-background.jpg"; // Formerly aston.jpg
   const storyImagePath = "/images/about/our-story.jpg";
-  // Assumes founder image is named after the key 'member1'
-  const founderImagePath = "/images/team/member1.webp"; // Formerly founder.webp
   // -------------------------------------------------------------------
 
   return (
@@ -104,31 +108,34 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Meet the Team (Founder Only - Centered) */}
+      {/* Meet the Team (Two Members in Grid) */}
       <section className="py-20 bg-background">
         <div className="container max-w-7xl mx-auto px-6 sm:px-8">
           <h2 className="text-3xl font-bold tracking-tight mb-12 text-center">
             {t('team.title')}
           </h2>
-          {/* Centering container for the single card */}
-          <div className="flex justify-center">
-            <div className="w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-sm"> {/* Added max-width for better presentation */}
-              <div className="h-64 bg-muted relative">
-                {/* Founder Image ('member1') - No Cropping */}
-                <Image
-                  src="/images/team/founder.webp" // Path relative to /public
-                  alt={t(`team.${founderKey}.imageAlt`)} // Use the specific founder key
-                  fill
-                  className="object-cover" // Use contain to avoid cropping
-                  sizes="(max-width: 640px) 100vw, 384px" // Adjusted sizes for max-w-sm
-                />
+          {/* Team members grid - 1 column on mobile, 2 columns on larger screens */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
+            {memberKeys.map((memberKey) => (
+              <div key={memberKey} className="w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-sm">
+                <div className="h-64 bg-muted relative">
+                  <Image
+                    src={memberImages[memberKey as keyof typeof memberImages]}
+                    alt={t(`team.${memberKey}.imageAlt`)}
+                    fill
+                    className={memberKey === 'member2'
+                      ? "object-cover object-[center_top]" // Adjust positioning for Patricia's photo
+                      : "object-cover"}
+                    sizes="(max-width: 640px) 100vw, 384px"
+                  />
+                </div>
+                <div className="p-6 text-center">
+                  <h3 className="text-xl font-semibold mb-1">{t(`team.${memberKey}.name`)}</h3>
+                  <p className="text-primary font-medium mb-4">{t(`team.${memberKey}.title`)}</p>
+                  <p className="text-muted-foreground italic">{t(`team.${memberKey}.quote`)}</p>
+                </div>
               </div>
-              <div className="p-6 text-center"> {/* Centered text */}
-                <h3 className="text-xl font-semibold mb-1">{t(`team.${founderKey}.name`)}</h3>
-                <p className="text-primary font-medium mb-4">{t(`team.${founderKey}.title`)}</p>
-                <p className="text-muted-foreground italic">{t(`team.${founderKey}.quote`)}</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
