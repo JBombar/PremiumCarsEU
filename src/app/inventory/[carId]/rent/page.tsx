@@ -207,13 +207,15 @@ export default async function CarRentPage({ params }: CarListingParams) {
                             listingType="rent"
                         />
 
-                        {/* Link back to main listing page */}
-                        <Link href={`/inventory/${carId}`}>
-                            <Button variant="outline" className="mt-4 w-full">
-                                <Car className="mr-2 h-4 w-4" />
-                                {t('rental.viewSaleDetails')}
-                            </Button>
-                        </Link>
+                        {/* Only show "View Sale Details" button for listings that are also for sale */}
+                        {carData.listing_type === 'both' && (
+                            <Link href={`/inventory/${carId}`}>
+                                <Button variant="outline" className="mt-4 w-full">
+                                    <Car className="mr-2 h-4 w-4" />
+                                    {t('rental.viewSaleDetails')}
+                                </Button>
+                            </Link>
+                        )}
 
                         {/* Tabs under the image */}
                         <div className="mt-6">
@@ -473,12 +475,15 @@ export default async function CarRentPage({ params }: CarListingParams) {
                                         />
                                     </div>
                                     <div className="mt-3">
-                                        <Link href={`/inventory/${carId}`}>
-                                            <Button variant="outline" className="w-full">
-                                                <Car className="mr-2 h-4 w-4" />
-                                                {t('rental.viewFullDetails')}
-                                            </Button>
-                                        </Link>
+                                        {/* Only show "View Sale Details" button for listings that are also for sale */}
+                                        {carData.listing_type === 'both' && (
+                                            <Link href={`/inventory/${carId}`}>
+                                                <Button variant="outline" className="w-full">
+                                                    <Car className="mr-2 h-4 w-4" />
+                                                    {t('rental.viewFullDetails')}
+                                                </Button>
+                                            </Link>
+                                        )}
                                     </div>
                                 </div>
 

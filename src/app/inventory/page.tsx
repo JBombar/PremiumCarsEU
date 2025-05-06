@@ -257,17 +257,20 @@ function InventoryPage() {
         )}
 
         {/* Results Header (Count and Sorting) */}
-        <div className="flex items-center justify-between mb-6">
-          <div>Showing {totalCount} vehicles</div>
-          <div className="flex items-center gap-4">
-            {/* Currency Dropdown - Now placed before Sort By */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          {/* Vehicle count - full width on mobile */}
+          <div className="text-base">Showing {totalCount} vehicles</div>
+
+          {/* Controls container - stack vertically on mobile */}
+          <div className="flex flex-col xs:flex-row gap-4">
+            {/* Currency Dropdown */}
             <div className="flex items-center gap-2">
-              <span>Currency:</span>
+              <span className="text-sm min-w-[70px] sm:min-w-0">Currency:</span>
               <Select
                 value={selectedCurrency}
                 onValueChange={(value) => setSelectedCurrency(value as Currency)}
               >
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="w-full sm:w-[120px]">
                   <SelectValue placeholder="Currency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -282,12 +285,12 @@ function InventoryPage() {
 
             {/* Sort By Dropdown */}
             <div className="flex items-center gap-2">
-              <span>Sort by:</span>
+              <span className="text-sm min-w-[70px] sm:min-w-0">Sort by:</span>
               <Select
                 value={sortOption}
                 onValueChange={(value) => handleSortChange(value)}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Sort order" />
                 </SelectTrigger>
                 <SelectContent>
