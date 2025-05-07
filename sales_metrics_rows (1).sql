@@ -1,1 +1,0 @@
-INSERT INTO "public"."sales_metrics" ("id", "dealer_id", "total_sales", "total_revenue", "cars_sold", "month", "year", "created_at", "updated_at") VALUES ('7ca800e9-bf51-4895-9d9b-b1de1ccce7ca', null, '0', '0', '0', null, null, '2025-04-02 08:32:06.863626', '2025-04-02 08:32:06.863626');

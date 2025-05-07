@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { CarFront, ShoppingCart, Car } from "lucide-react";
+import { CarFront, ShoppingCart, Car, DollarSign, Sparkles, Clock } from "lucide-react";
 import { KpiCard } from "@/components/admin/KpiCard";
 import { redirect } from "next/navigation";
 
@@ -15,8 +15,17 @@ interface InventoryStats {
   total_listings: number;
   sold_cars: number;
   available_cars: number;
+  total_value?: number;
+  new_cars_count?: number;
+  used_cars_count?: number;
   created_at?: string;
   updated_at?: string;
+}
+
+// Define car listing interface to ensure proper typing
+interface CarListing {
+  price: string | null;
+  condition?: string;
 }
 
 async function getInventoryStats() {
@@ -45,8 +54,44 @@ async function getInventoryStats() {
     return { error, data: null };
   }
 
+  // Fetch car listings to calculate additional stats
+  const { data: carListings, error: listingsError } = await supabase
+    .from('car_listings')
+    .select('price, condition')
+    .eq('dealer_id', dealerId)
+    .eq('status', 'available'); // Only count available cars
+
+  if (listingsError) {
+    console.error("Error fetching car listings:", listingsError);
+    return { error: listingsError, data: null };
+  }
+
+  // Calculate total value of inventory with proper type handling
+  const totalValue = (carListings as CarListing[]).reduce((sum, car) => {
+    // Handle cases where price might be null or not a valid number
+    const price = car.price ? parseFloat(car.price) : 0;
+    return sum + (isNaN(price) ? 0 : price);
+  }, 0);
+
+  // Count new and used cars
+  const newCarsCount = (carListings as CarListing[]).filter(car =>
+    car.condition?.toLowerCase() === 'new'
+  ).length;
+
+  const usedCarsCount = (carListings as CarListing[]).filter(car =>
+    car.condition?.toLowerCase() === 'used'
+  ).length;
+
+  // Add calculated stats to the data
+  const enhancedStats = {
+    ...data,
+    total_value: totalValue,
+    new_cars_count: newCarsCount,
+    used_cars_count: usedCarsCount
+  };
+
   // Cast the data to our defined interface
-  return { data: data as InventoryStats | null, error: null };
+  return { data: enhancedStats as InventoryStats | null, error: null };
 }
 
 export default async function AdminDashboard() {
@@ -54,6 +99,11 @@ export default async function AdminDashboard() {
 
   const isLoading = false; // We're using Server Components, so no client-side loading state
   const hasError = error !== null;
+
+  // Format currency value
+  const formatCurrency = (value: number) => {
+    return `CHF ${value.toLocaleString('de-DE')}`;
+  };
 
   return (
     <div>
@@ -69,26 +119,50 @@ export default async function AdminDashboard() {
           <p>There was an error loading your inventory statistics. Please try refreshing the page.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <KpiCard
-            title="Total Cars Listed"
-            value={stats?.total_listings || 0}
-            icon={CarFront}
-            isLoading={isLoading}
-          />
-          <KpiCard
-            title="Cars Sold This Month"
-            value={stats?.sold_cars || 0}
-            icon={ShoppingCart}
-            isLoading={isLoading}
-          />
-          <KpiCard
-            title="Available Cars"
-            value={stats?.available_cars || 0}
-            icon={Car}
-            isLoading={isLoading}
-          />
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <KpiCard
+              title="Total Cars Listed"
+              value={stats?.total_listings || 0}
+              icon={CarFront}
+              isLoading={isLoading}
+            />
+            <KpiCard
+              title="Cars Sold This Month"
+              value={stats?.sold_cars || 0}
+              icon={ShoppingCart}
+              isLoading={isLoading}
+            />
+            <KpiCard
+              title="Available Cars"
+              value={stats?.available_cars || 0}
+              icon={Car}
+              isLoading={isLoading}
+            />
+            <KpiCard
+              title="Total Inventory Value"
+              value={formatCurrency(stats?.total_value || 0)}
+              icon={DollarSign}
+              isLoading={isLoading}
+            />
+          </div>
+
+          <h2 className="text-xl font-semibold mb-4">Inventory Breakdown</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <KpiCard
+              title="New Cars in Stock"
+              value={stats?.new_cars_count || 0}
+              icon={Sparkles}
+              isLoading={isLoading}
+            />
+            <KpiCard
+              title="Used Cars in Stock"
+              value={stats?.used_cars_count || 0}
+              icon={Clock}
+              isLoading={isLoading}
+            />
+          </div>
+        </>
       )}
 
       {/* When no data exists yet */}
