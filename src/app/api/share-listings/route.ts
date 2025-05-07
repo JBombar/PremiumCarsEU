@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
                 make: listing.make,
                 model: listing.model,
                 year: listing.year,
-                listing_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourdomain.com'}/inventory/${listing_id}`,
+                listing_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://premiumcarseu.com'}/inventory/${listing_id}`,
                 status: 'pending'
             });
         }
