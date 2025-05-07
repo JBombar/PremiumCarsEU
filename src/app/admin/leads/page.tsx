@@ -1032,7 +1032,7 @@ export default function LeadsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm">
-                    {lead.budget ? `$${lead.budget.toLocaleString()}` : 'Not specified'}
+                    {lead.budget ? `CHF ${lead.budget.toLocaleString()}` : 'Not specified'}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     {lead.location || 'Not specified'}
@@ -1190,7 +1190,7 @@ export default function LeadsPage() {
                   </div>
                   <div>
                     <div className="font-medium text-muted-foreground">Budget</div>
-                    <div>{selectedLead.budget ? `$${selectedLead.budget.toLocaleString()}` : 'Not specified'}</div>
+                    <div>{selectedLead.budget ? `CHF ${selectedLead.budget.toLocaleString()}` : 'Not specified'}</div>
                   </div>
                   <div>
                     <div className="font-medium text-muted-foreground">Condition</div>

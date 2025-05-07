@@ -265,9 +265,9 @@ export default function AdminCarsPage() {
 
   // Format currency
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("de-CH", {
       style: "currency",
-      currency: "USD",
+      currency: "CHF",
     }).format(amount);
   };
 
@@ -1067,7 +1067,7 @@ export default function AdminCarsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      <div>{offer.mileage} miles</div>
+                      <div>{offer.mileage} km</div>
                       <div className="text-sm text-muted-foreground">
                         {offer.fuel_type}, {offer.transmission}
                       </div>
@@ -1208,7 +1208,7 @@ export default function AdminCarsPage() {
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-sm font-medium text-muted-foreground">Mileage</dt>
-                        <dd>{selectedOffer.mileage} miles</dd>
+                        <dd>{selectedOffer.mileage} km</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-sm font-medium text-muted-foreground">Fuel Type</dt>
