@@ -5,14 +5,33 @@ import { Database } from '@/types/supabase';
 import { z } from 'zod';
 
 const paramsSchema = z.object({ id: z.string().uuid() });
-// reuse the same schema for updates (make everything optional)
+
+// ✅ Modified schema to include `is_shared_with_network`
 const pendingListingUpdateSchema = z.object({
     make: z.string().optional(),
     model: z.string().optional(),
     year: z.number().int().optional(),
     price: z.number().nonnegative().optional(),
     mileage: z.number().int().nonnegative().optional(),
-    // … (rest same as POST, all optional)
+    fuel_type: z.string().optional(),
+    transmission: z.string().optional(),
+    condition: z.string().optional(),
+    location_city: z.string().optional(),
+    location_country: z.string().optional(),
+    images: z.array(z.string().url()).optional(),
+    description: z.string().optional(),
+    body_type: z.string().optional(),
+    exterior_color: z.string().optional(),
+    interior_color: z.string().optional(),
+    engine: z.string().optional(),
+    vin: z.string().optional(),
+    features: z.array(z.string()).optional(),
+    seller_name: z.string().optional(),
+    seller_since: z.string().optional(),
+    is_special_offer: z.boolean().optional(),
+    special_offer_label: z.string().optional(),
+    // ✅ NEW FIELD
+    is_shared_with_network: z.boolean().optional(),
 });
 
 function createSupabaseClient() {

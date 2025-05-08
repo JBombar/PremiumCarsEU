@@ -43,6 +43,7 @@ export default function Sidebar() {
     { name: "Dashboard", href: "/admin", icon: LayoutGrid },
     { name: "Inventory", href: "/admin/inventory", icon: Car },
     { name: "Car Offers", href: "/admin/car-offers", icon: Tag },
+    { name: "Public Database", href: "/admin/public-database", icon: Car },
     { name: "Dealer Listings", href: "/admin/dealer-listings", icon: ClipboardList }, // <-- Added new navigation item
     { name: "Partners", href: "/admin/partners", icon: Users },
     { name: "Leads", href: "/admin/leads", icon: Users },

@@ -33,6 +33,7 @@ export default function DealerSidebar() {
         { name: "Inventory", href: "/dealer-admin/inventory", icon: Car },
         { name: "Reservations", href: "/dealer-admin/reservations", icon: ClipboardCheck },
         { name: "Test Drives", href: "/dealer-admin/test-drive-reservations", icon: CalendarClock },
+        { name: "Public Database", href: "/dealer-admin/public-database", icon: Car },
     ];
 
     const handleLogout = async () => {

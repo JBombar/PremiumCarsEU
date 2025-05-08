@@ -82,6 +82,7 @@ interface Car {
     is_special_offer?: boolean;
     special_offer_label?: string | null;
     approval_status: ApprovalStatus; // <--- Added approval_status
+    is_shared_with_network?: boolean; // <--- Added is_shared_with_network field
     created_at?: string;
 }
 
@@ -111,6 +112,7 @@ const initialFormData: Partial<Car> = {
     is_special_offer: false,
     special_offer_label: '',
     approval_status: 'pending', // Default for form if needed, though not editable here
+    is_shared_with_network: false, // <--- Default value for network sharing
 };
 
 
@@ -296,6 +298,7 @@ export default function DealerInventoryPage() {
                 is_special_offer: item.is_special_offer ?? false,
                 special_offer_label: item.special_offer_label || null,
                 approval_status: item.approval_status ?? 'pending', // <--- Map approval_status, default to pending
+                is_shared_with_network: item.is_shared_with_network ?? false, // <--- Map is_shared_with_network field
                 created_at: item.created_at,
             }));
             setCars(formattedData);
@@ -528,7 +531,7 @@ export default function DealerInventoryPage() {
             is_public: formData.is_public ?? true,
             is_special_offer: formData.is_special_offer ?? false,
             special_offer_label: formData.is_special_offer ? (formData.special_offer_label?.trim() || null) : null,
-            // approval_status is set by default in DB or by admin, not included here
+            is_shared_with_network: formData.is_shared_with_network ?? false,
         };
 
         try {
@@ -828,6 +831,7 @@ export default function DealerInventoryPage() {
                                         <DetailItem label="Engine" value={currentCar.engine} />
                                         <DetailItem label="VIN" value={currentCar.vin} />
                                         <DetailItem label="Location" value={currentCar.location_city && currentCar.location_country ? `${currentCar.location_city}, ${currentCar.location_country}` : currentCar.location_city || currentCar.location_country || 'N/A'} />
+                                        <DetailItem label="Shared with Network" value={currentCar.is_shared_with_network} />
                                     </dl>
                                 </div>
 
@@ -981,6 +985,76 @@ export default function DealerInventoryPage() {
                                 </section>
                                 {/* Images */}
                                 <section> <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Images*</h3> <Label htmlFor="vehicle-image-upload" className="block text-sm font-medium text-gray-700 mb-2">Upload New Images (Max 10MB each)</Label> <div className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition ${formErrors.images ? 'border-red-500' : 'border-gray-300'}`}> <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" id="vehicle-image-upload" disabled={isSubmitting} /> <label htmlFor="vehicle-image-upload" className={`cursor-pointer flex flex-col items-center ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}> <CloudArrowUpIcon className="h-10 w-10 text-gray-400 mb-2" /> <p className="text-sm text-gray-600">Drag & drop or click to select</p> {isSubmitting && <p className="text-xs text-blue-600 mt-1">Uploading...</p>} </label> </div> <p className="text-red-500 text-xs mt-1 h-4">{formErrors.images}</p> {(formData.images?.length ?? 0) > 0 && (<div className="mt-4"> <Label className="block text-sm font-medium text-gray-700 mb-2">Current Images ({formData.images?.length})</Label> <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"> {formData.images?.map((url, index) => (url && (<div key={url || index} className="relative border rounded overflow-hidden group aspect-video bg-gray-100"> <img src={url} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150x100?text=Error'; }} /> <button type="button" onClick={() => handleRemoveImage(index)} className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed" aria-label={`Remove image ${index + 1}`} disabled={isSubmitting} > <XMarkIcon className="h-3 w-3" /> </button> </div>)))} </div> </div>)} </section>
+                                {/* Visibility & Sharing Settings */}
+                                <section>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Visibility & Sharing Settings</h3>
+                                    <div className="space-y-4">
+                                        {/* Public Listing Checkbox */}
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="is_public"
+                                                name="is_public"
+                                                checked={formData.is_public}
+                                                onCheckedChange={(checked) => {
+                                                    setFormData(prev => ({ ...prev, is_public: checked === true }));
+                                                }}
+                                            />
+                                            <Label htmlFor="is_public" className="font-normal cursor-pointer">
+                                                Make this listing public
+                                            </Label>
+                                        </div>
+
+                                        {/* Network Sharing Checkbox (NEW) */}
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="is_shared_with_network"
+                                                name="is_shared_with_network"
+                                                checked={formData.is_shared_with_network}
+                                                onCheckedChange={(checked) => {
+                                                    setFormData(prev => ({ ...prev, is_shared_with_network: checked === true }));
+                                                }}
+                                            />
+                                            <Label htmlFor="is_shared_with_network" className="font-normal cursor-pointer">
+                                                Share this listing with the network
+                                            </Label>
+                                        </div>
+
+                                        {/* Special Offer Section */}
+                                        <div className="mt-4 pt-4 border-t">
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id="is_special_offer"
+                                                    name="is_special_offer"
+                                                    checked={formData.is_special_offer}
+                                                    onCheckedChange={(checked) => {
+                                                        setFormData(prev => ({ ...prev, is_special_offer: checked === true }));
+                                                        if (formErrors.special_offer_label) {
+                                                            setFormErrors(prev => ({ ...prev, special_offer_label: '' }));
+                                                        }
+                                                    }}
+                                                />
+                                                <Label htmlFor="is_special_offer" className="font-normal cursor-pointer">
+                                                    Mark as Special Offer
+                                                </Label>
+                                            </div>
+
+                                            {formData.is_special_offer && (
+                                                <div className="mt-3 pl-6">
+                                                    <Label htmlFor="special_offer_label">Special Offer Label*</Label>
+                                                    <Input
+                                                        id="special_offer_label"
+                                                        name="special_offer_label"
+                                                        value={formData.special_offer_label || ''}
+                                                        onChange={handleFormChange}
+                                                        placeholder="e.g., Summer Sale, Limited Time Offer"
+                                                        className={formErrors.special_offer_label ? 'border-red-500' : ''}
+                                                    />
+                                                    <p className="text-red-500 text-xs mt-1 h-4">{formErrors.special_offer_label}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </section>
                                 {/* Form Actions */}
                                 <div className="flex justify-end space-x-3 pt-5 border-t mt-6"> {modalMode === 'edit' && (<Button type="button" variant="destructive" onClick={handleDelete} disabled={isSubmitting}> {isSubmitting ? <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" /> : <TrashIconOutline className="h-4 w-4 mr-2" />} Delete </Button>)} <Button type="button" variant="outline" onClick={closeModal} disabled={isSubmitting}>Cancel</Button> <Button type="submit" disabled={isSubmitting || !dealerPartnerId}> {isSubmitting ? <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" /> : null} {modalMode === 'create' ? 'Add Vehicle' : 'Save Changes'} </Button> </div>
                             </form>

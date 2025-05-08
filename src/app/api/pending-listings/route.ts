@@ -28,6 +28,7 @@ const pendingListingSchema = z.object({
     seller_since: z.string().optional(), // Consider if this should come from user/partner data
     is_special_offer: z.boolean().optional(),
     special_offer_label: z.string().optional(),
+    is_shared_with_network: z.boolean().optional(), // Added new field for network sharing
 });
 type PendingListing = z.infer<typeof pendingListingSchema>;
 
