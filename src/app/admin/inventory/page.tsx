@@ -1014,6 +1014,239 @@ export default function InventoryPage() {
 
   // --- Render ---
 
+  // Add these new state variables for bulk actions
+  const [showPriceModal, setShowPriceModal] = useState(false);
+  const [priceChangeType, setPriceChangeType] = useState<'fixed' | 'percentage'>('fixed');
+  const [priceChangeAmount, setPriceChangeAmount] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<string>('');
+  const [confirmMessage, setConfirmMessage] = useState<string>('');
+  const [isPerformingBulkAction, setIsPerformingBulkAction] = useState(false);
+  const [specialOfferLabel, setSpecialOfferLabel] = useState('');
+  const [showSpecialOfferModal, setShowSpecialOfferModal] = useState(false);
+  const [selectedListingType, setSelectedListingType] = useState<'sale' | 'rent' | 'both'>('sale');
+  const [showListingTypeModal, setShowListingTypeModal] = useState(false);
+
+  // Add these bulk action helper functions before the render section
+
+  // Helper function to update multiple listings in Supabase
+  const bulkUpdateListings = async (updateData: any) => {
+    setIsPerformingBulkAction(true);
+    try {
+      const { error } = await supabase
+        .from('car_listings')
+        .update(updateData)
+        .in('id', selectedListingIds);
+
+      if (error) throw error;
+
+      // Success toast
+      toast({
+        title: 'Success',
+        description: `Updated ${selectedListingIds.length} listing(s).`,
+      });
+
+      // Refresh inventory
+      fetchInventory();
+
+      return true;
+    } catch (err: any) {
+      console.error('Error updating listings:', err);
+      toast({
+        title: 'Update Failed',
+        description: err.message || 'An error occurred while updating listings.',
+        variant: 'destructive'
+      });
+      return false;
+    } finally {
+      setIsPerformingBulkAction(false);
+    }
+  };
+
+  // Toggle public status of selected listings
+  const togglePublicStatus = async (makePublic: boolean) => {
+    setConfirmAction('togglePublic');
+    setConfirmMessage(`Make ${selectedListingIds.length} listing(s) ${makePublic ? 'public' : 'private'}?`);
+    setShowConfirmModal(true);
+  };
+
+  // Confirm and execute toggle public status
+  const confirmTogglePublicStatus = async (makePublic: boolean) => {
+    return await bulkUpdateListings({ is_public: makePublic });
+  };
+
+  // Toggle sold status of selected listings
+  const toggleSoldStatus = async (markAsSold: boolean) => {
+    setConfirmAction('toggleSold');
+    setConfirmMessage(`Mark ${selectedListingIds.length} listing(s) as ${markAsSold ? 'sold' : 'available'}?`);
+    setShowConfirmModal(true);
+  };
+
+  // Confirm and execute toggle sold status
+  const confirmToggleSoldStatus = async (markAsSold: boolean) => {
+    let updateData: any = {
+      status: markAsSold ? 'sold' : 'available',
+      is_public: !markAsSold // Not public when sold
+    };
+
+    // If marking as sold, calculate time in stock
+    if (markAsSold) {
+      // We need to fetch each listing to get its created_at date
+      const { data: listings } = await supabase
+        .from('car_listings')
+        .select('id, created_at')
+        .in('id', selectedListingIds);
+
+      if (listings && listings.length > 0) {
+        for (const listing of listings) {
+          const createdDate = new Date(listing.created_at);
+          const today = new Date();
+          const timeDiffMs = today.getTime() - createdDate.getTime();
+          const daysDiff = Math.round(timeDiffMs / (1000 * 60 * 60 * 24));
+
+          // Update each listing individually with its own time_in_stock_days
+          await supabase
+            .from('car_listings')
+            .update({
+              status: 'sold',
+              is_public: false,
+              time_in_stock_days: daysDiff
+            })
+            .eq('id', listing.id);
+        }
+
+        // Refresh inventory
+        fetchInventory();
+        return true;
+      }
+    }
+
+    // If we're setting to available or couldn't get created_at dates, just do a bulk update
+    return await bulkUpdateListings(updateData);
+  };
+
+  // Open modal to update listing type
+  const openListingTypeModal = () => {
+    setShowListingTypeModal(true);
+  };
+
+  // Confirm and update listing type
+  const confirmUpdateListingType = async () => {
+    return await bulkUpdateListings({ listing_type: selectedListingType });
+  };
+
+  // Open modal to set special offer label
+  const openSpecialOfferModal = () => {
+    setShowSpecialOfferModal(true);
+  };
+
+  // Confirm and set special offer
+  const confirmSetSpecialOffer = async () => {
+    return await bulkUpdateListings({
+      is_special_offer: true,
+      special_offer_label: specialOfferLabel
+    });
+  };
+
+  // Remove special offer from selected listings
+  const removeSpecialOffer = async () => {
+    setConfirmAction('removeSpecialOffer');
+    setConfirmMessage(`Remove special offer status from ${selectedListingIds.length} listing(s)?`);
+    setShowConfirmModal(true);
+  };
+
+  // Confirm and remove special offer
+  const confirmRemoveSpecialOffer = async () => {
+    return await bulkUpdateListings({
+      is_special_offer: false,
+      special_offer_label: ''
+    });
+  };
+
+  // Open modal to change price
+  const openPriceChangeModal = () => {
+    setShowPriceModal(true);
+  };
+
+  // Confirm and apply price change
+  const confirmPriceChange = async () => {
+    // We need to apply the price change to each listing individually
+    setIsPerformingBulkAction(true);
+
+    try {
+      const amount = parseFloat(priceChangeAmount);
+      if (isNaN(amount)) throw new Error('Invalid amount');
+
+      // Fetch current prices
+      const { data: listings } = await supabase
+        .from('car_listings')
+        .select('id, price')
+        .in('id', selectedListingIds);
+
+      if (!listings || listings.length === 0) throw new Error('Could not fetch listings');
+
+      // Update each listing with new price
+      for (const listing of listings) {
+        let newPrice;
+
+        if (priceChangeType === 'fixed') {
+          newPrice = amount; // Direct replacement
+        } else {
+          // Percentage change
+          const discount = listing.price * (amount / 100);
+          newPrice = listing.price - discount;
+          if (newPrice < 0) newPrice = 0;
+        }
+
+        await supabase
+          .from('car_listings')
+          .update({ price: newPrice })
+          .eq('id', listing.id);
+      }
+
+      toast({
+        title: 'Success',
+        description: `Updated prices for ${selectedListingIds.length} listing(s).`,
+      });
+
+      // Refresh inventory and reset state
+      fetchInventory();
+      setShowPriceModal(false);
+      setPriceChangeAmount('');
+
+      return true;
+    } catch (err: any) {
+      console.error('Error updating prices:', err);
+      toast({
+        title: 'Price Update Failed',
+        description: err.message || 'An error occurred while updating prices.',
+        variant: 'destructive'
+      });
+      return false;
+    } finally {
+      setIsPerformingBulkAction(false);
+    }
+  };
+
+  // Handle confirm modal actions
+  const handleConfirmAction = async () => {
+    setShowConfirmModal(false);
+
+    switch (confirmAction) {
+      case 'togglePublic':
+        await confirmTogglePublicStatus(confirmMessage.includes('public'));
+        break;
+      case 'toggleSold':
+        await confirmToggleSoldStatus(confirmMessage.includes('sold'));
+        break;
+      case 'removeSpecialOffer':
+        await confirmRemoveSpecialOffer();
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Header */}
@@ -1436,6 +1669,130 @@ export default function InventoryPage() {
           </div>
         )}
       </div>
+
+      {/* Bulk Actions Panel - Only visible when listings are selected */}
+      {selectedListingIds.length > 0 && (
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-6 border border-blue-200">
+          <div className="flex items-center mb-3">
+            <h2 className="text-lg font-semibold text-gray-700">Bulk Actions</h2>
+            <Badge variant="outline" className="ml-2 bg-blue-50">
+              {selectedListingIds.length} {selectedListingIds.length === 1 ? 'listing' : 'listings'} selected
+            </Badge>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {/* Make Public/Private */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Visibility</Label>
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 bg-gray-50 hover:bg-green-50"
+                  onClick={() => togglePublicStatus(true)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Make Public
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 bg-gray-50 hover:bg-gray-100"
+                  onClick={() => togglePublicStatus(false)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Make Private
+                </Button>
+              </div>
+            </div>
+
+            {/* Mark as Sold/Available */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Status</Label>
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 bg-gray-50 hover:bg-red-50"
+                  onClick={() => toggleSoldStatus(true)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Mark as Sold
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 bg-gray-50 hover:bg-green-50"
+                  onClick={() => toggleSoldStatus(false)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Mark Available
+                </Button>
+              </div>
+            </div>
+
+            {/* Update Listing Type */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Listing Type</Label>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full bg-gray-50 hover:bg-blue-50"
+                onClick={openListingTypeModal}
+                disabled={isPerformingBulkAction}
+              >
+                Update Listing Type
+              </Button>
+            </div>
+
+            {/* Special Offer */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Special Offer</Label>
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 bg-gray-50 hover:bg-amber-50"
+                  onClick={openSpecialOfferModal}
+                  disabled={isPerformingBulkAction}
+                >
+                  Add Special Offer
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 bg-gray-50 hover:bg-gray-100"
+                  onClick={removeSpecialOffer}
+                  disabled={isPerformingBulkAction}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+
+            {/* Price Change */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Price</Label>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full bg-gray-50 hover:bg-purple-50"
+                onClick={openPriceChangeModal}
+                disabled={isPerformingBulkAction}
+              >
+                Update Price
+              </Button>
+            </div>
+          </div>
+
+          {isPerformingBulkAction && (
+            <div className="mt-4 flex items-center justify-center text-sm text-blue-600">
+              <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />
+              Updating listings... Please wait.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Inventory Table / Loading / Error State */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
@@ -2379,6 +2736,216 @@ export default function InventoryPage() {
             {selectedImageIndex !== null && currentCar?.images?.[selectedImageIndex] && (
               <img src={currentCar.images[selectedImageIndex]} alt={`Image ${selectedImageIndex + 1}`} className="max-h-full max-w-full object-contain" />
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* --- Bulk Action Modals --- */}
+
+      {/* Confirmation Modal */}
+      <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+        <DialogContent className="sm:max-w-md">
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Confirm Action</h3>
+            <p className="text-gray-600 mb-4">{confirmMessage}</p>
+            <div className="flex justify-end space-x-3">
+              <Button variant="outline" onClick={() => setShowConfirmModal(false)} disabled={isPerformingBulkAction}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmAction}
+                disabled={isPerformingBulkAction}
+              >
+                {isPerformingBulkAction && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Listing Type Modal */}
+      <Dialog open={showListingTypeModal} onOpenChange={setShowListingTypeModal}>
+        <DialogContent className="sm:max-w-md">
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Update Listing Type</h3>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="listing-type">Select New Listing Type</Label>
+                <Select
+                  value={selectedListingType}
+                  onValueChange={(value: 'sale' | 'rent' | 'both') => setSelectedListingType(value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select listing type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sale">For Sale</SelectItem>
+                    <SelectItem value="rent">For Rent</SelectItem>
+                    <SelectItem value="both">Sale or Rent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowListingTypeModal(false)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    await confirmUpdateListingType();
+                    setShowListingTypeModal(false);
+                  }}
+                  disabled={isPerformingBulkAction}
+                >
+                  {isPerformingBulkAction && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
+                  Update {selectedListingIds.length} Listing{selectedListingIds.length !== 1 ? 's' : ''}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Special Offer Modal */}
+      <Dialog open={showSpecialOfferModal} onOpenChange={setShowSpecialOfferModal}>
+        <DialogContent className="sm:max-w-md">
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Set Special Offer</h3>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="special-offer-label">Special Offer Label</Label>
+                <Input
+                  id="special-offer-label"
+                  value={specialOfferLabel}
+                  onChange={(e) => setSpecialOfferLabel(e.target.value)}
+                  placeholder="e.g., HOT DEAL, SALE, SPECIAL PRICE"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  This label will be displayed prominently on all selected listings.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowSpecialOfferModal(false)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    if (!specialOfferLabel.trim()) {
+                      toast({
+                        title: "Label Required",
+                        description: "Please enter a special offer label.",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+                    await confirmSetSpecialOffer();
+                    setShowSpecialOfferModal(false);
+                  }}
+                  disabled={isPerformingBulkAction || !specialOfferLabel.trim()}
+                >
+                  {isPerformingBulkAction && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
+                  Apply to {selectedListingIds.length} Listing{selectedListingIds.length !== 1 ? 's' : ''}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Price Change Modal */}
+      <Dialog open={showPriceModal} onOpenChange={setShowPriceModal}>
+        <DialogContent className="sm:max-w-md">
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Update Price</h3>
+            <div className="space-y-4">
+              <div>
+                <Label className="mb-2 block">Price Change Type</Label>
+                <div className="flex space-x-2 mb-4">
+                  <Button
+                    type="button"
+                    variant={priceChangeType === 'fixed' ? 'default' : 'outline'}
+                    onClick={() => setPriceChangeType('fixed')}
+                    className="flex-1"
+                  >
+                    Fixed Amount
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={priceChangeType === 'percentage' ? 'default' : 'outline'}
+                    onClick={() => setPriceChangeType('percentage')}
+                    className="flex-1"
+                  >
+                    Percentage Discount
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="price-change-amount">
+                  {priceChangeType === 'fixed' ? 'New Price (CHF)' : 'Discount Percentage (%)'}
+                </Label>
+                <Input
+                  id="price-change-amount"
+                  type="number"
+                  step={priceChangeType === 'fixed' ? '100' : '0.1'}
+                  value={priceChangeAmount}
+                  onChange={(e) => setPriceChangeAmount(e.target.value)}
+                  placeholder={priceChangeType === 'fixed' ? 'e.g., 25000' : 'e.g., 10'}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {priceChangeType === 'fixed'
+                    ? 'All selected listings will be updated to this exact price.'
+                    : 'Price will be reduced by this percentage for all selected listings.'}
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowPriceModal(false)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    if (!priceChangeAmount.trim() || isNaN(parseFloat(priceChangeAmount))) {
+                      toast({
+                        title: "Invalid Amount",
+                        description: "Please enter a valid number.",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    if (priceChangeType === 'percentage' && (parseFloat(priceChangeAmount) <= 0 || parseFloat(priceChangeAmount) >= 100)) {
+                      toast({
+                        title: "Invalid Percentage",
+                        description: "Percentage must be between 0 and 100.",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    await confirmPriceChange();
+                  }}
+                  disabled={isPerformingBulkAction || !priceChangeAmount.trim()}
+                >
+                  {isPerformingBulkAction && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
+                  Update Price{selectedListingIds.length > 1 ? 's' : ''}
+                </Button>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
