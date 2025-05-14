@@ -18,6 +18,7 @@ interface Car { /* ... same interface definition ... */
     body_type?: string | null; exterior_color?: string | null; interior_color?: string | null;
     status: string; images?: string[] | null; created_at: string; view_count: number;
     seller_name?: string | null; location_city?: string | null; location_country?: string | null;
+    is_public?: boolean; // Add is_public to the interface
 }
 
 // --- Helper Functions (Keep these) ---
@@ -55,9 +56,37 @@ const CarCard = ({ car, t }: { car: Car, t: ReturnType<typeof useTranslations<'M
 
 type MostSearchedCarsClientProps = { cars: Car[]; };
 
-// isValidCar function (Keep as it was)
-function isValidCar(car: Car | null | undefined): boolean { /* ... same logic ... */
-    if (!car) return false; const isValid = Boolean(car.id && car.make && car.model && car.year); return isValid;
+// isValidCar function
+function isValidCar(car: Car | null | undefined): boolean {
+    if (!car) return false;
+
+    // Debug
+    if (car.id) {
+        console.log(`Client validating car ${car.id} with is_public:`, car.is_public);
+    }
+
+    // Check if is_public field is not set in the database schema
+    // In this case, we'll accept the car as valid regardless of is_public
+    if (car.is_public === undefined || car.is_public === null) {
+        // We'll let these pass through only if the parent component already did filtering
+        return Boolean(car.id && car.make && car.model && car.year);
+    }
+
+    // More lenient check for is_public with proper type checking
+    let isPublic = false;
+    if (typeof car.is_public === 'boolean') {
+        isPublic = car.is_public === true;
+    } else if (typeof car.is_public === 'number') {
+        isPublic = car.is_public === 1;
+    } else if (typeof car.is_public === 'string') {
+        isPublic = car.is_public === 'true';
+    }
+
+    const isValid = Boolean(
+        car.id && car.make && car.model && car.year && isPublic
+    );
+
+    return isValid;
 }
 
 // --- Component Function Start ---

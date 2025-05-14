@@ -14,6 +14,7 @@ interface Car {
   body_type?: string | null; exterior_color?: string | null; interior_color?: string | null;
   status: string; images?: string[] | null; created_at: string; view_count: number;
   seller_name?: string | null; location_city?: string | null; location_country?: string | null;
+  is_public?: boolean; // Add is_public to the interface
 }
 
 export function MostSearchedCars() {
@@ -35,12 +36,61 @@ export function MostSearchedCars() {
         }
 
         const data = await response.json();
-        // Data processing and filtering logic remains the same...
+
+        // Debug: Log the raw data from API
+        console.log('API Response:', data);
+
+        // Data processing and filtering logic
         if (data && Array.isArray(data)) {
-          const filteredCars = data.filter(car =>
-            car && car.id && car.make && car.model && car.year &&
-            car.status && car.status.toLowerCase() === 'available'
-          );
+          // Apply each filter separately for debugging
+          const withIds = data.filter(car => car && car.id);
+          console.log('Cars with IDs:', withIds.length);
+
+          const withBasicInfo = withIds.filter(car => car.make && car.model && car.year);
+          console.log('Cars with basic info:', withBasicInfo.length);
+
+          const availableCars = withBasicInfo.filter(car => car.status && car.status.toLowerCase() === 'available');
+          console.log('Available cars:', availableCars.length);
+
+          const publicCars = availableCars.filter(car => {
+            console.log(`Car ID: ${car.id}, is_public: ${car.is_public}`);
+            return car.is_public === true;
+          });
+          console.log('Public cars:', publicCars.length);
+
+          // More lenient approach for is_public - check if an issue with boolean comparison
+          const filteredCars = availableCars.filter(car => {
+            // Handle different possible types for is_public with proper type checking
+            let isPublic = false;
+            if (typeof car.is_public === 'boolean') {
+              isPublic = car.is_public === true;
+            } else if (typeof car.is_public === 'number') {
+              isPublic = car.is_public === 1;
+            } else if (typeof car.is_public === 'string') {
+              isPublic = car.is_public === 'true';
+            }
+            return isPublic;
+          });
+
+          console.log('Final filtered cars:', filteredCars.length);
+
+          // If our strict filtering returns no results, 
+          // check if the is_public field might not be populated at all in the database
+          if (filteredCars.length === 0 && availableCars.length > 0) {
+            // Check if any cars have is_public explicitly set to any value
+            const anyWithIsPublicSet = availableCars.some(car => car.is_public !== undefined && car.is_public !== null);
+
+            console.log('Any cars with is_public set:', anyWithIsPublicSet);
+
+            if (!anyWithIsPublicSet) {
+              // If no cars have is_public set, it might be a schema issue
+              // Default to showing available cars without is_public filter
+              console.log('No cars have is_public set, defaulting to available cars');
+              setCars(availableCars);
+              return;
+            }
+          }
+
           setCars(filteredCars);
         } else {
           setCars([]);
