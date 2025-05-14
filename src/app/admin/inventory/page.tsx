@@ -1477,7 +1477,10 @@ export default function InventoryPage() {
                   <tr><td colSpan={11} className="px-4 py-8 text-center text-gray-500">No vehicles found.</td></tr>
                 ) : (
                   inventory.map(car => (
-                    <tr key={car.id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={car.id}
+                      className={`hover:bg-gray-50 transition-colors ${car.is_public === false ? 'bg-gray-100' : ''}`}
+                    >
                       {/* Checkbox Cell */}
                       <td className="px-4 py-3 whitespace-nowrap text-sm">
                         <Checkbox
