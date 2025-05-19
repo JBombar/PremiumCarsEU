@@ -29,6 +29,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 // Icons (Example using Heroicons - install @heroicons/react)
 import {
@@ -46,6 +57,11 @@ import {
   PhotoIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  ChartBarIcon,
+  CurrencyDollarIcon,
+  PresentationChartLineIcon,
+  LinkIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 
 
@@ -1245,6 +1261,560 @@ export default function InventoryPage() {
       default:
         break;
     }
+  };
+
+  // Market Analysis handlers
+  const handleInitiateMarketAnalysis = async () => {
+    if (selectedListingIds.length === 0) {
+      toast({
+        title: "No Vehicles Selected",
+        description: "Please select at least one vehicle to analyze.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsAnalysisButtonLoading(true);
+
+    try {
+      // Collect required data for selected vehicles
+      const vehiclesToAnalyze = selectedListingIds.map(id => {
+        const vehicle = inventory.find(car => car.id === id);
+        if (!vehicle) return null;
+
+        return {
+          inventory_item_id: vehicle.id,
+          make: vehicle.make,
+          model: vehicle.model,
+          year: vehicle.year,
+          mileage: vehicle.mileage
+        };
+      }).filter((v): v is {
+        inventory_item_id: string;
+        make: string;
+        model: string;
+        year: number;
+        mileage: number;
+      } => v !== null); // Remove any null entries with type assertion
+
+      if (vehiclesToAnalyze.length === 0) {
+        throw new Error("Could not gather required data for selected vehicles");
+      }
+
+      // Send to API
+      const response = await fetch('/api/market-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ vehicles: vehiclesToAnalyze }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to initiate market analysis');
+      }
+
+      const data = await response.json();
+
+      // Store scan data for tracking
+      setActiveScanRequestId(data.scan_request_id);
+      setVehiclesInCurrentScan(vehiclesToAnalyze);
+      setScanRequestStatus('pending');
+      setScanRequestError(null);
+      setVehicleScanResults({});
+
+      toast({
+        title: "Market Analysis Initiated",
+        description: "Your request is being processed. Results will update in real-time.",
+      });
+    } catch (err: any) {
+      console.error('Error initiating market analysis:', err);
+      toast({
+        title: "Analysis Request Failed",
+        description: err.message || 'An unexpected error occurred.',
+        variant: "destructive"
+      });
+    } finally {
+      setIsAnalysisButtonLoading(false);
+    }
+  };
+
+  const handleViewAnalysisDetails = (vehicleId: string) => {
+    setSelectedVehicleForDetails(vehicleId);
+    setIsDetailsModalOpen(true);
+  };
+
+  // Market Analysis state variables
+  const [activeScanRequestId, setActiveScanRequestId] = useState<string | null>(null);
+  const [scanRequestStatus, setScanRequestStatus] = useState<string | null>(null);
+  const [scanRequestError, setScanRequestError] = useState<string | null>(null);
+  const [vehiclesInCurrentScan, setVehiclesInCurrentScan] = useState<{
+    inventory_item_id: string;
+    make: string;
+    model: string;
+    year: number;
+    mileage: number;
+  }[] | null>(null);
+  const [vehicleScanResults, setVehicleScanResults] = useState<Record<string, any>>({});
+  const [isAnalysisButtonLoading, setIsAnalysisButtonLoading] = useState(false);
+  const [selectedVehicleForDetails, setSelectedVehicleForDetails] = useState<string | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+  // Add Supabase Realtime subscriptions for market analysis
+  useEffect(() => {
+    if (!activeScanRequestId) return;
+
+    // Create subscriptions to track market analysis scan updates
+    const scanRequestsChannel = supabase
+      .channel(`scan-requests-${activeScanRequestId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'market_scan_requests',
+          filter: `scan_request_id=eq.${activeScanRequestId}`,
+        },
+        (payload) => {
+          const scanData = payload.new;
+          setScanRequestStatus(scanData.status);
+          setScanRequestError(scanData.error_message);
+        }
+      )
+      .subscribe();
+
+    const scanResultsChannel = supabase
+      .channel(`scan-results-${activeScanRequestId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen for INSERT and UPDATE
+          schema: 'public',
+          table: 'market_scan_results',
+          filter: `scan_request_id=eq.${activeScanRequestId}`,
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+            const resultData = payload.new;
+            setVehicleScanResults(prev => ({
+              ...prev,
+              [resultData.carbiz_vehicle_id]: resultData,
+            }));
+          }
+        }
+      )
+      .subscribe();
+
+    // Clean up subscriptions when component unmounts or activeScanRequestId changes
+    return () => {
+      scanRequestsChannel.unsubscribe();
+      scanResultsChannel.unsubscribe();
+    };
+  }, [activeScanRequestId, supabase]);
+
+  // Market Analysis Components
+  // 1. Market Analysis Trigger Button
+  const MarketAnalysisTriggerButton = () => {
+    const isDisabled = selectedListingIds.length === 0 || isAnalysisButtonLoading || (activeScanRequestId !== null && scanRequestStatus === 'processing');
+
+    return (
+      <Button
+        onClick={handleInitiateMarketAnalysis}
+        disabled={isDisabled}
+        className="mb-4 bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
+      >
+        {isAnalysisButtonLoading ? (
+          <ReloadIcon className="h-4 w-4 animate-spin" />
+        ) : (
+          <PresentationChartLineIcon className="h-5 w-5" />
+        )}
+        Analyze Market & Prices
+      </Button>
+    );
+  };
+
+  // 2. Scan Overall Status Display
+  const ScanOverallStatusDisplay = () => {
+    if (!activeScanRequestId) return null;
+
+    // Calculate stats
+    const totalVehicles = vehiclesInCurrentScan?.length || 0;
+    const processedVehicles = Object.keys(vehicleScanResults).length;
+    const successVehicles = Object.values(vehicleScanResults).filter(result => result.status_for_vehicle === 'success').length;
+    const errorVehicles = Object.values(vehicleScanResults).filter(result => result.status_for_vehicle === 'error').length;
+    const noDataVehicles = Object.values(vehicleScanResults).filter(result => result.status_for_vehicle === 'no_data_found').length;
+
+    // Status badges
+    const getStatusBadge = (status: string | null) => {
+      switch (status) {
+        case 'processing':
+          return <Badge className="bg-blue-100 text-blue-800">Processing</Badge>;
+        case 'completed':
+          return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
+        case 'partially_failed':
+          return <Badge className="bg-yellow-100 text-yellow-800">Partially Completed</Badge>;
+        case 'failed':
+          return <Badge className="bg-red-100 text-red-800">Failed</Badge>;
+        default:
+          return <Badge className="bg-gray-100 text-gray-800">Pending</Badge>;
+      }
+    };
+
+    return (
+      <Alert className="mb-4 border-l-4 border-blue-500">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <AlertTitle className="flex items-center gap-2 text-blue-600">
+              <ChartBarIcon className="h-5 w-5" />
+              Market Analysis {getStatusBadge(scanRequestStatus)}
+            </AlertTitle>
+            <AlertDescription className="mt-2 text-sm">
+              <div className="font-medium text-gray-700">Scan ID: {activeScanRequestId}</div>
+              <div className="mt-1">
+                <span className="inline-block mr-3">
+                  <span className="font-medium">Vehicles:</span> {processedVehicles} processed / {totalVehicles} total
+                </span>
+                {successVehicles > 0 && (
+                  <Badge className="mr-2 bg-green-50 text-green-700">{successVehicles} successful</Badge>
+                )}
+                {errorVehicles > 0 && (
+                  <Badge className="mr-2 bg-red-50 text-red-700">{errorVehicles} failed</Badge>
+                )}
+                {noDataVehicles > 0 && (
+                  <Badge className="mr-2 bg-yellow-50 text-yellow-700">{noDataVehicles} no data</Badge>
+                )}
+              </div>
+              {scanRequestError && (
+                <div className="mt-2 text-red-500">
+                  <ExclamationTriangleIcon className="inline h-4 w-4 mr-1" />
+                  Error: {scanRequestError}
+                </div>
+              )}
+            </AlertDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2 md:mt-0"
+            onClick={() => {
+              setActiveScanRequestId(null);
+              setVehiclesInCurrentScan(null);
+              setScanRequestStatus(null);
+              setScanRequestError(null);
+              setVehicleScanResults({});
+            }}
+          >
+            <XMarkIcon className="h-4 w-4 mr-1" />
+            Dismiss
+          </Button>
+        </div>
+      </Alert>
+    );
+  };
+
+  // 3. Active Analysis Results Table
+  const ActiveAnalysisResultsTable = () => {
+    if (!activeScanRequestId || !vehiclesInCurrentScan) return null;
+
+    const formatCurrency = (value: number | null) => {
+      if (value === null || value === undefined) return '—';
+      return new Intl.NumberFormat('de-CH', {
+        style: 'currency',
+        currency: 'CHF',
+        maximumFractionDigits: 0
+      }).format(value);
+    };
+
+    const getStatusBadge = (vehicleId: string) => {
+      const result = vehicleScanResults[vehicleId];
+      if (!result) {
+        return <Badge className="bg-gray-100 text-gray-800">Pending</Badge>;
+      }
+
+      switch (result.status_for_vehicle) {
+        case 'success':
+          return <Badge className="bg-green-100 text-green-800">Success</Badge>;
+        case 'error':
+          return <Badge className="bg-red-100 text-red-800">Error</Badge>;
+        case 'no_data_found':
+          return <Badge className="bg-yellow-100 text-yellow-800">No Data Found</Badge>;
+        case 'processing':
+          return <Badge className="bg-blue-100 text-blue-800">Processing</Badge>;
+        default:
+          return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
+      }
+    };
+
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        <div className="p-4 border-b border-gray-200 bg-gray-50">
+          <h3 className="text-lg font-semibold text-gray-800">Market Analysis Results</h3>
+          <p className="text-sm text-gray-600">Real-time results for your selected vehicles</p>
+        </div>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Make</TableHead>
+                <TableHead>Model</TableHead>
+                <TableHead>Year</TableHead>
+                <TableHead>Mileage</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Avg. Market Price</TableHead>
+                <TableHead>Listings Found</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {vehiclesInCurrentScan.map((vehicle) => {
+                const result = vehicleScanResults[vehicle.inventory_item_id];
+                return (
+                  <TableRow key={vehicle.inventory_item_id}>
+                    <TableCell>{vehicle.make}</TableCell>
+                    <TableCell>{vehicle.model}</TableCell>
+                    <TableCell>{vehicle.year}</TableCell>
+                    <TableCell>{new Intl.NumberFormat('de-CH').format(vehicle.mileage)} km</TableCell>
+                    <TableCell>{getStatusBadge(vehicle.inventory_item_id)}</TableCell>
+                    <TableCell>
+                      {result?.market_avg_price
+                        ? formatCurrency(result.market_avg_price)
+                        : '—'}
+                    </TableCell>
+                    <TableCell>
+                      {result?.comparable_listings_found !== undefined
+                        ? result.comparable_listings_found
+                        : '—'}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewAnalysisDetails(vehicle.inventory_item_id)}
+                        disabled={!result || (result.status_for_vehicle !== 'success' && result.status_for_vehicle !== 'error')}
+                      >
+                        {result?.status_for_vehicle === 'error' ? 'View Error' : 'View Details'}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    );
+  };
+
+  // 4. Market Analysis Details Modal
+  const MarketAnalysisDetailsModal = () => {
+    if (!selectedVehicleForDetails || !isDetailsModalOpen) return null;
+
+    const vehicleDetails = vehiclesInCurrentScan?.find(
+      v => v.inventory_item_id === selectedVehicleForDetails
+    );
+    const scanResult = vehicleScanResults[selectedVehicleForDetails];
+
+    if (!vehicleDetails) return null;
+
+    return (
+      <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
+        <DialogContent className="max-w-4xl w-full max-h-[95vh] overflow-y-auto">
+          <div className="px-6 py-4 border-b">
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+              <PresentationChartLineIcon className="h-6 w-6 mr-2 text-blue-600" />
+              Market Analysis: {vehicleDetails.make} {vehicleDetails.model} ({vehicleDetails.year})
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              {vehicleDetails.mileage.toLocaleString()} km | Scan ID: {activeScanRequestId}
+            </p>
+          </div>
+
+          <div className="p-6">
+            {!scanResult && (
+              <div className="text-center py-12">
+                <ReloadIcon className="h-8 w-8 mx-auto animate-spin text-blue-500" />
+                <p className="mt-4 text-gray-600">Analysis in progress. Results will appear here once complete.</p>
+              </div>
+            )}
+
+            {scanResult?.status_for_vehicle === 'error' && (
+              <Alert variant="destructive" className="mb-6">
+                <ExclamationTriangleIcon className="h-5 w-5" />
+                <AlertTitle>Analysis Error</AlertTitle>
+                <AlertDescription>
+                  {scanResult.error_details_for_vehicle || 'An unknown error occurred during analysis.'}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {scanResult?.status_for_vehicle === 'no_data_found' && (
+              <Alert className="mb-6 bg-yellow-50 border-yellow-200 text-yellow-800">
+                <InformationCircleIcon className="h-5 w-5" />
+                <AlertTitle>No Comparable Listings Found</AlertTitle>
+                <AlertDescription>
+                  We couldn't find any comparable listings for this vehicle in our data sources.
+                  This could be due to the vehicle's unique specifications or limited market data.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {scanResult?.status_for_vehicle === 'success' && (
+              <>
+                {/* Price Range Section */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <div className="text-sm text-blue-600 font-medium">Minimum Market Price</div>
+                    <div className="text-2xl font-bold mt-1">
+                      {new Intl.NumberFormat('de-CH', {
+                        style: 'currency',
+                        currency: scanResult.currency || 'CHF',
+                        maximumFractionDigits: 0
+                      }).format(scanResult.market_min_price || 0)}
+                    </div>
+                  </div>
+                  <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                    <div className="text-sm text-emerald-600 font-medium">Average Market Price</div>
+                    <div className="text-2xl font-bold mt-1">
+                      {new Intl.NumberFormat('de-CH', {
+                        style: 'currency',
+                        currency: scanResult.currency || 'CHF',
+                        maximumFractionDigits: 0
+                      }).format(scanResult.market_avg_price || 0)}
+                    </div>
+                  </div>
+                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                    <div className="text-sm text-purple-600 font-medium">Maximum Market Price</div>
+                    <div className="text-2xl font-bold mt-1">
+                      {new Intl.NumberFormat('de-CH', {
+                        style: 'currency',
+                        currency: scanResult.currency || 'CHF',
+                        maximumFractionDigits: 0
+                      }).format(scanResult.market_max_price || 0)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Analysis Info Section */}
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
+                  <h3 className="text-md font-semibold text-gray-700 mb-2">Analysis Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-500">Listings Found:</span>{' '}
+                      <span className="font-medium">{scanResult.comparable_listings_found}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Data Source:</span>{' '}
+                      <span className="font-medium">{scanResult.data_source || 'Multiple Sources'}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Scanned At:</span>{' '}
+                      <span className="font-medium">{scanResult.scanned_at ? format(new Date(scanResult.scanned_at), 'PPp') : 'N/A'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Example Listings URLs */}
+                {scanResult.example_listing_urls && scanResult.example_listing_urls.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-md font-semibold text-gray-700 mb-2">Sample Listings</h3>
+                    <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-2">
+                      {scanResult.example_listing_urls.map((url: string, index: number) => (
+                        <a
+                          key={index}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center text-blue-600 hover:text-blue-800 hover:underline break-all"
+                        >
+                          <LinkIcon className="h-4 w-4 mr-1 flex-shrink-0" />
+                          <span className="text-sm">Listing #{index + 1}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comparable Listings Table */}
+                {scanResult.all_comparable_details && scanResult.all_comparable_details.length > 0 && (
+                  <div>
+                    <h3 className="text-md font-semibold text-gray-700 mb-2">Comparable Listings</h3>
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Title</TableHead>
+                              <TableHead>Price</TableHead>
+                              <TableHead>Year</TableHead>
+                              <TableHead>Mileage</TableHead>
+                              <TableHead>Location</TableHead>
+                              <TableHead>Details</TableHead>
+                              <TableHead></TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {scanResult.all_comparable_details.map((listing: any, index: number) => (
+                              <TableRow key={index}>
+                                <TableCell className="font-medium">{listing.title || 'N/A'}</TableCell>
+                                <TableCell>
+                                  {listing.price_numeric
+                                    ? new Intl.NumberFormat('de-CH', {
+                                      style: 'currency',
+                                      currency: scanResult.currency || 'CHF',
+                                      maximumFractionDigits: 0
+                                    }).format(listing.price_numeric)
+                                    : 'N/A'}
+                                </TableCell>
+                                <TableCell>{listing.year_numeric || 'N/A'}</TableCell>
+                                <TableCell>
+                                  {listing.mileage_numeric
+                                    ? `${new Intl.NumberFormat('de-CH').format(listing.mileage_numeric)} km`
+                                    : 'N/A'}
+                                </TableCell>
+                                <TableCell>{listing.location || 'N/A'}</TableCell>
+                                <TableCell>
+                                  {(listing.fuel_type || listing.transmission) && (
+                                    <span className="text-sm text-gray-600">
+                                      {listing.fuel_type}{listing.fuel_type && listing.transmission ? ', ' : ''}
+                                      {listing.transmission}
+                                    </span>
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  {listing.full_listing_url && (
+                                    <a
+                                      href={listing.full_listing_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:text-blue-800"
+                                    >
+                                      <LinkIcon className="h-4 w-4" />
+                                    </a>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          <div className="px-6 py-4 border-t flex justify-end">
+            <Button
+              onClick={() => setIsDetailsModalOpen(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   };
 
   return (
@@ -2949,6 +3519,125 @@ export default function InventoryPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Market Analysis Trigger Button */}
+      <MarketAnalysisTriggerButton />
+
+      {/* Scan Overall Status Display */}
+      <ScanOverallStatusDisplay />
+
+      {/* Active Analysis Results Table */}
+      <ActiveAnalysisResultsTable />
+
+      {/* Market Analysis Details Modal */}
+      <MarketAnalysisDetailsModal />
+
+      {/* Price Change Modal */}
+      <Dialog open={showPriceModal} onOpenChange={setShowPriceModal}>
+        <DialogContent className="sm:max-w-md">
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Update Price</h3>
+            <div className="space-y-4">
+              <div>
+                <Label className="mb-2 block">Price Change Type</Label>
+                <div className="flex space-x-2 mb-4">
+                  <Button
+                    type="button"
+                    variant={priceChangeType === 'fixed' ? 'default' : 'outline'}
+                    onClick={() => setPriceChangeType('fixed')}
+                    className="flex-1"
+                  >
+                    Fixed Amount
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={priceChangeType === 'percentage' ? 'default' : 'outline'}
+                    onClick={() => setPriceChangeType('percentage')}
+                    className="flex-1"
+                  >
+                    Percentage Discount
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="price-change-amount">
+                  {priceChangeType === 'fixed' ? 'New Price (CHF)' : 'Discount Percentage (%)'}
+                </Label>
+                <Input
+                  id="price-change-amount"
+                  type="number"
+                  step={priceChangeType === 'fixed' ? '100' : '0.1'}
+                  value={priceChangeAmount}
+                  onChange={(e) => setPriceChangeAmount(e.target.value)}
+                  placeholder={priceChangeType === 'fixed' ? 'e.g., 25000' : 'e.g., 10'}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {priceChangeType === 'fixed'
+                    ? 'All selected listings will be updated to this exact price.'
+                    : 'Price will be reduced by this percentage for all selected listings.'}
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowPriceModal(false)}
+                  disabled={isPerformingBulkAction}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={async () => {
+                    if (!priceChangeAmount.trim() || isNaN(parseFloat(priceChangeAmount))) {
+                      toast({
+                        title: "Invalid Amount",
+                        description: "Please enter a valid number.",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    if (priceChangeType === 'percentage' && (parseFloat(priceChangeAmount) <= 0 || parseFloat(priceChangeAmount) >= 100)) {
+                      toast({
+                        title: "Invalid Percentage",
+                        description: "Percentage must be between 0 and 100.",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+
+                    await confirmPriceChange();
+                  }}
+                  disabled={isPerformingBulkAction || !priceChangeAmount.trim()}
+                >
+                  {isPerformingBulkAction && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
+                  Update Price{selectedListingIds.length > 1 ? 's' : ''}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Market Analysis Components */}
+      {selectedListingIds.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <PresentationChartLineIcon className="h-5 w-5 mr-2 text-emerald-600" />
+            Market & Price Analysis
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Analyze the current market prices for your selected vehicles by comparing with similar listings.
+          </p>
+          <MarketAnalysisTriggerButton />
+          <ScanOverallStatusDisplay />
+          <ActiveAnalysisResultsTable />
+        </div>
+      )}
+
+      {/* Market Analysis Details Modal */}
+      <MarketAnalysisDetailsModal />
 
     </div> // End container
   );
