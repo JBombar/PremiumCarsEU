@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from '@/components/ui/dialog'; // Assuming Shadcn Dialog
 import { Button } from "@/components/ui/button"; // Assuming Shadcn Button
 import { Input } from "@/components/ui/input"; // Assuming Shadcn Input
@@ -1446,23 +1447,85 @@ export default function InventoryPage() {
   const fetchHistoricalScans = async (userId: string) => {
     setIsLoadingHistoricalScans(true);
     try {
-      const { data, error } = await supabase
+      // First get historical scans
+      const { data: scanData, error: scanError } = await supabase
         .from('market_scan_requests')
         .select('*')
         .eq('user_id', userId)
-        .in('status', ['completed', 'failed', 'partially_failed']) // Get completed and failed scans
+        .in('status', ['completed', 'failed', 'partially_failed'])
         .order('created_at', { ascending: false })
-        .limit(10); // Limit to 10 most recent scans initially
+        .limit(10);
 
-      if (error) throw error;
+      if (scanError) throw scanError;
 
-      // Process the historical scans data
-      const processedScans = await Promise.all((data || []).map(async (scan) => {
-        // Try to generate a descriptive summary for the scan
+      // Load scan data and ensure we have vehicle information
+
+      // Now get scan results to ensure we have vehicle information
+      const scanRequestIds = scanData?.map(scan => scan.scan_request_id) || [];
+
+      // If we don't have any scan history, return early
+      if (scanRequestIds.length === 0) {
+        setHistoricalScans([]);
+        return;
+      }
+
+      // Fetch scan results for these IDs to get vehicle details
+      const { data: resultsData, error: resultsError } = await supabase
+        .from('market_scan_results')
+        .select('*')
+        .in('scan_request_id', scanRequestIds);
+
+      if (resultsError) {
+        console.error("Error fetching scan results:", resultsError);
+        // Continue with scan data only
+      }
+
+      // Group results by scan_request_id
+      const resultsByScanId: Record<string, any[]> = {};
+      if (resultsData) {
+        resultsData.forEach(result => {
+          if (!resultsByScanId[result.scan_request_id]) {
+            resultsByScanId[result.scan_request_id] = [];
+          }
+          resultsByScanId[result.scan_request_id].push(result);
+        });
+      }
+
+      // Process the historical scans data with enriched information
+      const processedScans = await Promise.all((scanData || []).map(async (scan) => {
+        // Default summary text is the timestamp
         let summaryText = format(new Date(scan.created_at), 'PPp');
 
-        // If vehicle_ids_requested exists, try to get vehicle details
-        if (scan.vehicle_ids_requested) {
+        // Try to get vehicle information from scan results
+        const scanResults = resultsByScanId[scan.scan_request_id] || [];
+
+        if (scanResults.length > 0) {
+          // Use the first vehicle result as the main one in the summary
+          const mainResult = scanResults[0];
+
+          // If the scan result has vehicle information, use that
+          if (mainResult && mainResult.make && mainResult.model) {
+            let vehicleInfo = `${mainResult.make} ${mainResult.model}`;
+
+            if (mainResult.year) {
+              vehicleInfo += ` (${mainResult.year})`;
+            }
+
+            if (mainResult.mileage) {
+              const mileageFormatted = `${new Intl.NumberFormat('de-CH').format(mainResult.mileage)} km`;
+              vehicleInfo += ` - ${mileageFormatted}`;
+            }
+
+            summaryText = vehicleInfo;
+
+            // If there are more vehicles, indicate that
+            if (scanResults.length > 1) {
+              summaryText += ` +${scanResults.length - 1} more`;
+            }
+          }
+        }
+        // Fallback to the previous logic with vehicle_ids_requested if no results found
+        else if (scan.vehicle_ids_requested) {
           // Parse vehicle IDs if stored as a JSON string
           const vehicleIds = typeof scan.vehicle_ids_requested === 'string'
             ? JSON.parse(scan.vehicle_ids_requested)
@@ -1476,16 +1539,23 @@ export default function InventoryPage() {
               .slice(0, 3); // Only use up to 3 vehicles for the summary
 
             if (vehicles.length > 0) {
-              const vehicleNames = vehicles.map(v => `${v?.make} ${v?.model}`);
-              summaryText = vehicleNames.join(', ');
+              // Create detailed vehicle descriptions including make, model, year, and mileage
+              const vehicleNames = vehicles.map(v => {
+                const mileageFormatted = v?.mileage ? `${new Intl.NumberFormat('de-CH').format(v.mileage)} km` : '';
+                return `${v?.make} ${v?.model} (${v?.year})${mileageFormatted ? ` - ${mileageFormatted}` : ''}`;
+              });
 
-              // If there are more vehicles than we're showing
-              if (vehicleIds.length > vehicles.length) {
-                summaryText += ` +${vehicleIds.length - vehicles.length} more`;
+              // Use only the first vehicle for the summary text
+              summaryText = vehicleNames[0];
+
+              // If there are more vehicles than we're showing in detail
+              if (vehicleIds.length > 1) {
+                summaryText += ` +${vehicleIds.length - 1} more`;
               }
             }
           }
         }
+
 
         return {
           ...scan,
@@ -1509,8 +1579,6 @@ export default function InventoryPage() {
   // Function to fetch details for a selected historical scan
   const fetchHistoricalScanDetails = async (scanRequestId: string) => {
     if (!userId) return;
-
-    console.error('⚠️ START: Fetching historical scan details for scanRequestId:', scanRequestId);
 
     // Clear any active scan state first to avoid UI confusion
     if (activeScanRequestId && activeScanRequestId !== scanRequestId) {
@@ -1542,12 +1610,8 @@ export default function InventoryPage() {
 
       if (scanResultsError) throw scanResultsError;
 
-      console.error('🔍 Scan results data received:', scanResultsData);
-      console.error('🔍 Scan results length:', scanResultsData?.length || 0);
-
       // Check for empty results
       if (!scanResultsData || scanResultsData.length === 0) {
-        console.error('❌ No scan results found in database for this scan ID');
         throw new Error('No scan results found in database for this scan ID');
       }
 
@@ -1556,31 +1620,20 @@ export default function InventoryPage() {
 
       // Ensure proper status values for historical data
       for (const result of scanResultsData) {
-        console.error(`🔍 Processing result for vehicle: ${result.carbiz_vehicle_id}`);
-
-        // Check if all_comparable_details exists and what type it is
-        console.error('🔍 all_comparable_details type:', typeof result.all_comparable_details);
-        console.error('🔍 all_comparable_details is null/undefined:', !result.all_comparable_details);
 
         // Always ensure all_comparable_details is an array
         if (!result.all_comparable_details) {
           result.all_comparable_details = [];
-          console.error('⚠️ all_comparable_details was missing, set to empty array');
         } else if (typeof result.all_comparable_details === 'string') {
           try {
-            console.error('⚠️ all_comparable_details is a string, parsing to JSON');
             result.all_comparable_details = JSON.parse(result.all_comparable_details);
           } catch (e) {
-            console.error('❌ Error parsing all_comparable_details:', e);
             result.all_comparable_details = [];
           }
         } else if (!Array.isArray(result.all_comparable_details)) {
-          console.error('⚠️ all_comparable_details is not an array, converting');
           // If it's an object but not an array, convert to array with that object
           result.all_comparable_details = [result.all_comparable_details];
         }
-
-        console.error('✅ Final all_comparable_details:', result.all_comparable_details);
 
         // Make sure statuses are set correctly for display
         if (result.market_avg_price || (result.comparable_listings_found > 0)) {
@@ -1597,8 +1650,7 @@ export default function InventoryPage() {
         resultsMap[result.carbiz_vehicle_id] = result;
       }
 
-      console.error('🔍 Processed results map:', resultsMap);
-      console.error('🔍 Keys in results map:', Object.keys(resultsMap));
+
 
       // Set the historical scan details - use functional update to ensure clean state
       setSelectedHistoricalScanDetails(resultsMap);
@@ -1623,15 +1675,11 @@ export default function InventoryPage() {
 
         // Store these temporarily to render the results table
         setVehiclesInCurrentScan(vehicleDetails);
-        console.error('🚗 Vehicle details set:', vehicleDetails);
 
         // Force open modal for the first vehicle with data
         if (vehicleDetails.length > 0) {
-          console.error('🚗 Looking for a vehicle with results...');
-
           // Find first vehicle with results in the resultsMap
           const vehicleIds = Object.keys(resultsMap);
-          console.error('🚗 Result map vehicle IDs:', vehicleIds);
 
           // Use the first vehicle from resultsMap if possible
           let selectedId = vehicleIds[0];
@@ -1639,22 +1687,16 @@ export default function InventoryPage() {
           // If not found, use the first vehicle from inventory
           if (!selectedId && vehicleDetails.length > 0) {
             selectedId = vehicleDetails[0].inventory_item_id;
-            console.error('⚠️ No matching vehicle in results map, using first inventory vehicle:', selectedId);
           }
 
           if (selectedId) {
-            console.error('✅ Setting selected vehicle for modal:', selectedId);
-
             // Set the selected vehicle
             setSelectedVehicleForDetails(selectedId);
 
             // Force open the modal with delay to ensure state updates first
             setTimeout(() => {
-              console.error('🔄 Opening modal for vehicle:', selectedId);
               setIsDetailsModalOpen(true);
             }, 300);
-          } else {
-            console.error('❌ No valid vehicle ID found to open modal');
           }
         }
       }
@@ -2094,10 +2136,16 @@ export default function InventoryPage() {
 
   // 4. Market Analysis Details Modal
   const MarketAnalysisDetailsModal = () => {
-    console.error('🔄 Modal rendering with isDetailsModalOpen:', isDetailsModalOpen);
-    console.error('🔄 selectedVehicleForDetails:', selectedVehicleForDetails);
-    console.error('🔄 viewingHistorical:', viewingHistorical);
-    console.error('🔄 selectedHistoricalScanId:', selectedHistoricalScanId);
+    // Early return - don't execute any code if the modal is not open
+    // This prevents unnecessary console logs and operations
+    if (!selectedVehicleForDetails || !isDetailsModalOpen) {
+      return null;
+    }
+
+    // Only log when the modal is actually being shown
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Modal is open with vehicle ID:', selectedVehicleForDetails);
+    }
 
     // Safe currency formatter that handles undefined/null values
     const safeFormatCurrency = (value?: number | null, currencyCode?: string | null) => {
@@ -2109,55 +2157,33 @@ export default function InventoryPage() {
           maximumFractionDigits: 0
         }).format(value);
       } catch (e) {
-        console.error('Error formatting currency:', e);
         return value?.toString() || '—';
       }
     };
 
     // Handle both active and historical views
     const currentResults = viewingHistorical ? selectedHistoricalScanDetails : vehicleScanResults;
-    console.error('🔄 currentResults:', currentResults);
-    console.error('🔄 selectedHistoricalScanDetails keys:', Object.keys(selectedHistoricalScanDetails));
-    console.error('🔄 vehicleScanResults keys:', Object.keys(vehicleScanResults));
-
-    if (!selectedVehicleForDetails || !isDetailsModalOpen) {
-      console.error('❌ Modal not showing: missing vehicle ID or modal not open');
-      return null;
-    }
-
-    console.error('🔄 Looking for vehicle details for ID:', selectedVehicleForDetails);
 
     // Get vehicle details, or create a placeholder if not found
     let vehicleDetails = vehiclesInCurrentScan?.find(
       v => v.inventory_item_id === selectedVehicleForDetails
     );
 
-    console.error('🔄 Found vehicle details:', !!vehicleDetails);
+
 
     const scanResult = currentResults[selectedVehicleForDetails];
-    console.error('🔄 scanResult found:', !!scanResult);
 
     if (scanResult) {
-      console.error('🔄 scanResult properties:', Object.keys(scanResult));
-
       // Ensure all_comparable_details is properly formatted
       if (!scanResult.all_comparable_details) {
-        console.error('⚠️ all_comparable_details is missing or null, creating empty array');
         scanResult.all_comparable_details = [];
       } else if (typeof scanResult.all_comparable_details === 'string') {
         try {
-          console.error('⚠️ all_comparable_details is still a string, parsing again...');
           scanResult.all_comparable_details = JSON.parse(scanResult.all_comparable_details);
         } catch (e) {
-          console.error('❌ Error parsing all_comparable_details in modal:', e);
           scanResult.all_comparable_details = [];
         }
       }
-
-      console.error('✅ Final all_comparable_details in modal:',
-        Array.isArray(scanResult.all_comparable_details) ? scanResult.all_comparable_details.length + ' items' : typeof scanResult.all_comparable_details);
-    } else {
-      console.error('❌ No scan result found for vehicle:', selectedVehicleForDetails);
     }
 
     // If no vehicle details but we have scan results, create a placeholder
@@ -2178,6 +2204,9 @@ export default function InventoryPage() {
     return (
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
         <DialogContent className="max-w-4xl w-full max-h-[95vh] overflow-y-auto">
+          <DialogTitle className="sr-only">
+            {viewingHistorical ? 'Historical Analysis' : 'Market Analysis'}: {vehicleDetails.make} {vehicleDetails.model}
+          </DialogTitle>
           <div className={`px-6 py-4 border-b ${viewingHistorical ? 'border-purple-200' : 'border-gray-200'}`}>
             <h2 className="text-xl font-semibold text-gray-800 flex items-center">
               <PresentationChartLineIcon className={`h-6 w-6 mr-2 ${viewingHistorical ? 'text-purple-600' : 'text-blue-600'}`} />
@@ -2198,20 +2227,12 @@ export default function InventoryPage() {
             )}
 
             {/* For historical views without scanResult, show a more appropriate message */}
-            {(() => {
-              console.error('🔍 Evaluating no data condition:', {
-                scanResult: !!scanResult,
-                viewingHistorical,
-                selectedVehicleForDetails,
-                hasResultsMap: Object.keys(currentResults).length > 0
-              });
-              return (!scanResult && viewingHistorical);
-            })() && (
-                <div className="text-center py-12">
-                  <ExclamationTriangleIcon className="h-8 w-8 mx-auto text-amber-500" />
-                  <p className="mt-4 text-gray-600">No data available for this historical scan.</p>
-                </div>
-              )}
+            {!scanResult && viewingHistorical && (
+              <div className="text-center py-12">
+                <ExclamationTriangleIcon className="h-8 w-8 mx-auto text-amber-500" />
+                <p className="mt-4 text-gray-600">No data available for this historical scan.</p>
+              </div>
+            )}
 
             {scanResult?.status_for_vehicle === 'error' && (
               <Alert variant="destructive" className="mb-6">
@@ -2300,16 +2321,9 @@ export default function InventoryPage() {
                 )}
 
                 {/* Comparable Listings Table */}
-                {(() => {
-                  console.log('Evaluating comparable listings condition:', {
-                    hasDetails: !!scanResult?.all_comparable_details,
-                    isArray: Array.isArray(scanResult?.all_comparable_details),
-                    length: scanResult?.all_comparable_details ? scanResult.all_comparable_details.length : 0
-                  });
-                  return scanResult?.all_comparable_details &&
-                    Array.isArray(scanResult.all_comparable_details) &&
-                    scanResult.all_comparable_details.length > 0;
-                })() && (
+                {scanResult?.all_comparable_details &&
+                  Array.isArray(scanResult.all_comparable_details) &&
+                  scanResult.all_comparable_details.length > 0 && (
                     <div>
                       <h3 className="text-md font-semibold text-gray-700 mb-2">Comparable Listings</h3>
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -2330,38 +2344,12 @@ export default function InventoryPage() {
                               {(scanResult?.all_comparable_details || []).map((listing: any, index: number) => (
                                 <TableRow key={index}>
                                   <TableCell className="font-medium">{listing.title || 'N/A'}</TableCell>
-                                  <TableCell>
-                                    {listing.price_numeric
-                                      ? safeFormatCurrency(listing.price_numeric, scanResult?.currency)
-                                      : 'N/A'}
-                                  </TableCell>
+                                  <TableCell>{listing.price_numeric ? safeFormatCurrency(listing.price_numeric, scanResult?.currency) : 'N/A'}</TableCell>
                                   <TableCell>{listing.year_numeric || 'N/A'}</TableCell>
-                                  <TableCell>
-                                    {listing.mileage_numeric
-                                      ? `${new Intl.NumberFormat('de-CH').format(listing.mileage_numeric)} km`
-                                      : 'N/A'}
-                                  </TableCell>
+                                  <TableCell>{listing.mileage_numeric ? `${new Intl.NumberFormat('de-CH').format(listing.mileage_numeric)} km` : 'N/A'}</TableCell>
                                   <TableCell>{listing.location || 'N/A'}</TableCell>
-                                  <TableCell>
-                                    {(listing.fuel_type || listing.transmission) && (
-                                      <span className="text-sm text-gray-600">
-                                        {listing.fuel_type}{listing.fuel_type && listing.transmission ? ', ' : ''}
-                                        {listing.transmission}
-                                      </span>
-                                    )}
-                                  </TableCell>
-                                  <TableCell>
-                                    {listing.full_listing_url && (
-                                      <a
-                                        href={listing.full_listing_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:text-blue-800"
-                                      >
-                                        <LinkIcon className="h-4 w-4" />
-                                      </a>
-                                    )}
-                                  </TableCell>
+                                  <TableCell>{(listing.fuel_type || listing.transmission) && (<span className="text-sm text-gray-600">{listing.fuel_type}{listing.fuel_type && listing.transmission ? ', ' : ''}{listing.transmission}</span>)}</TableCell>
+                                  <TableCell>{listing.full_listing_url && (<a href={listing.full_listing_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800"><LinkIcon className="h-4 w-4" /></a>)}</TableCell>
                                 </TableRow>
                               ))}
                             </TableBody>
@@ -2445,6 +2433,7 @@ export default function InventoryPage() {
                         <div className="font-medium text-gray-800">
                           {scan.summary_text || format(new Date(scan.created_at), 'PPp')}
                         </div>
+
                         <div className="text-sm text-gray-500 mt-1">
                           {format(new Date(scan.created_at), 'PPp')}
                         </div>
@@ -2468,14 +2457,6 @@ export default function InventoryPage() {
                           className="text-xs"
                           onClick={(e) => {
                             e.stopPropagation(); // Prevent triggering the parent div onClick
-
-                            // EXTREME DEBUGGING
-                            console.error('🔴 View Details button clicked for scan:', scan.scan_request_id);
-
-                            // Force visibility in browser
-                            window.alert('View Details clicked for scan: ' + scan.scan_request_id);
-
-                            // Call function directly
                             fetchHistoricalScanDetails(scan.scan_request_id);
                           }}
                           disabled={isLoadingHistoricalScanDetails && selectedHistoricalScanId === scan.scan_request_id}
