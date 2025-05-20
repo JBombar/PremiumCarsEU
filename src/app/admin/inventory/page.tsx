@@ -1,10 +1,11 @@
 'use client';
+console.log("INVENTORY PAGE LOADED - LOGGING TEST");
 
-import { useState, useEffect, ChangeEvent, FormEvent, MouseEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent, MouseEvent, useRef } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { createClient } from '@/utils/supabase/client';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -178,6 +179,7 @@ function DetailItem({ label, value }: { label: string; value: string | number | 
 
 export default function InventoryPage() {
   const supabase = createClient();
+  const { toast } = useToast(); // Get toast function from hook
   const [inventory, setInventory] = useState<CarListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLoading, setUserLoading] = useState(false); // For Add button state
@@ -1277,6 +1279,9 @@ export default function InventoryPage() {
     setIsAnalysisButtonLoading(true);
 
     try {
+      // First cleanup any existing scan data
+      cleanupRealtimeSubscriptions();
+
       // Collect required data for selected vehicles
       const vehiclesToAnalyze = selectedListingIds.map(id => {
         const vehicle = inventory.find(car => car.id === id);
@@ -1295,7 +1300,7 @@ export default function InventoryPage() {
         model: string;
         year: number;
         mileage: number;
-      } => v !== null); // Remove any null entries with type assertion
+      } => v !== null);
 
       if (vehiclesToAnalyze.length === 0) {
         throw new Error("Could not gather required data for selected vehicles");
@@ -1317,12 +1322,22 @@ export default function InventoryPage() {
 
       const data = await response.json();
 
+      // Store scan ID in localStorage for persistence
+      if (data.scan_request_id) {
+        localStorage.setItem('active_market_scan_id', data.scan_request_id);
+      }
+
       // Store scan data for tracking
       setActiveScanRequestId(data.scan_request_id);
       setVehiclesInCurrentScan(vehiclesToAnalyze);
       setScanRequestStatus('pending');
       setScanRequestError(null);
       setVehicleScanResults({});
+
+      // Set up realtime subscriptions for this new scan
+      if (userId) {
+        setupRealtimeSubscriptions(data.scan_request_id, userId);
+      }
 
       toast({
         title: "Market Analysis Initiated",
@@ -1339,6 +1354,8 @@ export default function InventoryPage() {
       setIsAnalysisButtonLoading(false);
     }
   };
+
+  // Function has been moved and enhanced below
 
   const handleViewAnalysisDetails = (vehicleId: string) => {
     setSelectedVehicleForDetails(vehicleId);
@@ -1360,39 +1377,400 @@ export default function InventoryPage() {
   const [isAnalysisButtonLoading, setIsAnalysisButtonLoading] = useState(false);
   const [selectedVehicleForDetails, setSelectedVehicleForDetails] = useState<string | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isFetchingPersistedScan, setIsFetchingPersistedScan] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const realTimeSubscriptionsRef = useRef<{ unsubscribe: () => void }[]>([]);
 
-  // Add Supabase Realtime subscriptions for market analysis
+  // New state variables for historical scans
+  const [historicalScans, setHistoricalScans] = useState<Array<{
+    scan_request_id: string;
+    created_at: string;
+    status: string;
+    vehicle_ids_requested: string[] | null;
+    error_message: string | null;
+    updated_at: string | null;
+    summary_text?: string;
+  }>>([]);
+  const [isHistoricalPanelExpanded, setIsHistoricalPanelExpanded] = useState(false);
+  const [isLoadingHistoricalScans, setIsLoadingHistoricalScans] = useState(false);
+  const [selectedHistoricalScanId, setSelectedHistoricalScanId] = useState<string | null>(null);
+  const [selectedHistoricalScanDetails, setSelectedHistoricalScanDetails] = useState<Record<string, any>>({});
+  const [isLoadingHistoricalScanDetails, setIsLoadingHistoricalScanDetails] = useState(false);
+  const [viewingHistorical, setViewingHistorical] = useState(false);
+
+  // Load user ID, persisted scan, and historical scans on component mount
   useEffect(() => {
-    if (!activeScanRequestId) return;
+    const getUserIdAndLoadData = async () => {
+      try {
+        // Get current user
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error('Error fetching user:', userError);
+          return;
+        }
 
-    // Create subscriptions to track market analysis scan updates
+        // Set the user ID
+        setUserId(user.id);
+
+        // Fetch historical scans
+        fetchHistoricalScans(user.id);
+
+        // Check localStorage for persisted scan
+        const persistedScanId = localStorage.getItem('active_market_scan_id');
+        if (!persistedScanId) return;
+
+        // Start fetching persisted scan data
+        setIsFetchingPersistedScan(true);
+        setActiveScanRequestId(persistedScanId);
+
+        // Fetch scan request data
+        await fetchPersistedScanData(persistedScanId, user.id);
+      } catch (err) {
+        console.error('Error loading data:', err);
+        // Clear any invalid persisted scan
+        localStorage.removeItem('active_market_scan_id');
+      } finally {
+        setIsFetchingPersistedScan(false);
+      }
+    };
+
+    getUserIdAndLoadData();
+
+    // Cleanup function to remove subscriptions when component unmounts
+    return () => {
+      cleanupRealtimeSubscriptions();
+    };
+  }, []);
+
+  // Function to fetch historical scan summaries for the user
+  const fetchHistoricalScans = async (userId: string) => {
+    setIsLoadingHistoricalScans(true);
+    try {
+      const { data, error } = await supabase
+        .from('market_scan_requests')
+        .select('*')
+        .eq('user_id', userId)
+        .in('status', ['completed', 'failed', 'partially_failed']) // Get completed and failed scans
+        .order('created_at', { ascending: false })
+        .limit(10); // Limit to 10 most recent scans initially
+
+      if (error) throw error;
+
+      // Process the historical scans data
+      const processedScans = await Promise.all((data || []).map(async (scan) => {
+        // Try to generate a descriptive summary for the scan
+        let summaryText = format(new Date(scan.created_at), 'PPp');
+
+        // If vehicle_ids_requested exists, try to get vehicle details
+        if (scan.vehicle_ids_requested) {
+          // Parse vehicle IDs if stored as a JSON string
+          const vehicleIds = typeof scan.vehicle_ids_requested === 'string'
+            ? JSON.parse(scan.vehicle_ids_requested)
+            : scan.vehicle_ids_requested;
+
+          // If we have the inventory data loaded, try to get vehicle details
+          if (inventory.length > 0 && Array.isArray(vehicleIds)) {
+            const vehicles = vehicleIds
+              .map(id => inventory.find(car => car.id === id))
+              .filter(Boolean)
+              .slice(0, 3); // Only use up to 3 vehicles for the summary
+
+            if (vehicles.length > 0) {
+              const vehicleNames = vehicles.map(v => `${v?.make} ${v?.model}`);
+              summaryText = vehicleNames.join(', ');
+
+              // If there are more vehicles than we're showing
+              if (vehicleIds.length > vehicles.length) {
+                summaryText += ` +${vehicleIds.length - vehicles.length} more`;
+              }
+            }
+          }
+        }
+
+        return {
+          ...scan,
+          summary_text: summaryText
+        };
+      }));
+
+      setHistoricalScans(processedScans);
+    } catch (err) {
+      console.error('Error fetching historical scans:', err);
+      toast({
+        title: "Error Loading History",
+        description: "We couldn't load your scan history. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingHistoricalScans(false);
+    }
+  };
+
+  // Function to fetch details for a selected historical scan
+  const fetchHistoricalScanDetails = async (scanRequestId: string) => {
+    if (!userId) return;
+
+    console.error('⚠️ START: Fetching historical scan details for scanRequestId:', scanRequestId);
+
+    // Clear any active scan state first to avoid UI confusion
+    if (activeScanRequestId && activeScanRequestId !== scanRequestId) {
+      resetScanState();
+    }
+
+    setIsLoadingHistoricalScanDetails(true);
+    setViewingHistorical(true);
+    setSelectedHistoricalScanId(scanRequestId);
+
+    try {
+      // 1. Fetch the scan request to get vehicle IDs and other metadata
+      const { data: scanRequestData, error: scanRequestError } = await supabase
+        .from('market_scan_requests')
+        .select('*')
+        .eq('scan_request_id', scanRequestId)
+        .eq('user_id', userId)
+        .single();
+
+      if (scanRequestError) throw scanRequestError;
+
+      console.log('Scan request data:', scanRequestData);
+
+      // 2. Fetch the scan results for this scan request
+      const { data: scanResultsData, error: scanResultsError } = await supabase
+        .from('market_scan_results')
+        .select('*')
+        .eq('scan_request_id', scanRequestId);  // Removed user_id filter as it might be restricting results
+
+      if (scanResultsError) throw scanResultsError;
+
+      console.error('🔍 Scan results data received:', scanResultsData);
+      console.error('🔍 Scan results length:', scanResultsData?.length || 0);
+
+      // Check for empty results
+      if (!scanResultsData || scanResultsData.length === 0) {
+        console.error('❌ No scan results found in database for this scan ID');
+        throw new Error('No scan results found in database for this scan ID');
+      }
+
+      // Process scan results into the expected format (keyed by vehicle ID)
+      const resultsMap: Record<string, any> = {};
+
+      // Ensure proper status values for historical data
+      for (const result of scanResultsData) {
+        console.error(`🔍 Processing result for vehicle: ${result.carbiz_vehicle_id}`);
+
+        // Check if all_comparable_details exists and what type it is
+        console.error('🔍 all_comparable_details type:', typeof result.all_comparable_details);
+        console.error('🔍 all_comparable_details is null/undefined:', !result.all_comparable_details);
+
+        // Always ensure all_comparable_details is an array
+        if (!result.all_comparable_details) {
+          result.all_comparable_details = [];
+          console.error('⚠️ all_comparable_details was missing, set to empty array');
+        } else if (typeof result.all_comparable_details === 'string') {
+          try {
+            console.error('⚠️ all_comparable_details is a string, parsing to JSON');
+            result.all_comparable_details = JSON.parse(result.all_comparable_details);
+          } catch (e) {
+            console.error('❌ Error parsing all_comparable_details:', e);
+            result.all_comparable_details = [];
+          }
+        } else if (!Array.isArray(result.all_comparable_details)) {
+          console.error('⚠️ all_comparable_details is not an array, converting');
+          // If it's an object but not an array, convert to array with that object
+          result.all_comparable_details = [result.all_comparable_details];
+        }
+
+        console.error('✅ Final all_comparable_details:', result.all_comparable_details);
+
+        // Make sure statuses are set correctly for display
+        if (result.market_avg_price || (result.comparable_listings_found > 0)) {
+          result.status_for_vehicle = 'success';
+        } else if (result.error_details_for_vehicle) {
+          result.status_for_vehicle = 'error';
+        } else if (result.status_for_vehicle === 'no_data_found') {
+          // Keep as is
+        } else {
+          // Default to success for completed records with missing status
+          result.status_for_vehicle = scanRequestData.status === 'completed' ? 'success' : 'error';
+        }
+
+        resultsMap[result.carbiz_vehicle_id] = result;
+      }
+
+      console.error('🔍 Processed results map:', resultsMap);
+      console.error('🔍 Keys in results map:', Object.keys(resultsMap));
+
+      // Set the historical scan details - use functional update to ensure clean state
+      setSelectedHistoricalScanDetails(resultsMap);
+
+      // If vehicle IDs exist in the request, try to get vehicle details from inventory
+      if (scanRequestData.vehicle_ids_requested) {
+        // Parse vehicle IDs if stored as a JSON string
+        const vehicleIds = typeof scanRequestData.vehicle_ids_requested === 'string'
+          ? JSON.parse(scanRequestData.vehicle_ids_requested)
+          : scanRequestData.vehicle_ids_requested;
+
+        // Get vehicle details from inventory
+        const vehicleDetails = inventory
+          .filter(car => vehicleIds.includes(car.id))
+          .map(car => ({
+            inventory_item_id: car.id,
+            make: car.make,
+            model: car.model,
+            year: car.year,
+            mileage: car.mileage
+          }));
+
+        // Store these temporarily to render the results table
+        setVehiclesInCurrentScan(vehicleDetails);
+        console.error('🚗 Vehicle details set:', vehicleDetails);
+
+        // Force open modal for the first vehicle with data
+        if (vehicleDetails.length > 0) {
+          console.error('🚗 Looking for a vehicle with results...');
+
+          // Find first vehicle with results in the resultsMap
+          const vehicleIds = Object.keys(resultsMap);
+          console.error('🚗 Result map vehicle IDs:', vehicleIds);
+
+          // Use the first vehicle from resultsMap if possible
+          let selectedId = vehicleIds[0];
+
+          // If not found, use the first vehicle from inventory
+          if (!selectedId && vehicleDetails.length > 0) {
+            selectedId = vehicleDetails[0].inventory_item_id;
+            console.error('⚠️ No matching vehicle in results map, using first inventory vehicle:', selectedId);
+          }
+
+          if (selectedId) {
+            console.error('✅ Setting selected vehicle for modal:', selectedId);
+
+            // Set the selected vehicle
+            setSelectedVehicleForDetails(selectedId);
+
+            // Force open the modal with delay to ensure state updates first
+            setTimeout(() => {
+              console.error('🔄 Opening modal for vehicle:', selectedId);
+              setIsDetailsModalOpen(true);
+            }, 300);
+          } else {
+            console.error('❌ No valid vehicle ID found to open modal');
+          }
+        }
+      }
+
+      toast({
+        title: "Historical Scan Loaded",
+        description: `Viewing analysis from ${format(new Date(scanRequestData.created_at), 'PPp')}`,
+      });
+    } catch (err) {
+      console.error('Error fetching historical scan details:', err);
+      toast({
+        title: "Error Loading Scan Details",
+        description: "We couldn't load the selected analysis. Please try again.",
+        variant: "destructive"
+      });
+
+      // Reset the selected historical scan
+      setSelectedHistoricalScanId(null);
+      setViewingHistorical(false);
+    } finally {
+      setIsLoadingHistoricalScanDetails(false);
+    }
+  };
+
+  // Handler to return to active scan (if any) from historical view
+  const returnToActiveScan = () => {
+    // Ensure modal is closed to avoid confusion
+    setIsDetailsModalOpen(false);
+    setSelectedVehicleForDetails(null);
+
+    // Clear historical view state
+    setViewingHistorical(false);
+    setSelectedHistoricalScanId(null);
+    setSelectedHistoricalScanDetails({});
+
+    toast({
+      title: "Returned to Active Scan",
+      description: "Now viewing your current market analysis.",
+    });
+  };
+
+  // Modified handleDismissScanResults to handle both active and historical views
+  const handleDismissScanResults = () => {
+    // If viewing historical, just return to normal view
+    if (viewingHistorical) {
+      returnToActiveScan();
+      return;
+    }
+
+    // Otherwise, clear the active scan as before
+    localStorage.removeItem('active_market_scan_id');
+    resetScanState();
+
+    toast({
+      title: "Analysis Dismissed",
+      description: "The market analysis results have been dismissed."
+    });
+  };
+
+  // Function to reset all scan-related state
+  const resetScanState = () => {
+    setActiveScanRequestId(null);
+    setScanRequestStatus(null);
+    setScanRequestError(null);
+    setVehiclesInCurrentScan(null);
+    setVehicleScanResults({});
+    cleanupRealtimeSubscriptions();
+  };
+
+  // Function to set up Supabase Realtime subscriptions
+  const setupRealtimeSubscriptions = (scanRequestId: string, currentUserId: string) => {
+    // First clean up any existing subscriptions
+    cleanupRealtimeSubscriptions();
+
+    // Create new subscriptions
     const scanRequestsChannel = supabase
-      .channel(`scan-requests-${activeScanRequestId}`)
+      .channel(`scan-requests-${scanRequestId}`)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
           table: 'market_scan_requests',
-          filter: `scan_request_id=eq.${activeScanRequestId}`,
+          filter: `scan_request_id=eq.${scanRequestId}`,
         },
         (payload) => {
           const scanData = payload.new;
           setScanRequestStatus(scanData.status);
           setScanRequestError(scanData.error_message);
+
+          // If scan is completed or failed, you might want to show a toast
+          if (scanData.status === 'completed') {
+            toast({
+              title: "Market Analysis Complete",
+              description: "Your market analysis has completed successfully.",
+            });
+          } else if (scanData.status === 'failed') {
+            toast({
+              title: "Market Analysis Failed",
+              description: scanData.error_message || "An error occurred during analysis.",
+              variant: "destructive"
+            });
+          }
         }
       )
       .subscribe();
 
     const scanResultsChannel = supabase
-      .channel(`scan-results-${activeScanRequestId}`)
+      .channel(`scan-results-${scanRequestId}`)
       .on(
         'postgres_changes',
         {
           event: '*', // Listen for INSERT and UPDATE
           schema: 'public',
           table: 'market_scan_results',
-          filter: `scan_request_id=eq.${activeScanRequestId}`,
+          filter: `scan_request_id=eq.${scanRequestId}`,
         },
         (payload) => {
           if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
@@ -1406,17 +1784,33 @@ export default function InventoryPage() {
       )
       .subscribe();
 
-    // Clean up subscriptions when component unmounts or activeScanRequestId changes
-    return () => {
-      scanRequestsChannel.unsubscribe();
-      scanResultsChannel.unsubscribe();
-    };
-  }, [activeScanRequestId, supabase]);
+    // Store references to subscriptions for cleanup
+    realTimeSubscriptionsRef.current.push(scanRequestsChannel);
+    realTimeSubscriptionsRef.current.push(scanResultsChannel);
+  };
+
+  // Function to clean up all Supabase Realtime subscriptions
+  const cleanupRealtimeSubscriptions = () => {
+    realTimeSubscriptionsRef.current.forEach(subscription => {
+      if (subscription && typeof subscription.unsubscribe === 'function') {
+        subscription.unsubscribe();
+      }
+    });
+    realTimeSubscriptionsRef.current = [];
+  };
 
   // Market Analysis Components
-  // 1. Market Analysis Trigger Button
+  // 1. Market Analysis Trigger Button - Modified to prevent redundant UI
   const MarketAnalysisTriggerButton = () => {
-    const isDisabled = selectedListingIds.length === 0 || isAnalysisButtonLoading || (activeScanRequestId !== null && scanRequestStatus === 'processing');
+    // Only show button if there are selected listings AND no active scan is in progress
+    const isDisabled = selectedListingIds.length === 0 || isAnalysisButtonLoading ||
+      (activeScanRequestId !== null && scanRequestStatus === 'processing') ||
+      isFetchingPersistedScan;
+
+    // Don't show the button if there's already an active scan being displayed
+    if (activeScanRequestId !== null && vehicleScanResults && Object.keys(vehicleScanResults).length > 0) {
+      return null;
+    }
 
     return (
       <Button
@@ -1424,7 +1818,7 @@ export default function InventoryPage() {
         disabled={isDisabled}
         className="mb-4 bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
       >
-        {isAnalysisButtonLoading ? (
+        {isAnalysisButtonLoading || isFetchingPersistedScan ? (
           <ReloadIcon className="h-4 w-4 animate-spin" />
         ) : (
           <PresentationChartLineIcon className="h-5 w-5" />
@@ -1434,11 +1828,91 @@ export default function InventoryPage() {
     );
   };
 
-  // 2. Scan Overall Status Display
+  // 2. Scan Overall Status Display - Modified to include dismiss button
   const ScanOverallStatusDisplay = () => {
+    // For historical view
+    if (viewingHistorical && selectedHistoricalScanId) {
+      const selectedScan = historicalScans.find(scan => scan.scan_request_id === selectedHistoricalScanId);
+      if (!selectedScan) return null;
+
+      // Calculate stats for historical view
+      const totalVehicles = vehiclesInCurrentScan?.length || 0;
+      const processedVehicles = Object.keys(selectedHistoricalScanDetails).length;
+      const successVehicles = Object.values(selectedHistoricalScanDetails)
+        .filter(result => result.status_for_vehicle === 'success').length;
+      const errorVehicles = Object.values(selectedHistoricalScanDetails)
+        .filter(result => result.status_for_vehicle === 'error').length;
+      const noDataVehicles = Object.values(selectedHistoricalScanDetails)
+        .filter(result => result.status_for_vehicle === 'no_data_found').length;
+
+      return (
+        <Alert className="mb-4 border-l-4 border-purple-500">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+              <AlertTitle className="flex items-center gap-2 text-purple-600">
+                <ChartBarIcon className="h-5 w-5" />
+                Historical Analysis
+                <Badge className="bg-purple-100 text-purple-800">
+                  {selectedScan.status === 'completed'
+                    ? 'Completed'
+                    : selectedScan.status === 'partially_failed'
+                      ? 'Partial Results'
+                      : 'Failed'}
+                </Badge>
+              </AlertTitle>
+              <AlertDescription className="mt-2 text-sm">
+                <div className="font-medium text-gray-700">Analysis from {format(new Date(selectedScan.created_at), 'PPp')}</div>
+                <div className="mt-1">
+                  <span className="inline-block mr-3">
+                    <span className="font-medium">Vehicles:</span> {processedVehicles} analyzed / {totalVehicles} total
+                  </span>
+                  {successVehicles > 0 && (
+                    <Badge className="mr-2 bg-green-50 text-green-700">{successVehicles} successful</Badge>
+                  )}
+                  {errorVehicles > 0 && (
+                    <Badge className="mr-2 bg-red-50 text-red-700">{errorVehicles} failed</Badge>
+                  )}
+                  {noDataVehicles > 0 && (
+                    <Badge className="mr-2 bg-yellow-50 text-yellow-700">{noDataVehicles} no data</Badge>
+                  )}
+                </div>
+                {selectedScan.error_message && (
+                  <div className="mt-2 text-red-500">
+                    <ExclamationTriangleIcon className="inline h-4 w-4 mr-1" />
+                    Error: {selectedScan.error_message}
+                  </div>
+                )}
+              </AlertDescription>
+            </div>
+            <div className="mt-2 md:mt-0 space-x-2">
+              {activeScanRequestId && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={returnToActiveScan}
+                >
+                  <ArrowPathIcon className="h-4 w-4 mr-1" />
+                  Back to Live Scan
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDismissScanResults}
+              >
+                <XMarkIcon className="h-4 w-4 mr-1" />
+                Dismiss
+              </Button>
+            </div>
+          </div>
+        </Alert>
+      );
+    }
+
+    // For active scan (original functionality)
     if (!activeScanRequestId) return null;
 
-    // Calculate stats
+    // Calculate stats for active scan
     const totalVehicles = vehiclesInCurrentScan?.length || 0;
     const processedVehicles = Object.keys(vehicleScanResults).length;
     const successVehicles = Object.values(vehicleScanResults).filter(result => result.status_for_vehicle === 'success').length;
@@ -1467,7 +1941,7 @@ export default function InventoryPage() {
           <div>
             <AlertTitle className="flex items-center gap-2 text-blue-600">
               <ChartBarIcon className="h-5 w-5" />
-              Market Analysis {getStatusBadge(scanRequestStatus)}
+              Live Market Analysis {getStatusBadge(scanRequestStatus)}
             </AlertTitle>
             <AlertDescription className="mt-2 text-sm">
               <div className="font-medium text-gray-700">Scan ID: {activeScanRequestId}</div>
@@ -1497,13 +1971,7 @@ export default function InventoryPage() {
             variant="outline"
             size="sm"
             className="mt-2 md:mt-0"
-            onClick={() => {
-              setActiveScanRequestId(null);
-              setVehiclesInCurrentScan(null);
-              setScanRequestStatus(null);
-              setScanRequestError(null);
-              setVehicleScanResults({});
-            }}
+            onClick={handleDismissScanResults}
           >
             <XMarkIcon className="h-4 w-4 mr-1" />
             Dismiss
@@ -1515,7 +1983,11 @@ export default function InventoryPage() {
 
   // 3. Active Analysis Results Table
   const ActiveAnalysisResultsTable = () => {
-    if (!activeScanRequestId || !vehiclesInCurrentScan) return null;
+    // Choose which data source to use
+    const currentResults = viewingHistorical ? selectedHistoricalScanDetails : vehicleScanResults;
+    const scanRequestId = viewingHistorical ? selectedHistoricalScanId : activeScanRequestId;
+
+    if (!scanRequestId || !vehiclesInCurrentScan) return null;
 
     const formatCurrency = (value: number | null) => {
       if (value === null || value === undefined) return '—';
@@ -1527,7 +1999,7 @@ export default function InventoryPage() {
     };
 
     const getStatusBadge = (vehicleId: string) => {
-      const result = vehicleScanResults[vehicleId];
+      const result = currentResults[vehicleId];
       if (!result) {
         return <Badge className="bg-gray-100 text-gray-800">Pending</Badge>;
       }
@@ -1547,10 +2019,16 @@ export default function InventoryPage() {
     };
 
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-gray-50">
-          <h3 className="text-lg font-semibold text-gray-800">Market Analysis Results</h3>
-          <p className="text-sm text-gray-600">Real-time results for your selected vehicles</p>
+      <div className={`bg-white rounded-lg shadow-sm border ${viewingHistorical ? 'border-purple-200' : 'border-gray-200'} mb-6 overflow-hidden`}>
+        <div className={`p-4 border-b ${viewingHistorical ? 'border-purple-200 bg-purple-50' : 'border-gray-200 bg-gray-50'}`}>
+          <h3 className="text-lg font-semibold text-gray-800">
+            {viewingHistorical ? 'Historical Analysis Results' : 'Market Analysis Results'}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {viewingHistorical
+              ? 'Results from your past market analysis'
+              : 'Real-time results for your selected vehicles'}
+          </p>
         </div>
         <div className="overflow-x-auto">
           <Table>
@@ -1568,7 +2046,7 @@ export default function InventoryPage() {
             </TableHeader>
             <TableBody>
               {vehiclesInCurrentScan.map((vehicle) => {
-                const result = vehicleScanResults[vehicle.inventory_item_id];
+                const result = currentResults[vehicle.inventory_item_id];
                 return (
                   <TableRow key={vehicle.inventory_item_id}>
                     <TableCell>{vehicle.make}</TableCell>
@@ -1590,8 +2068,16 @@ export default function InventoryPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleViewAnalysisDetails(vehicle.inventory_item_id)}
-                        disabled={!result || (result.status_for_vehicle !== 'success' && result.status_for_vehicle !== 'error')}
+                        onClick={() => {
+                          // Always allow opening the modal in historical view
+                          setSelectedVehicleForDetails(vehicle.inventory_item_id);
+                          console.log('Opening modal from table for vehicle:', vehicle.inventory_item_id);
+                          setTimeout(() => {
+                            setIsDetailsModalOpen(true);
+                          }, 50);
+                        }}
+                        // For historical scans, enable the button even without results
+                        disabled={!viewingHistorical && (!result || (result.status_for_vehicle !== 'success' && result.status_for_vehicle !== 'error'))}
                       >
                         {result?.status_for_vehicle === 'error' ? 'View Error' : 'View Details'}
                       </Button>
@@ -1608,35 +2094,124 @@ export default function InventoryPage() {
 
   // 4. Market Analysis Details Modal
   const MarketAnalysisDetailsModal = () => {
-    if (!selectedVehicleForDetails || !isDetailsModalOpen) return null;
+    console.error('🔄 Modal rendering with isDetailsModalOpen:', isDetailsModalOpen);
+    console.error('🔄 selectedVehicleForDetails:', selectedVehicleForDetails);
+    console.error('🔄 viewingHistorical:', viewingHistorical);
+    console.error('🔄 selectedHistoricalScanId:', selectedHistoricalScanId);
 
-    const vehicleDetails = vehiclesInCurrentScan?.find(
+    // Safe currency formatter that handles undefined/null values
+    const safeFormatCurrency = (value?: number | null, currencyCode?: string | null) => {
+      if (value === undefined || value === null) return '—';
+      try {
+        return new Intl.NumberFormat('de-CH', {
+          style: 'currency',
+          currency: currencyCode || 'CHF',
+          maximumFractionDigits: 0
+        }).format(value);
+      } catch (e) {
+        console.error('Error formatting currency:', e);
+        return value?.toString() || '—';
+      }
+    };
+
+    // Handle both active and historical views
+    const currentResults = viewingHistorical ? selectedHistoricalScanDetails : vehicleScanResults;
+    console.error('🔄 currentResults:', currentResults);
+    console.error('🔄 selectedHistoricalScanDetails keys:', Object.keys(selectedHistoricalScanDetails));
+    console.error('🔄 vehicleScanResults keys:', Object.keys(vehicleScanResults));
+
+    if (!selectedVehicleForDetails || !isDetailsModalOpen) {
+      console.error('❌ Modal not showing: missing vehicle ID or modal not open');
+      return null;
+    }
+
+    console.error('🔄 Looking for vehicle details for ID:', selectedVehicleForDetails);
+
+    // Get vehicle details, or create a placeholder if not found
+    let vehicleDetails = vehiclesInCurrentScan?.find(
       v => v.inventory_item_id === selectedVehicleForDetails
     );
-    const scanResult = vehicleScanResults[selectedVehicleForDetails];
 
-    if (!vehicleDetails) return null;
+    console.error('🔄 Found vehicle details:', !!vehicleDetails);
+
+    const scanResult = currentResults[selectedVehicleForDetails];
+    console.error('🔄 scanResult found:', !!scanResult);
+
+    if (scanResult) {
+      console.error('🔄 scanResult properties:', Object.keys(scanResult));
+
+      // Ensure all_comparable_details is properly formatted
+      if (!scanResult.all_comparable_details) {
+        console.error('⚠️ all_comparable_details is missing or null, creating empty array');
+        scanResult.all_comparable_details = [];
+      } else if (typeof scanResult.all_comparable_details === 'string') {
+        try {
+          console.error('⚠️ all_comparable_details is still a string, parsing again...');
+          scanResult.all_comparable_details = JSON.parse(scanResult.all_comparable_details);
+        } catch (e) {
+          console.error('❌ Error parsing all_comparable_details in modal:', e);
+          scanResult.all_comparable_details = [];
+        }
+      }
+
+      console.error('✅ Final all_comparable_details in modal:',
+        Array.isArray(scanResult.all_comparable_details) ? scanResult.all_comparable_details.length + ' items' : typeof scanResult.all_comparable_details);
+    } else {
+      console.error('❌ No scan result found for vehicle:', selectedVehicleForDetails);
+    }
+
+    // If no vehicle details but we have scan results, create a placeholder
+    if (!vehicleDetails && scanResult) {
+      console.log('Creating placeholder vehicle details');
+      vehicleDetails = {
+        inventory_item_id: selectedVehicleForDetails,
+        make: scanResult.make || 'Unknown',
+        model: scanResult.model || 'Vehicle',
+        year: scanResult.year || new Date().getFullYear(),
+        mileage: scanResult.mileage || 0
+      };
+    } else if (!vehicleDetails) {
+      console.log('No vehicle details and no scan results');
+      return null;
+    }
 
     return (
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
         <DialogContent className="max-w-4xl w-full max-h-[95vh] overflow-y-auto">
-          <div className="px-6 py-4 border-b">
+          <div className={`px-6 py-4 border-b ${viewingHistorical ? 'border-purple-200' : 'border-gray-200'}`}>
             <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-              <PresentationChartLineIcon className="h-6 w-6 mr-2 text-blue-600" />
-              Market Analysis: {vehicleDetails.make} {vehicleDetails.model} ({vehicleDetails.year})
+              <PresentationChartLineIcon className={`h-6 w-6 mr-2 ${viewingHistorical ? 'text-purple-600' : 'text-blue-600'}`} />
+              {viewingHistorical ? 'Historical Analysis' : 'Market Analysis'}: {vehicleDetails.make} {vehicleDetails.model} ({vehicleDetails.year})
             </h2>
             <p className="text-sm text-gray-600 mt-1">
-              {vehicleDetails.mileage.toLocaleString()} km | Scan ID: {activeScanRequestId}
+              {vehicleDetails.mileage.toLocaleString()} km | Scan ID: {viewingHistorical ? selectedHistoricalScanId : activeScanRequestId}
             </p>
           </div>
 
           <div className="p-6">
-            {!scanResult && (
+            {/* Only show loading state for non-historical views when scanResult is missing */}
+            {!scanResult && !viewingHistorical && (
               <div className="text-center py-12">
                 <ReloadIcon className="h-8 w-8 mx-auto animate-spin text-blue-500" />
                 <p className="mt-4 text-gray-600">Analysis in progress. Results will appear here once complete.</p>
               </div>
             )}
+
+            {/* For historical views without scanResult, show a more appropriate message */}
+            {(() => {
+              console.error('🔍 Evaluating no data condition:', {
+                scanResult: !!scanResult,
+                viewingHistorical,
+                selectedVehicleForDetails,
+                hasResultsMap: Object.keys(currentResults).length > 0
+              });
+              return (!scanResult && viewingHistorical);
+            })() && (
+                <div className="text-center py-12">
+                  <ExclamationTriangleIcon className="h-8 w-8 mx-auto text-amber-500" />
+                  <p className="mt-4 text-gray-600">No data available for this historical scan.</p>
+                </div>
+              )}
 
             {scanResult?.status_for_vehicle === 'error' && (
               <Alert variant="destructive" className="mb-6">
@@ -1659,38 +2234,27 @@ export default function InventoryPage() {
               </Alert>
             )}
 
-            {scanResult?.status_for_vehicle === 'success' && (
+            {/* Always render content for historical view or if status is success */}
+            {scanResult && (viewingHistorical || scanResult?.status_for_vehicle === 'success') && (
               <>
                 {/* Price Range Section */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                     <div className="text-sm text-blue-600 font-medium">Minimum Market Price</div>
                     <div className="text-2xl font-bold mt-1">
-                      {new Intl.NumberFormat('de-CH', {
-                        style: 'currency',
-                        currency: scanResult.currency || 'CHF',
-                        maximumFractionDigits: 0
-                      }).format(scanResult.market_min_price || 0)}
+                      {safeFormatCurrency(scanResult?.market_min_price, scanResult?.currency)}
                     </div>
                   </div>
                   <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
                     <div className="text-sm text-emerald-600 font-medium">Average Market Price</div>
                     <div className="text-2xl font-bold mt-1">
-                      {new Intl.NumberFormat('de-CH', {
-                        style: 'currency',
-                        currency: scanResult.currency || 'CHF',
-                        maximumFractionDigits: 0
-                      }).format(scanResult.market_avg_price || 0)}
+                      {safeFormatCurrency(scanResult?.market_avg_price, scanResult?.currency)}
                     </div>
                   </div>
                   <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
                     <div className="text-sm text-purple-600 font-medium">Maximum Market Price</div>
                     <div className="text-2xl font-bold mt-1">
-                      {new Intl.NumberFormat('de-CH', {
-                        style: 'currency',
-                        currency: scanResult.currency || 'CHF',
-                        maximumFractionDigits: 0
-                      }).format(scanResult.market_max_price || 0)}
+                      {safeFormatCurrency(scanResult?.market_max_price, scanResult?.currency)}
                     </div>
                   </div>
                 </div>
@@ -1701,21 +2265,21 @@ export default function InventoryPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="text-gray-500">Listings Found:</span>{' '}
-                      <span className="font-medium">{scanResult.comparable_listings_found}</span>
+                      <span className="font-medium">{scanResult?.comparable_listings_found ?? 'N/A'}</span>
                     </div>
                     <div>
                       <span className="text-gray-500">Data Source:</span>{' '}
-                      <span className="font-medium">{scanResult.data_source || 'Multiple Sources'}</span>
+                      <span className="font-medium">{scanResult?.data_source || 'Multiple Sources'}</span>
                     </div>
                     <div>
                       <span className="text-gray-500">Scanned At:</span>{' '}
-                      <span className="font-medium">{scanResult.scanned_at ? format(new Date(scanResult.scanned_at), 'PPp') : 'N/A'}</span>
+                      <span className="font-medium">{scanResult?.scanned_at ? format(new Date(scanResult.scanned_at), 'PPp') : 'N/A'}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Example Listings URLs */}
-                {scanResult.example_listing_urls && scanResult.example_listing_urls.length > 0 && (
+                {scanResult?.example_listing_urls && scanResult.example_listing_urls.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-md font-semibold text-gray-700 mb-2">Sample Listings</h3>
                     <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-2">
@@ -1736,71 +2300,76 @@ export default function InventoryPage() {
                 )}
 
                 {/* Comparable Listings Table */}
-                {scanResult.all_comparable_details && scanResult.all_comparable_details.length > 0 && (
-                  <div>
-                    <h3 className="text-md font-semibold text-gray-700 mb-2">Comparable Listings</h3>
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Title</TableHead>
-                              <TableHead>Price</TableHead>
-                              <TableHead>Year</TableHead>
-                              <TableHead>Mileage</TableHead>
-                              <TableHead>Location</TableHead>
-                              <TableHead>Details</TableHead>
-                              <TableHead></TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {scanResult.all_comparable_details.map((listing: any, index: number) => (
-                              <TableRow key={index}>
-                                <TableCell className="font-medium">{listing.title || 'N/A'}</TableCell>
-                                <TableCell>
-                                  {listing.price_numeric
-                                    ? new Intl.NumberFormat('de-CH', {
-                                      style: 'currency',
-                                      currency: scanResult.currency || 'CHF',
-                                      maximumFractionDigits: 0
-                                    }).format(listing.price_numeric)
-                                    : 'N/A'}
-                                </TableCell>
-                                <TableCell>{listing.year_numeric || 'N/A'}</TableCell>
-                                <TableCell>
-                                  {listing.mileage_numeric
-                                    ? `${new Intl.NumberFormat('de-CH').format(listing.mileage_numeric)} km`
-                                    : 'N/A'}
-                                </TableCell>
-                                <TableCell>{listing.location || 'N/A'}</TableCell>
-                                <TableCell>
-                                  {(listing.fuel_type || listing.transmission) && (
-                                    <span className="text-sm text-gray-600">
-                                      {listing.fuel_type}{listing.fuel_type && listing.transmission ? ', ' : ''}
-                                      {listing.transmission}
-                                    </span>
-                                  )}
-                                </TableCell>
-                                <TableCell>
-                                  {listing.full_listing_url && (
-                                    <a
-                                      href={listing.full_listing_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 hover:text-blue-800"
-                                    >
-                                      <LinkIcon className="h-4 w-4" />
-                                    </a>
-                                  )}
-                                </TableCell>
+                {(() => {
+                  console.log('Evaluating comparable listings condition:', {
+                    hasDetails: !!scanResult?.all_comparable_details,
+                    isArray: Array.isArray(scanResult?.all_comparable_details),
+                    length: scanResult?.all_comparable_details ? scanResult.all_comparable_details.length : 0
+                  });
+                  return scanResult?.all_comparable_details &&
+                    Array.isArray(scanResult.all_comparable_details) &&
+                    scanResult.all_comparable_details.length > 0;
+                })() && (
+                    <div>
+                      <h3 className="text-md font-semibold text-gray-700 mb-2">Comparable Listings</h3>
+                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Title</TableHead>
+                                <TableHead>Price</TableHead>
+                                <TableHead>Year</TableHead>
+                                <TableHead>Mileage</TableHead>
+                                <TableHead>Location</TableHead>
+                                <TableHead>Details</TableHead>
+                                <TableHead></TableHead>
                               </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                            </TableHeader>
+                            <TableBody>
+                              {(scanResult?.all_comparable_details || []).map((listing: any, index: number) => (
+                                <TableRow key={index}>
+                                  <TableCell className="font-medium">{listing.title || 'N/A'}</TableCell>
+                                  <TableCell>
+                                    {listing.price_numeric
+                                      ? safeFormatCurrency(listing.price_numeric, scanResult?.currency)
+                                      : 'N/A'}
+                                  </TableCell>
+                                  <TableCell>{listing.year_numeric || 'N/A'}</TableCell>
+                                  <TableCell>
+                                    {listing.mileage_numeric
+                                      ? `${new Intl.NumberFormat('de-CH').format(listing.mileage_numeric)} km`
+                                      : 'N/A'}
+                                  </TableCell>
+                                  <TableCell>{listing.location || 'N/A'}</TableCell>
+                                  <TableCell>
+                                    {(listing.fuel_type || listing.transmission) && (
+                                      <span className="text-sm text-gray-600">
+                                        {listing.fuel_type}{listing.fuel_type && listing.transmission ? ', ' : ''}
+                                        {listing.transmission}
+                                      </span>
+                                    )}
+                                  </TableCell>
+                                  <TableCell>
+                                    {listing.full_listing_url && (
+                                      <a
+                                        href={listing.full_listing_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:text-blue-800"
+                                      >
+                                        <LinkIcon className="h-4 w-4" />
+                                      </a>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </>
             )}
           </div>
@@ -1815,6 +2384,197 @@ export default function InventoryPage() {
         </DialogContent>
       </Dialog>
     );
+  };
+
+  // Create a Historical Scans Panel component
+  const HistoricalScansPanel = () => {
+    // If no userId or we're in the middle of an active scan and not viewing historical, don't show
+    if (!userId || (isFetchingPersistedScan && !viewingHistorical)) return null;
+
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div
+          className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50"
+          onClick={() => setIsHistoricalPanelExpanded(!isHistoricalPanelExpanded)}
+        >
+          <div className="flex items-center">
+            <ChartBarIcon className="h-5 w-5 text-blue-600 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-800">Analysis History</h3>
+            {historicalScans.length > 0 && (
+              <Badge className="ml-2 bg-blue-50 text-blue-800">{historicalScans.length}</Badge>
+            )}
+          </div>
+          <Button variant="ghost" size="sm" className="p-1">
+            {isHistoricalPanelExpanded ? (
+              <ChevronDownIcon className="h-5 w-5" />
+            ) : (
+              <ChevronRightIcon className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
+
+        {isHistoricalPanelExpanded && (
+          <div className="p-4 border-t border-gray-200">
+            {isLoadingHistoricalScans ? (
+              <div className="flex justify-center py-8">
+                <ReloadIcon className="h-6 w-6 animate-spin text-blue-500" />
+              </div>
+            ) : historicalScans.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <InformationCircleIcon className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                <p>No past analyses found. Complete your first market analysis to see it here.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {historicalScans.map((scan) => (
+                  <div
+                    key={scan.scan_request_id}
+                    className={`p-3 rounded-lg border ${selectedHistoricalScanId === scan.scan_request_id
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                      } transition-colors cursor-pointer`}
+                    onClick={() => {
+                      // First fetch the historical scan details
+                      fetchHistoricalScanDetails(scan.scan_request_id);
+                      // Ensure we're displaying historical view
+                      setViewingHistorical(true);
+                    }}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-medium text-gray-800">
+                          {scan.summary_text || format(new Date(scan.created_at), 'PPp')}
+                        </div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {format(new Date(scan.created_at), 'PPp')}
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <Badge className={`mr-2 ${scan.status === 'completed'
+                          ? 'bg-green-50 text-green-700'
+                          : scan.status === 'partially_failed'
+                            ? 'bg-yellow-50 text-yellow-700'
+                            : 'bg-red-50 text-red-700'
+                          }`}>
+                          {scan.status === 'completed'
+                            ? 'Completed'
+                            : scan.status === 'partially_failed'
+                              ? 'Partial Results'
+                              : 'Failed'}
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering the parent div onClick
+
+                            // EXTREME DEBUGGING
+                            console.error('🔴 View Details button clicked for scan:', scan.scan_request_id);
+
+                            // Force visibility in browser
+                            window.alert('View Details clicked for scan: ' + scan.scan_request_id);
+
+                            // Call function directly
+                            fetchHistoricalScanDetails(scan.scan_request_id);
+                          }}
+                          disabled={isLoadingHistoricalScanDetails && selectedHistoricalScanId === scan.scan_request_id}
+                        >
+                          {isLoadingHistoricalScanDetails && selectedHistoricalScanId === scan.scan_request_id ? (
+                            <ReloadIcon className="h-3 w-3 animate-spin" />
+                          ) : (
+                            'View Details'
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Add the missing fetchPersistedScanData function after fetchHistoricalScans
+  // Function to fetch persisted scan data from Supabase
+  const fetchPersistedScanData = async (scanRequestId: string, currentUserId: string) => {
+    try {
+      // 1. Fetch the scan request details
+      const { data: scanRequestData, error: scanRequestError } = await supabase
+        .from('market_scan_requests')
+        .select('*')
+        .eq('scan_request_id', scanRequestId)
+        .eq('user_id', currentUserId)
+        .single();
+
+      if (scanRequestError) throw scanRequestError;
+
+      if (!scanRequestData) {
+        // No scan found - clear localStorage
+        localStorage.removeItem('active_market_scan_id');
+        return;
+      }
+
+      // Update scan status state
+      setScanRequestStatus(scanRequestData.status);
+      setScanRequestError(scanRequestData.error_message);
+
+      // If scan has vehicle IDs, parse and set them
+      if (scanRequestData.vehicle_ids_requested) {
+        // Parse vehicles if stored as JSON string, or use directly if already an array
+        const vehicleIds = typeof scanRequestData.vehicle_ids_requested === 'string'
+          ? JSON.parse(scanRequestData.vehicle_ids_requested)
+          : scanRequestData.vehicle_ids_requested;
+
+        // Fetch vehicle details for these IDs from inventory
+        const vehicleDetails = inventory
+          .filter(car => vehicleIds.includes(car.id))
+          .map(car => ({
+            inventory_item_id: car.id,
+            make: car.make,
+            model: car.model,
+            year: car.year,
+            mileage: car.mileage
+          }));
+
+        setVehiclesInCurrentScan(vehicleDetails);
+      }
+
+      // 2. Fetch the scan results
+      const { data: scanResultsData, error: scanResultsError } = await supabase
+        .from('market_scan_results')
+        .select('*')
+        .eq('scan_request_id', scanRequestId)
+        .eq('user_id', currentUserId);
+
+      if (scanResultsError) throw scanResultsError;
+
+      // Process scan results into the expected format
+      const resultsMap: Record<string, any> = {};
+      scanResultsData.forEach(result => {
+        resultsMap[result.carbiz_vehicle_id] = result;
+      });
+
+      setVehicleScanResults(resultsMap);
+
+      // 3. Set up realtime subscriptions for this scan
+      setupRealtimeSubscriptions(scanRequestId, currentUserId);
+
+    } catch (err) {
+      console.error('Error fetching persisted scan data:', err);
+      toast({
+        title: "Error Loading Saved Analysis",
+        description: "We couldn't load your previously saved analysis. Starting fresh.",
+        variant: "destructive"
+      });
+
+      // Clear invalid scan data
+      localStorage.removeItem('active_market_scan_id');
+      resetScanState();
+    }
   };
 
   return (
@@ -3520,108 +4280,9 @@ export default function InventoryPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Market Analysis Trigger Button */}
-      <MarketAnalysisTriggerButton />
-
-      {/* Scan Overall Status Display */}
-      <ScanOverallStatusDisplay />
-
-      {/* Active Analysis Results Table */}
-      <ActiveAnalysisResultsTable />
-
-      {/* Market Analysis Details Modal */}
-      <MarketAnalysisDetailsModal />
-
-      {/* Price Change Modal */}
-      <Dialog open={showPriceModal} onOpenChange={setShowPriceModal}>
-        <DialogContent className="sm:max-w-md">
-          <div className="p-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Update Price</h3>
-            <div className="space-y-4">
-              <div>
-                <Label className="mb-2 block">Price Change Type</Label>
-                <div className="flex space-x-2 mb-4">
-                  <Button
-                    type="button"
-                    variant={priceChangeType === 'fixed' ? 'default' : 'outline'}
-                    onClick={() => setPriceChangeType('fixed')}
-                    className="flex-1"
-                  >
-                    Fixed Amount
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={priceChangeType === 'percentage' ? 'default' : 'outline'}
-                    onClick={() => setPriceChangeType('percentage')}
-                    className="flex-1"
-                  >
-                    Percentage Discount
-                  </Button>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="price-change-amount">
-                  {priceChangeType === 'fixed' ? 'New Price (CHF)' : 'Discount Percentage (%)'}
-                </Label>
-                <Input
-                  id="price-change-amount"
-                  type="number"
-                  step={priceChangeType === 'fixed' ? '100' : '0.1'}
-                  value={priceChangeAmount}
-                  onChange={(e) => setPriceChangeAmount(e.target.value)}
-                  placeholder={priceChangeType === 'fixed' ? 'e.g., 25000' : 'e.g., 10'}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {priceChangeType === 'fixed'
-                    ? 'All selected listings will be updated to this exact price.'
-                    : 'Price will be reduced by this percentage for all selected listings.'}
-                </p>
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPriceModal(false)}
-                  disabled={isPerformingBulkAction}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={async () => {
-                    if (!priceChangeAmount.trim() || isNaN(parseFloat(priceChangeAmount))) {
-                      toast({
-                        title: "Invalid Amount",
-                        description: "Please enter a valid number.",
-                        variant: "destructive"
-                      });
-                      return;
-                    }
-
-                    if (priceChangeType === 'percentage' && (parseFloat(priceChangeAmount) <= 0 || parseFloat(priceChangeAmount) >= 100)) {
-                      toast({
-                        title: "Invalid Percentage",
-                        description: "Percentage must be between 0 and 100.",
-                        variant: "destructive"
-                      });
-                      return;
-                    }
-
-                    await confirmPriceChange();
-                  }}
-                  disabled={isPerformingBulkAction || !priceChangeAmount.trim()}
-                >
-                  {isPerformingBulkAction && <ArrowPathIcon className="animate-spin h-4 w-4 mr-2" />}
-                  Update Price{selectedListingIds.length > 1 ? 's' : ''}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Market Analysis Components */}
-      {selectedListingIds.length > 0 && (
+      {/* Market Analysis Section */}
+      {/* Analysis Trigger Button - Only show when no active scan */}
+      {selectedListingIds.length > 0 && !activeScanRequestId && !viewingHistorical && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
             <PresentationChartLineIcon className="h-5 w-5 mr-2 text-emerald-600" />
@@ -3631,12 +4292,21 @@ export default function InventoryPage() {
             Analyze the current market prices for your selected vehicles by comparing with similar listings.
           </p>
           <MarketAnalysisTriggerButton />
-          <ScanOverallStatusDisplay />
-          <ActiveAnalysisResultsTable />
         </div>
       )}
 
-      {/* Market Analysis Details Modal */}
+      {/* Active or Historical Scan Status & Results - Only one will be shown at a time */}
+      {(activeScanRequestId || viewingHistorical) && (
+        <>
+          <ScanOverallStatusDisplay />
+          <ActiveAnalysisResultsTable />
+        </>
+      )}
+
+      {/* Historical Scans Panel - Always shown if user is logged in, regardless of other states */}
+      <HistoricalScansPanel />
+
+      {/* Market Analysis Details Modal - Single instance for both active and historical views */}
       <MarketAnalysisDetailsModal />
 
     </div> // End container
