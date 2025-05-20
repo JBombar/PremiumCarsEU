@@ -1842,9 +1842,9 @@ export default function InventoryPage() {
   };
 
   // Market Analysis Components
-  // 1. Market Analysis Trigger Button - Modified to prevent redundant UI
+  // 1. Market Analysis Trigger Button - Always visible but disabled when no vehicles selected
   const MarketAnalysisTriggerButton = () => {
-    // Only show button if there are selected listings AND no active scan is in progress
+    // Disable button when no vehicles selected or scan in progress
     const isDisabled = selectedListingIds.length === 0 || isAnalysisButtonLoading ||
       (activeScanRequestId !== null && scanRequestStatus === 'processing') ||
       isFetchingPersistedScan;
@@ -2380,7 +2380,7 @@ export default function InventoryPage() {
     if (!userId || (isFetchingPersistedScan && !viewingHistorical)) return null;
 
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6 mt-8">
         <div
           className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50"
           onClick={() => setIsHistoricalPanelExpanded(!isHistoricalPanelExpanded)}
@@ -2401,8 +2401,14 @@ export default function InventoryPage() {
           </Button>
         </div>
 
+        <div className="px-4 py-2 border-t border-b border-gray-100 bg-gray-50">
+          <p className="text-sm text-gray-600">
+            View your past market analyses and their results. Click on any entry to see detailed comparisons and pricing insights.
+          </p>
+        </div>
+
         {isHistoricalPanelExpanded && (
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-100">
             {isLoadingHistoricalScans ? (
               <div className="flex justify-center py-8">
                 <ReloadIcon className="h-6 w-6 animate-spin text-blue-500" />
@@ -4263,7 +4269,8 @@ export default function InventoryPage() {
 
       {/* Market Analysis Section */}
       {/* Analysis Trigger Button - Only show when no active scan */}
-      {selectedListingIds.length > 0 && !activeScanRequestId && !viewingHistorical && (
+      {/* Market & Price Analysis - Always visible */}
+      {!activeScanRequestId && !viewingHistorical && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
             <PresentationChartLineIcon className="h-5 w-5 mr-2 text-emerald-600" />
