@@ -64,6 +64,7 @@ import {
   PresentationChartLineIcon,
   LinkIcon,
   InformationCircleIcon,
+  ClipboardIcon,
 } from '@heroicons/react/24/outline';
 
 
@@ -1458,18 +1459,17 @@ export default function InventoryPage() {
 
       if (scanError) throw scanError;
 
-      // Load scan data and ensure we have vehicle information
-
-      // Now get scan results to ensure we have vehicle information
-      const scanRequestIds = scanData?.map(scan => scan.scan_request_id) || [];
-
       // If we don't have any scan history, return early
-      if (scanRequestIds.length === 0) {
+      if (!scanData || scanData.length === 0) {
         setHistoricalScans([]);
         return;
       }
 
+      // Now get scan results to ensure we have vehicle information
+      const scanRequestIds = scanData.map(scan => scan.scan_request_id);
+
       // Fetch scan results for these IDs to get vehicle details
+      // IMPORTANT: Removed the user_id filter which was causing no results to show
       const { data: resultsData, error: resultsError } = await supabase
         .from('market_scan_results')
         .select('*')
@@ -1491,8 +1491,13 @@ export default function InventoryPage() {
         });
       }
 
+      // Filter scan data to only include scans that have results
+      const scansWithResults = scanData.filter(scan =>
+        resultsByScanId[scan.scan_request_id] && resultsByScanId[scan.scan_request_id].length > 0
+      );
+
       // Process the historical scans data with enriched information
-      const processedScans = await Promise.all((scanData || []).map(async (scan) => {
+      const processedScans = await Promise.all((scansWithResults || []).map(async (scan) => {
         // Default summary text is the timestamp
         let summaryText = format(new Date(scan.created_at), 'PPp');
 
@@ -1556,7 +1561,6 @@ export default function InventoryPage() {
           }
         }
 
-
         return {
           ...scan,
           summary_text: summaryText
@@ -1600,13 +1604,11 @@ export default function InventoryPage() {
 
       if (scanRequestError) throw scanRequestError;
 
-      console.log('Scan request data:', scanRequestData);
-
-      // 2. Fetch the scan results for this scan request
+      // 2. Fetch the scan results for this scan request - no user_id filter to ensure we get all results
       const { data: scanResultsData, error: scanResultsError } = await supabase
         .from('market_scan_results')
         .select('*')
-        .eq('scan_request_id', scanRequestId);  // Removed user_id filter as it might be restricting results
+        .eq('scan_request_id', scanRequestId);
 
       if (scanResultsError) throw scanResultsError;
 
@@ -2362,6 +2364,15 @@ export default function InventoryPage() {
             )}
           </div>
 
+          {/* Price Calculator Section - Added just before the closing button */}
+          <div className="p-6 border-t border-gray-200">
+            <h3 className="text-md font-semibold text-gray-700 mb-4 flex items-center">
+              <CurrencyDollarIcon className="h-5 w-5 mr-2 text-emerald-600" />
+              Price Calculator
+            </h3>
+            <PriceCalculator averageMarketPrice={scanResult?.market_avg_price} />
+          </div>
+
           <div className="px-6 py-4 border-t flex justify-end">
             <Button
               onClick={() => setIsDetailsModalOpen(false)}
@@ -2562,6 +2573,44 @@ export default function InventoryPage() {
       localStorage.removeItem('active_market_scan_id');
       resetScanState();
     }
+  };
+
+  // Add a new component for the expandable price calculator
+  const ExpandablePriceCalculator = () => {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div
+          className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="flex items-center">
+            <CurrencyDollarIcon className="h-5 w-5 text-emerald-600 mr-2" />
+            <h3 className="text-lg font-semibold text-gray-800">Price Calculator</h3>
+          </div>
+          <Button variant="ghost" size="sm" className="p-1">
+            {isExpanded ? (
+              <ChevronDownIcon className="h-5 w-5" />
+            ) : (
+              <ChevronRightIcon className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
+
+        <div className="px-4 py-2 border-t border-b border-gray-100 bg-gray-50">
+          <p className="text-sm text-gray-600">
+            Calculate importing costs, margins, and compare prices with market averages.
+          </p>
+        </div>
+
+        {isExpanded && (
+          <div className="p-6 border-t border-gray-100">
+            <PriceCalculator averageMarketPrice={null} />
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -4291,6 +4340,9 @@ export default function InventoryPage() {
         </>
       )}
 
+      {/* Add the Expandable Price Calculator here */}
+      <ExpandablePriceCalculator />
+
       {/* Historical Scans Panel - Always shown if user is logged in, regardless of other states */}
       <HistoricalScansPanel />
 
@@ -4300,3 +4352,329 @@ export default function InventoryPage() {
     </div> // End container
   );
 }
+
+// Add the PriceCalculator component definition right after the MarketAnalysisDetailsModal component
+// Just before the HistoricalScansPanel definition (around line 2375 based on file outline)
+const PriceCalculator = ({ averageMarketPrice }: { averageMarketPrice?: number | null }) => {
+  const supabase = createClient();
+  const [isLoading, setIsLoading] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState<number>(1.08); // Default EUR/CHF rate
+  const [customExchangeRate, setCustomExchangeRate] = useState<number | null>(null);
+  const [purchasingPrice, setPurchasingPrice] = useState<number | null>(null);
+  const [targetListingPrice, setTargetListingPrice] = useState<number | null>(null);
+  const [importCostPercentage, setImportCostPercentage] = useState<number>(12);
+  const [selectedCurrency, setSelectedCurrency] = useState<'CHF' | 'EUR'>('CHF');
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  // Fetch latest exchange rate on component mount
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('currency_rates')
+          .select('EUR')
+          .eq('base_currency', 'CHF')
+          .order('fetched_at', { ascending: false })
+          .limit(1);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          // Since base currency is CHF, we need to use 1/EUR for EUR to CHF rate
+          setExchangeRate(1 / data[0].EUR);
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExchangeRate();
+  }, [supabase]);
+
+  // Calculate values
+  const effectiveExchangeRate = customExchangeRate || exchangeRate;
+
+  // Conversion functions
+  const convertEURtoCHF = (amount: number) => amount * effectiveExchangeRate;
+  const convertCHFtoEUR = (amount: number) => amount / effectiveExchangeRate;
+
+  // Convert prices to CHF for calculations (our base currency)
+  const purchasingPriceInCHF = purchasingPrice
+    ? (selectedCurrency === 'EUR' ? convertEURtoCHF(purchasingPrice) : purchasingPrice)
+    : null;
+
+  // Calculate import cost
+  const importCostInCHF = purchasingPriceInCHF ? (purchasingPriceInCHF * importCostPercentage / 100) : null;
+  const importCostInEUR = importCostInCHF ? convertCHFtoEUR(importCostInCHF) : null;
+
+  // Calculate total import cost
+  const totalImportCostInCHF = purchasingPriceInCHF && importCostInCHF
+    ? purchasingPriceInCHF + importCostInCHF
+    : null;
+  const totalImportCostInEUR = totalImportCostInCHF ? convertCHFtoEUR(totalImportCostInCHF) : null;
+
+  // Target listing price in CHF (for calculations)
+  const targetListingPriceInCHF = targetListingPrice
+    ? (selectedCurrency === 'EUR' ? convertEURtoCHF(targetListingPrice) : targetListingPrice)
+    : null;
+
+  // Calculate target margin
+  const targetMargin = (targetListingPriceInCHF && totalImportCostInCHF && totalImportCostInCHF > 0)
+    ? ((targetListingPriceInCHF - totalImportCostInCHF) / totalImportCostInCHF) * 100
+    : null;
+
+  // Format currency based on selected currency
+  const formatCurrency = (amount: number | null, currency: 'CHF' | 'EUR'): string => {
+    if (amount === null) return '—';
+    return new Intl.NumberFormat('de-CH', {
+      style: 'currency',
+      currency: currency,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  // Copy to clipboard
+  const copyTargetPriceToClipboard = () => {
+    if (!targetListingPrice) return;
+
+    const price = targetListingPrice;
+
+    navigator.clipboard.writeText(price.toString());
+
+    // Access the toast function from the parent component
+    window.alert(`${formatCurrency(price, selectedCurrency)} copied to clipboard`);
+  };
+
+  // Market price comparison
+  const getMarketComparison = () => {
+    if (!targetListingPriceInCHF || !averageMarketPrice) return null;
+
+    // Always compare in CHF (base currency) for consistency
+    const difference = targetListingPriceInCHF - averageMarketPrice;
+    const percentageDiff = (difference / averageMarketPrice) * 100;
+
+    if (Math.abs(percentageDiff) < 1) return "on par with market average";
+
+    return percentageDiff > 0
+      ? `${percentageDiff.toFixed(1)}% above market average`
+      : `${Math.abs(percentageDiff).toFixed(1)}% below market average`;
+  };
+
+  const marketComparison = getMarketComparison();
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left Column */}
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="purchasing-price" className="flex items-center">
+              Purchasing Price
+            </Label>
+            <div className="flex mt-1.5">
+              <Input
+                id="purchasing-price"
+                type="number"
+                placeholder="Enter amount"
+                value={purchasingPrice ?? ''}
+                onChange={(e) => setPurchasingPrice(e.target.value ? Number(e.target.value) : null)}
+                className="rounded-r-none"
+              />
+              <Button
+                type="button"
+                variant={selectedCurrency === 'CHF' ? 'default' : 'outline'}
+                className="rounded-l-none px-3 border border-l-0"
+                onClick={() => setSelectedCurrency('CHF')}
+              >
+                CHF
+              </Button>
+              <Button
+                type="button"
+                variant={selectedCurrency === 'EUR' ? 'default' : 'outline'}
+                className="rounded-l-none px-3 border border-l-0"
+                onClick={() => setSelectedCurrency('EUR')}
+              >
+                EUR
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="import-cost" className="flex items-center">
+              Import Cost %
+            </Label>
+            <div className="flex mt-1.5">
+              <Input
+                id="import-cost"
+                type="number"
+                value={importCostPercentage}
+                onChange={(e) => setImportCostPercentage(Number(e.target.value))}
+                className="rounded-r-none"
+              />
+              <div className="flex items-center justify-center px-3 bg-gray-100 border border-l-0 rounded-r-md">
+                %
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="target-price" className="flex items-center">
+              Target Listing Price
+            </Label>
+            <div className="flex mt-1.5">
+              <Input
+                id="target-price"
+                type="number"
+                placeholder="Enter amount"
+                value={targetListingPrice ?? ''}
+                onChange={(e) => setTargetListingPrice(e.target.value ? Number(e.target.value) : null)}
+                className="rounded-r-none"
+              />
+              <Button
+                type="button"
+                variant={selectedCurrency === 'CHF' ? 'default' : 'outline'}
+                className="rounded-l-none px-3 border border-l-0"
+                onClick={() => setSelectedCurrency('CHF')}
+              >
+                CHF
+              </Button>
+              <Button
+                type="button"
+                variant={selectedCurrency === 'EUR' ? 'default' : 'outline'}
+                className="rounded-l-none px-3 border border-l-0"
+                onClick={() => setSelectedCurrency('EUR')}
+              >
+                EUR
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="px-2"
+                onClick={copyTargetPriceToClipboard}
+                disabled={!targetListingPrice}
+              >
+                <ClipboardIcon className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="exchange-rate" className="flex items-center">
+              EUR/CHF Exchange Rate
+              <Popover open={tooltipOpen} onOpenChange={setTooltipOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="w-6 h-6 ml-1">
+                    <InformationCircleIcon className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-3">
+                  <p className="text-sm">
+                    Current EUR/CHF rate: {isLoading ? "Loading..." : exchangeRate.toFixed(4)}.
+                    You can override this rate for your calculations if needed.
+                  </p>
+                </PopoverContent>
+              </Popover>
+            </Label>
+            <div className="flex mt-1.5">
+              <Input
+                id="exchange-rate"
+                type="number"
+                value={(customExchangeRate ?? exchangeRate).toFixed(4)}
+                onChange={(e) => setCustomExchangeRate(e.target.value ? parseFloat(parseFloat(e.target.value).toFixed(4)) : null)}
+                step="0.0001"
+                min="0.0001"
+                className="rounded-r-none"
+              />
+              <div className="flex items-center justify-center px-3 bg-gray-100 border border-l-0 rounded-r-md">
+                {isLoading ? <ReloadIcon className="h-4 w-4 animate-spin" /> : "EUR/CHF"}
+              </div>
+            </div>
+            {customExchangeRate && (
+              <div className="text-xs text-amber-600 mt-1 flex items-center">
+                <ExclamationTriangleIcon className="h-3 w-3 mr-1" />
+                Using custom exchange rate
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column - Calculation Results */}
+        <div className="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <h4 className="text-sm font-medium text-gray-700">Calculation Results</h4>
+
+          <div>
+            <div className="text-sm text-gray-500">Import Cost</div>
+            <div className="grid grid-cols-2 gap-2 mt-1">
+              <div className="bg-white p-2 rounded border border-gray-200">
+                <div className="text-xs text-gray-500">CHF</div>
+                <div className="font-medium">{formatCurrency(importCostInCHF, 'CHF')}</div>
+              </div>
+              <div className="bg-white p-2 rounded border border-gray-200">
+                <div className="text-xs text-gray-500">EUR</div>
+                <div className="font-medium">{formatCurrency(importCostInEUR, 'EUR')}</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-sm text-gray-500">Total Cost</div>
+            <div className="grid grid-cols-2 gap-2 mt-1">
+              <div className="bg-white p-2 rounded border border-gray-200">
+                <div className="text-xs text-gray-500">CHF</div>
+                <div className="font-medium">{formatCurrency(totalImportCostInCHF, 'CHF')}</div>
+              </div>
+              <div className="bg-white p-2 rounded border border-gray-200">
+                <div className="text-xs text-gray-500">EUR</div>
+                <div className="font-medium">{formatCurrency(totalImportCostInEUR, 'EUR')}</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-sm text-gray-500">Target Margin</div>
+            <div className="bg-white p-2 rounded border border-gray-200 mt-1">
+              <div className="font-medium">
+                {targetMargin !== null ? `${targetMargin.toFixed(1)}%` : '—'}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-sm text-gray-500">Net Profit</div>
+            <div className="bg-white p-2 rounded border border-gray-200 mt-1">
+              <div className="font-medium">
+                {targetListingPriceInCHF && totalImportCostInCHF ?
+                  formatCurrency(targetListingPriceInCHF - totalImportCostInCHF, selectedCurrency) :
+                  '—'
+                }
+              </div>
+            </div>
+          </div>
+
+          {averageMarketPrice && (
+            <div>
+              <div className="text-sm text-gray-500">Market Comparison</div>
+              <div className="bg-white p-2 rounded border border-gray-200 mt-1">
+                <div className="text-xs text-gray-500">Market Average Price</div>
+                <div className="font-medium">
+                  {selectedCurrency === 'CHF'
+                    ? formatCurrency(averageMarketPrice, 'CHF')
+                    : formatCurrency(convertCHFtoEUR(averageMarketPrice), 'EUR')
+                  }
+                </div>
+                {marketComparison && (
+                  <div className={`text-xs mt-1 ${marketComparison.includes('below') ? 'text-emerald-600' : (marketComparison.includes('above') ? 'text-amber-600' : 'text-blue-600')}`}>
+                    Your price is {marketComparison}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
