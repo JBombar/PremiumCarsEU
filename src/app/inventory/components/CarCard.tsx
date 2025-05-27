@@ -64,7 +64,7 @@ export function CarCard({
     return (
         <Card
             key={car.id} // Key is still useful here for React's list rendering
-            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] focus-within:scale-[1.02] focus-within:shadow-xl flex flex-col" // Added flex flex-col
+            className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] focus-within:scale-[1.02] focus-within:shadow-xl flex flex-col h-full" // Added h-full for uniform height
         >
             {/* Image Carousel */}
             <div className="aspect-video relative overflow-hidden bg-muted">
@@ -174,14 +174,14 @@ export function CarCard({
                             </div>
                         </div>
                     )}
-
-                    {/* Price display - relocated to bottom of content area with subtle gradient */}
-                    <div className="mt-4">
-                        <div className="inline-block font-semibold text-lg bg-gradient-to-r from-gray-50/80 to-gray-100/60 text-primary px-4 py-1.5 rounded-md border border-gray-200/50">
-                            {formatPrice(getCarPrice())}
-                        </div>
-                    </div>
                 </CardContent>
+
+                {/* Price display - moved to separate section for uniform spacing */}
+                <div className="px-6 pb-4">
+                    <div className="inline-block font-semibold text-lg bg-gradient-to-r from-gray-50/80 to-gray-100/60 text-primary px-4 py-1.5 rounded-md border border-gray-200/50">
+                        {formatPrice(getCarPrice())}
+                    </div>
+                </div>
 
                 <CardFooter className="mt-auto"> {/* Simplified footer with single button */}
                     <Link

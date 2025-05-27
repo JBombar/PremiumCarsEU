@@ -33,6 +33,8 @@ export function SpecialOfferCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [animating, setAnimating] = useState(false);
+  // Add state for tracking current image index for each offer
+  const [currentImageIndex, setCurrentImageIndex] = useState<{ [key: string]: number }>({});
 
   // Fetch special offers from Supabase
   useEffect(() => {
@@ -88,6 +90,27 @@ export function SpecialOfferCarousel() {
       current === specialOffers.length - 1 ? 0 : current + 1
     );
     setTimeout(() => setAnimating(false), 500);
+  };
+
+  // Image navigation functions for individual offers
+  const nextImage = (offerId: string) => {
+    const offer = specialOffers.find(o => o.id === offerId);
+    if (!offer?.images || offer.images.length <= 1) return;
+
+    setCurrentImageIndex(prev => ({
+      ...prev,
+      [offerId]: ((prev[offerId] || 0) + 1) % offer.images!.length
+    }));
+  };
+
+  const prevImage = (offerId: string) => {
+    const offer = specialOffers.find(o => o.id === offerId);
+    if (!offer?.images || offer.images.length <= 1) return;
+
+    setCurrentImageIndex(prev => ({
+      ...prev,
+      [offerId]: ((prev[offerId] || 0) - 1 + offer.images!.length) % offer.images!.length
+    }));
   };
 
   // Show loading state
@@ -150,8 +173,10 @@ export function SpecialOfferCarousel() {
   const validIndex = activeIndex < specialOffers.length ? activeIndex : 0;
   const currentOffer = specialOffers[validIndex];
 
+  // Get current image index for this offer
+  const offerImageIndex = currentImageIndex[currentOffer.id] || 0;
   const imageUrl = currentOffer.images && currentOffer.images.length > 0
-    ? currentOffer.images[0]
+    ? currentOffer.images[offerImageIndex]
     : '/images/car-placeholder.jpg';
 
   const carTitle = `${currentOffer.year} ${currentOffer.make} ${currentOffer.model}`;
@@ -192,11 +217,12 @@ export function SpecialOfferCarousel() {
             <div className="overflow-hidden rounded-xl shadow-lg bg-white">
               <div className="flex flex-col md:flex-row">
                 {/* Left side - Image */}
-                <div className="relative w-full md:w-1/2 h-64 md:h-96">
+                <div className="relative w-full md:w-1/2 h-64 md:h-96 group">
                   <div className="absolute top-4 left-4 z-10 bg-primary text-white text-sm font-bold px-4 py-1 rounded-full">
                     {/* Use fetched label or translated default */}
                     {currentOffer.special_offer_label || t('defaultOfferLabel')}
                   </div>
+
                   <Image
                     src={imageUrl}
                     // Use translated alt text with dynamic value
@@ -206,6 +232,40 @@ export function SpecialOfferCarousel() {
                     height={400}
                     priority={validIndex === 0} // Only prioritize the first image initially
                   />
+
+                  {/* Image navigation arrows - only show if current offer has multiple images */}
+                  {currentOffer.images && currentOffer.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          prevImage(currentOffer.id);
+                        }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-white transition-all bg-black/40 hover:bg-black/60 rounded-full p-2 opacity-0 group-hover:opacity-100"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          nextImage(currentOffer.id);
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 text-white/70 hover:text-white transition-all bg-black/40 hover:bg-black/60 rounded-full p-2 opacity-0 group-hover:opacity-100"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+
+                      {/* Image counter */}
+                      <div className="absolute bottom-4 right-4 z-20 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                        {offerImageIndex + 1} / {currentOffer.images.length}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Right side - Details */}
